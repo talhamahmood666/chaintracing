@@ -71,6 +71,10 @@ export function ReportView({ report }: { report: ReportData }) {
   const tier = report.tier ?? "quick";
   const bridgeHops = report.hops.filter((h) => (h as Hop & { isBridge?: boolean }).isBridge);
   const mixerHops = report.hops.filter((h) => h.isMixer);
+  const scamDbMatchCount = report.hops.reduce(
+    (sum, h) => sum + ((h as Hop & { scamMatches?: unknown[] }).scamMatches?.length ?? 0),
+    0
+  );
 
   async function handleUnlock() {
     setUnlocking(true);
@@ -212,6 +216,21 @@ export function ReportView({ report }: { report: ReportData }) {
               ))}
             </div>
           </section>
+        )}
+
+        {/* Scam database match count */}
+        {scamDbMatchCount > 0 && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+            <p className="text-sm font-semibold text-red-800">
+              This address appears in {scamDbMatchCount} scam database{" "}
+              {scamDbMatchCount === 1 ? "entry" : "entries"}
+            </p>
+            <p className="text-xs text-red-600 mt-1">
+              Scam database entries aggregated from public sources (OFAC, community
+              reports). ChainTracing does not accuse individuals. Verify independently
+              before acting.
+            </p>
+          </div>
         )}
 
         {/* Methodology warning — single-path BFS disclosure, visible on all paid reports */}

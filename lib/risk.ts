@@ -1,12 +1,14 @@
 import type { Hop, Chain } from "./tracer";
 import exchangeWallets from "@/data/exchange-wallets.json";
 import { env } from "./config";
+import { lookupScamAddress } from "./scam-db";
 
 export interface RiskResult {
   score: number; // 0-100
   level: "info" | "low" | "medium" | "high" | "critical";
   flags: RiskFlag[];
   summary: string;
+  scamDbMatchCount: number; // total scam_addresses hits for this address + all hop addresses
 }
 
 export interface RiskFlag {
@@ -92,11 +94,50 @@ export async function scoreAddress(
         },
       ],
       summary: `This address belongs to ${cexEntry.exchange} (${cexEntry.label}). If you sent funds here as part of a scam, contact ${cexEntry.exchange} support directly with your transaction hash and report it as fraud. Do not attempt to trace further from this address.`,
+      scamDbMatchCount: 0,
     };
   }
 
   const flags: RiskFlag[] = [];
   let score = 0;
+
+  // ── Scam database lookup ───────────────────────────────────────────────────
+  const inputScamMatches = await lookupScamAddress(address, chain);
+  const hopScamCount = hops.reduce(
+    (sum, h) => sum + (h.scamMatches?.length ?? 0),
+    0
+  );
+  const scamDbMatchCount = inputScamMatches.length + hopScamCount;
+
+  if (inputScamMatches.length > 0) {
+    const maxConf = Math.max(...inputScamMatches.map((m) => m.confidenceScore));
+    score += Math.round(maxConf * 0.4); // up to +40 for confidence=100
+    const categories = [...new Set(inputScamMatches.map((m) => m.category))];
+    const sources = [...new Set(inputScamMatches.map((m) => m.source))];
+    flags.push({
+      id: "scam_db_match",
+      label: "Found in Scam Database",
+      severity: maxConf >= 80 ? "critical" : "high",
+      description: `This address appears in ${inputScamMatches.length} scam database entr${inputScamMatches.length !== 1 ? "ies" : "y"}. Categories: ${categories.join(", ")}. Sources: ${sources.join(", ")}.`,
+    });
+  }
+
+  const scamHops = hops.filter(
+    (h) => h.scamMatches && h.scamMatches.length > 0
+  );
+  if (scamHops.length > 0) {
+    const totalHopMatches = scamHops.reduce(
+      (sum, h) => sum + (h.scamMatches?.length ?? 0),
+      0
+    );
+    score += Math.min(30, scamHops.length * 10);
+    flags.push({
+      id: "scam_db_hop_match",
+      label: "Scam Database Match in Hop Chain",
+      severity: "high",
+      description: `${totalHopMatches} scam database match${totalHopMatches !== 1 ? "es" : ""} found across ${scamHops.length} hop address${scamHops.length !== 1 ? "es" : ""} in the trace.`,
+    });
+  }
 
   // 1. Mixer interaction
   const mixerHops = hops.filter((h) => h.isMixer);
@@ -215,7 +256,7 @@ export async function scoreAddress(
 
   const summary = buildSummary(score, level, flags, hops);
 
-  return { score, level, flags, summary };
+  return { score, level, flags, summary, scamDbMatchCount };
 }
 
 function buildSummary(

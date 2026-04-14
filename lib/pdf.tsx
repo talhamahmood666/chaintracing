@@ -320,6 +320,13 @@ function formatGap(seconds: number): string {
 
 // ─── Document component ───────────────────────────────────────────────────────
 
+export interface ScamDbMatchEntry {
+  address: string;
+  category: string;
+  source: string;
+  confidenceScore: number;
+}
+
 export interface PdfReportProps {
   reportId: string;
   address: string;
@@ -333,6 +340,7 @@ export interface PdfReportProps {
   tier: "quick" | "deep";
   cluster?: ClusterResult;
   timingFlags?: TimingFlag[];
+  scamDbMatches?: ScamDbMatchEntry[];
 }
 
 export function ChainTracingReport({
@@ -348,6 +356,7 @@ export function ChainTracingReport({
   tier,
   cluster,
   timingFlags,
+  scamDbMatches,
 }: PdfReportProps) {
   const cexHop = hops.find((h) => h.label);
   const chainLabel = chain.toUpperCase();
@@ -603,6 +612,33 @@ export function ChainTracingReport({
           </>
         )}
 
+        {/* Known Scam Database Matches */}
+        {scamDbMatches && scamDbMatches.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Known Scam Database Matches</Text>
+            <View style={[styles.infoRow, { marginBottom: 4, backgroundColor: "#fef2f2" }]}>
+              <Text style={[styles.infoLabel, { color: "#991b1b" }]}>Address</Text>
+              <Text style={[styles.infoLabel, { width: 60, color: "#991b1b" }]}>Category</Text>
+              <Text style={[styles.infoLabel, { width: 70, color: "#991b1b" }]}>Source</Text>
+              <Text style={[styles.infoLabel, { width: 50, color: "#991b1b" }]}>Confidence</Text>
+            </View>
+            {scamDbMatches.map((match, i) => (
+              <View key={i} style={[styles.infoRow, { marginBottom: 1 }]}>
+                <Text style={[styles.hopCell, { flex: 1 }]}>{shortAddr(match.address)}</Text>
+                <Text style={[styles.hopCell, { width: 60 }]}>{match.category}</Text>
+                <Text style={[styles.hopCell, { width: 70 }]}>{match.source}</Text>
+                <Text style={[styles.hopCell, { width: 50 }]}>{match.confidenceScore}%</Text>
+              </View>
+            ))}
+            <View style={[styles.disclaimer, { marginTop: 6, marginBottom: 12 }]}>
+              <Text style={styles.disclaimerText}>
+                Scam database entries aggregated from public sources (OFAC, community reports).
+                ChainTracing does not accuse individuals. Verify independently before acting.
+              </Text>
+            </View>
+          </>
+        )}
+
         {/* Evidence links */}
         <Text style={styles.sectionTitle}>Evidence Links (Block Explorer)</Text>
         {hops.map((hop) => (
@@ -623,10 +659,12 @@ export function ChainTracingReport({
             available blockchain data. It is intended to assist victims of fraud
             in gathering evidence and is not legal advice. Exchange wallet labels
             are sourced from a community-maintained database and may not be
-            exhaustive. For official proceedings, please consult a qualified
-            legal professional and contact your local law enforcement agency.
-            ChainTracing does not guarantee the completeness or accuracy of this
-            report.
+            exhaustive. Scam database entries aggregated from public sources
+            (OFAC, community reports). ChainTracing does not accuse individuals.
+            Verify independently before acting. For official proceedings, please
+            consult a qualified legal professional and contact your local law
+            enforcement agency. ChainTracing does not guarantee the completeness
+            or accuracy of this report.
           </Text>
         </View>
 

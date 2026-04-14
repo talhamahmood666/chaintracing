@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
       riskLevel: risk.level,
       riskSummary: risk.summary,
       flags: risk.flags,
+      scamDbMatchCount: risk.scamDbMatchCount,
       hopCount: hops.length,
       hops,
       firstHop: hops[0]

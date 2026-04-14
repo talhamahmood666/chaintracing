@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { getAdminClient } from "@/lib/supabase";
-import { generatePdfBuffer } from "@/lib/pdf";
+import { generatePdfBuffer, type ScamDbMatchEntry } from "@/lib/pdf";
 import {
   clusterWallets,
   analyzeTimings,
@@ -51,6 +51,22 @@ export async function GET(
   const cluster = tier === "deep" ? clusterWallets(hops) : undefined;
   const timingFlags = tier === "deep" ? analyzeTimings(hops) : undefined;
 
+  // Collect scam matches from annotated hops (available for reports traced after scam DB was added)
+  const scamDbMatches: ScamDbMatchEntry[] = [];
+  for (const hop of hops) {
+    const hopWithScam = hop as Hop & { scamMatches?: Array<{ category: string; source: string; confidenceScore: number }> };
+    if (hopWithScam.scamMatches && hopWithScam.scamMatches.length > 0) {
+      for (const match of hopWithScam.scamMatches) {
+        scamDbMatches.push({
+          address: hop.to,
+          category: match.category,
+          source: match.source,
+          confidenceScore: match.confidenceScore,
+        });
+      }
+    }
+  }
+
   const buf = await generatePdfBuffer({
     reportId: report.id,
     address: report.address,
@@ -64,6 +80,7 @@ export async function GET(
     tier,
     cluster,
     timingFlags,
+    scamDbMatches: scamDbMatches.length > 0 ? scamDbMatches : undefined,
   });
 
   return new Response(new Uint8Array(buf), {

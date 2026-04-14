@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ingest:ofac": "tsx --env-file=.env.local scripts/ingest/ingest-ofac.ts",
+    "ingest:scamdb": "tsx --env-file=.env.local scripts/ingest/ingest-cryptoscamdb.ts",
+    "ingest:all": "tsx --env-file=.env.local scripts/ingest/run-all.ts"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.4.1",
@@ -23,9 +26,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/xml2js": "^0.4.14",
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.19.3",
+    "typescript": "^5",
+    "xml2js": "^0.6.2"
   }
 }

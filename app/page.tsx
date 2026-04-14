@@ -27,6 +27,7 @@ interface FreeResult {
   riskLevel: string;
   riskSummary: string;
   flags: RiskFlag[];
+  scamDbMatchCount: number;
   hopCount: number;
   hops: unknown[];
   firstHop: { to: string; label?: string } | null;
@@ -341,6 +342,21 @@ export default function HomePage() {
                         <FlagBadge key={f.id} flag={f} />
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* Scam database match count (free tier: count only, no source details) */}
+                {result.scamDbMatchCount > 0 && (
+                  <div className="mb-5 bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-sm font-semibold text-red-800">
+                      This address appears in {result.scamDbMatchCount} scam database{" "}
+                      {result.scamDbMatchCount === 1 ? "entry" : "entries"}
+                    </p>
+                    <p className="text-xs text-red-600 mt-0.5">
+                      Scam database entries aggregated from public sources (OFAC, community
+                      reports). ChainTracing does not accuse individuals. Verify independently
+                      before acting.
+                    </p>
                   </div>
                 )}
               </>

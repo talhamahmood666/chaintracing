@@ -3,6 +3,9 @@ import bridgeContracts from "@/data/bridge-contracts.json";
 import mixerAddresses from "@/data/mixer-addresses.json";
 import { EVM_CHAIN_CONFIG, getExplorerTxUrl, type EvmChainConfig } from "@/lib/chain-utils";
 import { env } from "./config";
+import { lookupScamAddressBatch, type ScamMatch } from "./scam-db";
+
+export type { ScamMatch };
 
 export type Chain = "eth" | "bsc" | "polygon" | "arbitrum" | "solana" | "tron";
 
@@ -23,6 +26,7 @@ export interface Hop {
   isBridge?: boolean;
   bridgeName?: string;
   gapFromPrevSeconds?: number; // seconds since last hop
+  scamMatches?: ScamMatch[]; // matches in scam_addresses table
 }
 
 export interface ClusterResult {
@@ -419,19 +423,37 @@ export async function traceAddress(
   chain: Chain,
   maxHops = 10
 ): Promise<Hop[]> {
+  let hops: Hop[];
   switch (chain) {
     case "eth":
     case "bsc":
     case "polygon":
     case "arbitrum":
-      return traceEvm(address, chain, maxHops);
+      hops = await traceEvm(address, chain, maxHops);
+      break;
     case "solana":
-      return traceSolana(address, maxHops);
+      hops = await traceSolana(address, maxHops);
+      break;
     case "tron":
-      return traceTron(address, maxHops);
+      hops = await traceTron(address, maxHops);
+      break;
     default:
       throw new Error(`Unknown chain: ${chain}`);
   }
+  return annotateHopsWithScam(hops, chain);
+}
+
+async function annotateHopsWithScam(hops: Hop[], chain: Chain): Promise<Hop[]> {
+  if (hops.length === 0) return hops;
+  const addresses = hops.flatMap((h) => [h.from, h.to]);
+  const matchMap = await lookupScamAddressBatch(addresses, chain);
+  if (matchMap.size === 0) return hops;
+  return hops.map((h) => {
+    const fromMatches = matchMap.get(h.from.toLowerCase()) ?? [];
+    const toMatches = matchMap.get(h.to.toLowerCase()) ?? [];
+    const allMatches = [...fromMatches, ...toMatches];
+    return allMatches.length > 0 ? { ...h, scamMatches: allMatches } : h;
+  });
 }
 
 /**
@@ -494,7 +516,8 @@ export async function continueTrace(
         : h.gapFromPrevSeconds,
   }));
 
-  return [...existingHops, ...renumbered];
+  const annotated = await annotateHopsWithScam(renumbered, chain);
+  return [...existingHops, ...annotated];
 }
 
 export function getExplorerAddressUrl(address: string, chain: Chain): string {
