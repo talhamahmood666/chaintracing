@@ -1,0 +1,46 @@
+{
+  "eth": {
+    "0x8731d54e9d02c286767d56ac03e8037c07e01e98": "Stargate",
+    "0x296f55f8fb28e498b858d0bcda06d955b2cb3f97": "Stargate",
+    "0x3ee18b2214aff97000d974cf647e7c347e8fa585": "Wormhole",
+    "0x98f3c9e6e3face36baad05fe09d375ef1464288b": "Wormhole",
+    "0x5c7bcd6e7de5423a257d81b442095a1a6ced35c5": "Across",
+    "0x4d9079bb4165aeb4084c526a32695dcfd2f77381": "Across",
+    "0x2796317b0ff8538f253012862c06787adfb8ceb6": "Synapse",
+    "0x3d4cc8a61c7528fd86c55cfe061a78dcba48edd1": "Hop",
+    "0x3666f603cc164936c1b87e207f36beba4ac5f18a": "Hop",
+    "0x914ef3a36c4b7f8b3e5e1b87e3bb4f6e69c8c5de": "Hop",
+    "0xb8901acb165ed027e32754e0ffe830802919727f": "Hop",
+    "0x22b1cbb8d98a01a3b71d034bb899775a76eb1cc2": "Multichain",
+    "0xba8da9dcf11b50b03fd5284f164ef5cdef910705": "Multichain"
+  },
+  "bsc": {
+    "0x4a364f8c717caad9a442737eb7b8a55cc6cf18d8": "Stargate",
+    "0xb6f6d86a8f9879a9c87f643768d9efc38c1da6e7": "Wormhole",
+    "0x98f3c9e6e3face36baad05fe09d375ef1464288b": "Wormhole",
+    "0xd123f70ae324d34a9e76b67a27bf77593ba8749f": "Synapse",
+    "0xabd380327fe66724ffda91a87c772fb8d00be488": "Synapse",
+    "0xc0cf9c3f568a0fa7b94f5b15a78fd90f1e7c5ee8": "Multichain",
+    "0xd1c5966f9f5ee6881ff6b261bbeda45972b1b5f3": "Celer cBridge"
+  },
+  "polygon": {
+    "0x45a01e4e04f14f7a4a6702c74187c5f6222033cd": "Stargate",
+    "0x5a58505a96d1dbf8df91cb21b54419fc36e93fde": "Wormhole",
+    "0x9295ee1d8c5b022be115a2ad3c30c72e34e7f096": "Across",
+    "0x8f5bbb2bb8c2ee94639e55d5f41de9b4839c1280": "Synapse",
+    "0x553bc791d746767166fa3888432038193ceed5e2": "Hop",
+    "0x25d8039bb044dc227f741a9e381ca4ceae2e6ae8": "Hop",
+    "0x4bf3e32de155359d1d75e8d474f3077d6aceb02a": "Multichain",
+    "0x88dcdc47d2f83a99cf0000fdf667a468bb958a78": "Celer cBridge"
+  },
+  "arbitrum": {
+    "0x53bf833a5d6c4dda888f69c22c88c9f356a41614": "Stargate",
+    "0x0b2402144bb366a632d14b83f244d2e0e21bd39c": "Wormhole",
+    "0xe35e9842fceaca96570b734083f4a58e8f7c5f2a": "Across",
+    "0x6f4e8eba4d337f874ab57478acc2cb5bacdc19c9": "Synapse",
+    "0xd151c8f0dc69618a284571da8dda37ea9ef9f0de": "Hop",
+    "0x0e0e3d2c5c292161999474247956ef542cab8f9c": "Hop",
+    "0xc931f61b1534eb21d8c11b24f3f5ab2471d4ab50": "Multichain",
+    "0x1619de601a75a4be52571ad66c2b46bc72b87cbf": "Celer cBridge"
+  }
+}

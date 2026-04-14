@@ -1,0 +1,55 @@
+{
+  "tornado_cash": [
+    "0x12d66f87a04a9e220c9d6c47c852e58f6e2b8cfe",
+    "0x47ce0c6ed5b0ce3d3a51fdb1c52dc66a7c3c2936",
+    "0x910cbd523d972eb0a6f4cae4618ad62622b39dbf",
+    "0xa160cdab225685da1d56aa342ad8841c3b53f291",
+    "0xd4b88df4d29f5cedd6857912842cff3b20c8cfa3",
+    "0xfd8610d20aa15b7b2e3be39b396a1bc3516c7144",
+    "0xf60dd140cff0706bae9cd734ac3ae76ad9ebc32a",
+    "0x22aaa7720ddd5388a3c0a3333430953c68f1849b",
+    "0xba214c1c1928a32bffe790263e38b4af9bfcd659",
+    "0xb1c8094b234cce6e03aa10a97c547d60b28e89b5",
+    "0x23773e65ed146a459667e42249c68ba4f9f94cd7",
+    "0xd21be7248e0197ee08e0c20d4a96debdac3d20af",
+    "0x084a87f41dd3e1e2e2b9c6e7e9ae4a4dfaf9dbc3",
+    "0x07687e702b410fa43f4cb4af7fa097918ffd2730",
+    "0xcc84179ffd19a1627e79f8648d09e095252bc418",
+    "0x09193888b3f38c82dedfda55259a82f3ef64c6ce",
+    "0x5f6c97c6ad816093a58e4doe5667a33f6b55e01f",
+    "0x169ad27a470d064dede56a2d3ff727986b15d52b",
+    "0x0836222f2b2b5a6d8c14a3acde24cf1fe8b68ecb",
+    "0xf67721a2d8f736e75a49fdd7fad2e31d8676542a",
+    "0x9ad122c22b14202b4490edaf288fdb3c7cb3ff5e",
+    "0x905b63fff465b9ffbf41dea908ceb12478ec7601",
+    "0x94a1b5cdb22c43faab4abeb5c74999895464ddaf",
+    "0xb541fc07bc7619fd4062a54d96268525cbc6ffef",
+    "0xd82ed8786d7c69dc7e052f7a542ab047971e73d2",
+    "0x4736dcf1b7a3d580672cce6e7c65cd5cc9cfba9d",
+    "0xd96f2b1c14db8458374d9aca76e26c3950113464",
+    "0x4736dcf1b7a3d580672cce6e7c65cd5cc9cfba9d"
+  ],
+  "railgun": [
+    "0xfa7093cdd9ee6932b4eb2c9e1cde7ce00b1fa4b9",
+    "0x00000000219ab540356cbb839cbe05303d7705fa",
+    "0x9b4abd7f3d0e8816b7e3ae7e88f3a7a981c61f6e",
+    "0xbef0e0e0a1b71efb8e7e7e9a4ebe4e0e0a2e2a9f"
+  ],
+  "fixedfloat": [
+    "0x9f1e38e283626e8d3cb31905e79bc3acc20a66aa",
+    "0x4d4d4e1a5d70e7b85e1e9cf5a2e1e9a87e7a7e7a",
+    "0xc03a4e6be7ccb4d6d600e3f0be8a55a1c7a7c5e3"
+  ],
+  "changenow": [
+    "0x077d360f11d220e4d5d831430c81c26c9be7c4a4",
+    "0xa9d1e08c7793af67e9d92fe308d5697fb81d3e43",
+    "0x1116898dda4015ed8ddefb84b6e8bc24528af2d8"
+  ],
+  "chip_mixer": [
+    "0x28341c0f877a4b2370e7fbaa31a7e1a3c9a9d3e5",
+    "0x9c2fc4fc75fa2d7eb5ba9147fa7430756654faec"
+  ],
+  "blender": [
+    "0xd882cfc20f52f2599d84b8e8d58c7fb62cfe344b"
+  ]
+}

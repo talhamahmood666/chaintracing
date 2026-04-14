@@ -1,0 +1,82 @@
+{
+  "evm": {
+    "0xbe0eb53f46cd790cd13851d5eff43d12404d33e8": { "exchange": "Binance", "label": "Binance Hot Wallet 1" },
+    "0xf977814e90da44bfa03b6295a0616a897441acec": { "exchange": "Binance", "label": "Binance Hot Wallet 2" },
+    "0x5a52e96bacdabb82fd05763e25335261b270efcb": { "exchange": "Binance", "label": "Binance Hot Wallet 3" },
+    "0x3f5ce5fbfe3e9af3971dd833d26ba9b5c936f0be": { "exchange": "Binance", "label": "Binance Hot Wallet 4" },
+    "0xd551234ae421e3bcba99a0da6d736074f22192ff": { "exchange": "Binance", "label": "Binance Cold Wallet" },
+    "0x564286362092d8e7936f0549571a803b203aaced": { "exchange": "Binance", "label": "Binance US Hot Wallet" },
+
+    "0xa9d1e08c7793af67e9d92fe308d5697fb81d3e43": { "exchange": "Coinbase", "label": "Coinbase Hot Wallet 1" },
+    "0x71660c4005ba85c37ccec55d0c4493e66fe775d3": { "exchange": "Coinbase", "label": "Coinbase Hot Wallet 2" },
+    "0x503828976d22510aad0201ac7ec88293211d23da": { "exchange": "Coinbase", "label": "Coinbase Cold Wallet" },
+    "0xddfabcdc4d8ffc6d5beaf154f18b778f892a0740": { "exchange": "Coinbase", "label": "Coinbase Custody" },
+
+    "0x0d0707963952f2fba59dd06f2b425ace40b492fe": { "exchange": "Gate.io", "label": "Gate.io Hot Wallet" },
+    "0x7793cd85c11a924478d358d49b05b37e91b5810f": { "exchange": "Gate.io", "label": "Gate.io Hot Wallet 2" },
+
+    "0x267be1c1d684f78cb4f6a176c4911b741e4ffdc0": { "exchange": "Kraken", "label": "Kraken Hot Wallet 1" },
+    "0xae2d4617c862309a3d75a0ffb358c7a5009c673f": { "exchange": "Kraken", "label": "Kraken Hot Wallet 2" },
+    "0x43984d578803891dfa9706bdeee6078d80cfc79e": { "exchange": "Kraken", "label": "Kraken Cold Wallet" },
+
+    "0x6cc5f688a315f3dc28a7781717a9a798a59fda7b": { "exchange": "OKX", "label": "OKX Hot Wallet 1" },
+    "0x236f9f97e0e62388479bf9e5ba4889e46b0273c3": { "exchange": "OKX", "label": "OKX Hot Wallet 2" },
+    "0xa7efae728d2936e78bda97dc267687568dd593f3": { "exchange": "OKX", "label": "OKX Hot Wallet 3" },
+
+    "0xf89d7b9c864f589bbf53a82105107622b35eaa40": { "exchange": "Bybit", "label": "Bybit Hot Wallet 1" },
+    "0x1db92e2eebc8e0c075a02bea49a2935bcd2dfcf4": { "exchange": "Bybit", "label": "Bybit Hot Wallet 2" },
+
+    "0xd6216fc19db775df9774a6e33526131da7d19a2c": { "exchange": "KuCoin", "label": "KuCoin Hot Wallet 1" },
+    "0xa1d8d972560c7f3b1e744d8b80da2c7ad06af6c0": { "exchange": "KuCoin", "label": "KuCoin Hot Wallet 2" },
+
+    "0x2faf487a4414fe77e2327f0bf4ae2a264a776ad2": { "exchange": "FTX", "label": "FTX Hot Wallet (defunct)" },
+    "0xc098b2a3aa256d2140208c3de6543aaef5cd3a94": { "exchange": "FTX", "label": "FTX Cold Wallet (defunct)" },
+
+    "0x28c6c06298d514db089934071355e5743bf21d60": { "exchange": "Binance", "label": "Binance Hot Wallet 5" },
+    "0x21a31ee1afc51d94c2efccaa2092ad1028285549": { "exchange": "Binance", "label": "Binance Hot Wallet 6" },
+
+    "0x4fabb145d64652a948d72533023f6e7a623c7c53": { "exchange": "Binance", "label": "Binance BUSD" },
+    "0x1522900b6dafac587d499a862861c0869be6e428": { "exchange": "Binance", "label": "Binance Hot Wallet 7" }
+  },
+  "solana": {
+    "5tzFkiKscXHK5ZXCGbXZxdw7gigs3skFXi9ys4QD3xBM": { "exchange": "Binance", "label": "Binance Solana Wallet" },
+    "AC5RDfQFmDS1deWZos921JfqscXdByf8BKHs5ACWjtW2": { "exchange": "Coinbase", "label": "Coinbase Solana Wallet" },
+    "H8sMJSCQxfKiFTCfDR3DUMLPwcRbM61LGFJ8N4dK3WjS": { "exchange": "FTX", "label": "FTX Solana Wallet (defunct)" },
+    "2AQdpHJ2JpcEgPiATUXjQxA8QmafFegfQwSLWSprPicm": { "exchange": "Kraken", "label": "Kraken Solana Wallet" }
+  },
+  "tron": {
+    "TNaRAoLUyYEV2uF7GUrzFNSFBxHbPfRzG5": { "exchange": "Binance", "label": "Binance Tron Wallet" },
+    "TKVdwBpgBDxbZLsGQ9SqDQFfhJQZZhJBv9": { "exchange": "Binance", "label": "Binance Tron Wallet 2" },
+    "TCaHME6LHoJgKWN9DRzDEkPSAedFENepEo": { "exchange": "Huobi", "label": "Huobi Tron Wallet" },
+    "TDqiqHmgQpSaAT3n3vXwXM6NqjvEUZCDYy": { "exchange": "OKX", "label": "OKX Tron Wallet" }
+  },
+  "mixers": [
+    "0xd90e2f925DA726b50C4Ed8D0Fb90Ad053324F31b",
+    "0x910Cbd523D972eb0a6f4cAe4618aD62622b39DbF",
+    "0xA160cdAB225685dA1d56aa342Ad8841c3b53f291",
+    "0x722122dF12D4e14e13Ac3b6895a86e84145b6967",
+    "0xDD4c48C0B24039969fC16D1cdF626eaB821d3384",
+    "0xd96f2B1c14Db8458374d9Aca76E26c3950113836",
+    "0x4736dCf1b7A3d580672CcE6E7c65cd5cc9cFBa9D",
+    "0xD4B88Df4D29F5CedD6857912842cff3b20C8Cfa3",
+    "0xFD8610d20aA15b7B2E3Be39B396a1bC3516c7144",
+    "0xF60dD140cFf0706bAE9Cd734Ac3ae76AD9eBC32A",
+    "0x22aaA7720ddd5388A3c0A3333430953C68f1849b",
+    "0xBA214C1c1928a32Bffe790263E38B4Af9bFCD659",
+    "0xb1C8094B234DcE6e03f10a5b673c1d8C69739A00",
+    "0x527653eA119F3E6a1F5BD18fbF4714081D7B31ce",
+    "0x58E8dCC13BE9780fC36AC8E076B8D515eF3E3d88"
+  ],
+  "sanctioned": [
+    "0x7F367cC41522cE07553e823bf3be79A889DEBE1B",
+    "0xd882cFC20F52f2599D84b8e8D58C7FB62cfE344b",
+    "0x901bb9583b24D97e995513C6778dc6888AB6870e",
+    "0xA7e5d5A720f06526557c513402f2e6B5fA20b008",
+    "0x8576aCC5C05D6Ce88f4e49bf65BdF0C62F91353C",
+    "0x1da5821544e25c636c1417Ba96Ade4Cf6D2f9B5A",
+    "0x7Db418b5D567A4e0E8c59Ad71BE1FcE48f3E6107",
+    "0x72a5843cc08275C8171E582972Aa4fDa8C397B2A",
+    "0x7F19720A857F834887FC9A7bC0a0fBe7Fc7f8102",
+    "0x9F4cda013E354b8fC285BF4b9A60460cEe7f7Ea9"
+  ]
+}
