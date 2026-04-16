@@ -13,8 +13,9 @@ import {
 import { scoreAddress } from "@/lib/risk";
 import { rateLimit, rateLimits } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
-import { env } from "@/lib/config";
 import { checkOrigin } from "@/lib/origin-check";
+import { getUser } from "@/lib/auth-helpers";
+import { env } from "@/lib/config";
 import { randomBytes } from "crypto";
 
 // Force IPv4 for all outbound fetch calls in this route.
@@ -48,6 +49,9 @@ export async function POST(request: NextRequest) {
   // Apply rate limiting (5 req / hour per IP via Upstash)
   const limitRes = await rateLimit(request, rateLimits.checkoutLimit);
   if (limitRes) return limitRes;
+
+  // Auth — optional for checkout (user may have scanned anonymously, then logs in)
+  const { user, supabase: _sessionSupabase } = await getUser(request);
 
   let body: {
     address?: string;
@@ -128,6 +132,7 @@ export async function POST(request: NextRequest) {
         risk_flags: risk.flags,
         risk_summary: risk.summary,
         view_token: viewToken,
+        user_id: user?.id ?? null,
       })
       .select("id")
       .single();

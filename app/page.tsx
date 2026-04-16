@@ -8,6 +8,8 @@ import {
   ADDRESS_PLACEHOLDERS,
   validateAddress as validateAddressShared,
 } from "@/lib/chain-utils";
+import { IntentSelector, type Intent } from "@/components/IntentSelector";
+
 
 const CHAINS: { value: Chain; label: string; placeholder: string }[] = [
   "eth",
@@ -86,11 +88,13 @@ export default function HomePage() {
   const [address, setAddress] = useState("");
   const [chain, setChain] = useState<Chain>("eth");
   const [email, setEmail] = useState("");
+  const [intent, setIntent] = useState<Intent | null>(null);
   const [loading, setLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState<"quick" | "deep" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
   const [result, setResult] = useState<FreeResult | null>(null);
+  const [showIntentWarning, setShowIntentWarning] = useState(false);
 
   const selectedChain = CHAINS.find((c) => c.value === chain)!;
 
@@ -257,6 +261,21 @@ export default function HomePage() {
           </div>
 
           {error && (
+
+    <IntentSelector value={intent} onChange={setIntent} />
+
+    {showIntentWarning && intent === "law_enforcement" && (
+      <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <p className="text-amber-900 font-semibold text-sm mb-2">
+          🚨 Law Enforcement Report
+        </p>
+        <p className="text-amber-800 text-sm">
+          For law enforcement cases, we recommend the Deep Trace ($29.99) which
+          includes compliance documentation and up to 20 hops. This provides the
+          strongest evidence for legal proceedings.
+        </p>
+      </div>
+    )}
             <p className="text-red-600 text-sm mb-4 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
               {error}
             </p>

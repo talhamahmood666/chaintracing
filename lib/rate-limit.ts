@@ -119,4 +119,6 @@ export const rateLimits = {
   traceLimit: { limiterType: "trace" as LimiterType, prefix: "trace" },
   // 5 requests per hour — for checkout endpoint
   checkoutLimit: { limiterType: "checkout" as LimiterType, prefix: "checkout" },
+  // 5 requests per minute — for share endpoint
+  shareLimit: { limiterType: "trace" as LimiterType, prefix: "share" },
 };

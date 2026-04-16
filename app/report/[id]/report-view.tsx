@@ -6,6 +6,11 @@ import type { Hop, Chain } from "@/lib/tracer";
 import type { RiskFlag } from "@/lib/risk";
 import { getExplorerAddressUrl, shortAddr } from "@/lib/chain-utils";
 
+interface ReportViewProps {
+  report: ReportData;
+  fomo?: FomoData;
+}
+
 interface ReportData {
   id: string;
   address: string;
@@ -18,6 +23,14 @@ interface ReportData {
   paid: boolean;
   tier: "quick" | "deep";
   viewToken: string;
+  userId: string | null;
+}
+
+interface FomoData {
+  shownHops: number;
+  totalHops: number;
+  exchangeDeposits: number;
+  isLoggedIn: boolean;
 }
 
 function riskColor(score: number): string {
@@ -61,7 +74,7 @@ function flagBadge(severity: RiskFlag["severity"]): string {
 
 
 
-export function ReportView({ report }: { report: ReportData }) {
+export function ReportView({ report, fomo }: ReportViewProps) {
   const [downloading, setDownloading] = useState(false);
   const [unlocking, setUnlocking] = useState(false);
   const [unlockError, setUnlockError] = useState<string | null>(null);
@@ -69,6 +82,11 @@ export function ReportView({ report }: { report: ReportData }) {
   const score = report.riskScore;
   const chain = report.chain as Chain;
   const tier = report.tier ?? "quick";
+
+  // FOMO state
+  const showUpsell = !report.paid;
+  const hiddenHops = fomo ? fomo.totalHops - fomo.shownHops : 0;
+  const additionalExchanges = fomo ? fomo.exchangeDeposits : 0;
   const bridgeHops = report.hops.filter((h) => (h as Hop & { isBridge?: boolean }).isBridge);
   const mixerHops = report.hops.filter((h) => h.isMixer);
   const scamDbMatchCount = report.hops.reduce(
@@ -271,6 +289,140 @@ export function ReportView({ report }: { report: ReportData }) {
           </div>
         )}
 
+        {/* FOMO: Redacted hops preview */}
+        {showUpsell && hiddenHops > 0 && (
+          <section className="mb-6">
+            <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl border border-slate-700 overflow-hidden">
+              <div className="bg-slate-800 px-5 py-4 border-b border-slate-700">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1">
+                      🔒 Deep Scan Only
+                    </p>
+                    <h3 className="text-white font-bold text-lg">
+                      Additional Hops Hidden
+                    </h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-black text-white">
+                      {hiddenHops}
+                    </p>
+                    <p className="text-xs text-slate-400 uppercase">
+                      hidden hops
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-800/50 p-5">
+                {/* FOMO message */}
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3 mb-5">
+                  <p className="text-amber-300 text-sm font-medium">
+                    <span className="bg-amber-500/20 px-2 py-0.5 rounded text-xs mr-2">
+                      FREE SCAN
+                    </span>
+                    Showing {fomo?.shownHops} of {fomo?.totalHops} total hops. Deep scan reveals{" "}
+                    <strong className="text-amber-400">{hiddenHops} additional hops</strong>
+                    {additionalExchanges > 0 && (
+                      <> and <strong className="text-amber-400">{additionalExchanges} exchange deposit{additionalExchanges > 1 ? "s" : ""}</strong></>
+                    )}{" "}
+                    in this trace.
+                  </p>
+                </div>
+
+                {/* Redacted hop nodes */}
+                <div className="mb-5">
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-3">
+                    Hidden in Free Scan
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {/* Render blurred placeholder nodes for hidden hops */}
+                    {Array.from({ length: Math.min(hiddenHops, 5) }).map((_, i) => (
+                      <div key={i} className="relative group">
+                        <div className="w-28 h-16 rounded-lg bg-slate-700/50 border border-slate-600/50 flex flex-col items-center justify-center blur-[2px] opacity-70">
+                          <div className="w-8 h-3 bg-slate-500 rounded mb-1" />
+                          <div className="w-16 h-2 bg-slate-600 rounded" />
+                        </div>
+                        <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs text-slate-500 whitespace-nowrap">
+                          Hop #{fomo!.shownHops + i + 1}
+                        </div>
+                      </div>
+                    ))}
+                    {hiddenHops > 5 && (
+                      <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-slate-700/30 border border-dashed border-slate-600/50">
+                        <span className="text-slate-500 text-xs">+{hiddenHops - 5} more</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Redacted exchange deposit if present */}
+                {additionalExchanges > 0 && (
+                  <div className="mb-5">
+                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-3">
+                      Hidden Exchange Deposits
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      {Array.from({ length: additionalExchanges }).map((_, i) => (
+                        <div key={i} className="relative group">
+                          <div className="w-36 h-16 rounded-lg bg-green-900/30 border border-green-700/50 flex flex-col items-center justify-center blur-[3px] opacity-60">
+                            <div className="w-10 h-3 bg-green-800 rounded mb-1" />
+                            <div className="w-20 h-2 bg-green-700/80 rounded" />
+                          </div>
+                          <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs text-green-500 whitespace-nowrap">
+                            Exchange Deposit
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Divider with lock icon */}
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="flex-1 h-px bg-slate-700" />
+                  <div className="flex items-center gap-2 text-slate-500 text-xs">
+                    <span className="text-lg">🔒</span>
+                    <span>Unlock to reveal</span>
+                  </div>
+                  <div className="flex-1 h-px bg-slate-700" />
+                </div>
+
+                {/* CTA Button */}
+                {unlockError && (
+                  <p className="text-red-400 text-sm mb-3 bg-red-900/30 border border-red-700/50 rounded-lg px-3 py-2">
+                    {unlockError}
+                  </p>
+                )}
+                <button
+                  onClick={handleUnlock}
+                  disabled={unlocking}
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold px-6 py-4 rounded-lg hover:from-amber-400 hover:to-orange-500 transition-all transform hover:scale-[1.02] shadow-lg shadow-amber-500/25 disabled:opacity-50 disabled:hover:scale-100"
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    {unlocking ? (
+                      <>
+                        <span className="animate-spin">⏳</span>
+                        Redirecting to checkout…
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-xl">🔍</span>
+                        {tier === "deep"
+                          ? "Reveal Full Trace — $29.99"
+                          : "Uncover Hidden Hops — $9.99"}
+                      </>
+                    )}
+                  </span>
+                </button>
+                <p className="text-slate-500 text-xs text-center mt-2">
+                  One-time payment · Instant access · PDF report included
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Hop table — gated on payment */}
         <section className="mb-6">
           <h2 className="font-semibold text-slate-700 mb-3">
@@ -280,7 +432,7 @@ export function ReportView({ report }: { report: ReportData }) {
             </span>
           </h2>
 
-          {report.paid ? (
+          {report.paid ? ( // Full hop table for paid users
             <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
@@ -359,38 +511,10 @@ export function ReportView({ report }: { report: ReportData }) {
               </table>
             </div>
           ) : (
-            /* Paywall */
-            <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
-              <div className="text-4xl mb-3">🔒</div>
-              <h3 className="font-bold text-slate-800 text-lg mb-2">
-                Full Trace Locked
-              </h3>
-              <p className="text-slate-500 text-sm mb-1">
-                {report.hops.length} hop{report.hops.length !== 1 ? "s" : ""}{" "}
-                traced. Unlock to see every wallet address, exchange
-                destination, and timestamped evidence links.
-              </p>
-              <p className="text-slate-400 text-xs mb-6">
-                Your report is ready — payment just unlocks it.
-              </p>
-              {unlockError && (
-                <p className="text-red-600 text-sm mb-3 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                  {unlockError}
-                </p>
-              )}
-              <button
-                onClick={handleUnlock}
-                disabled={unlocking}
-                className="w-full bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg hover:bg-blue-800 transition-colors disabled:opacity-50"
-              >
-                {unlocking
-                  ? "Redirecting to checkout…"
-                  : tier === "deep"
-                  ? "Unlock Deep Trace — $29.99"
-                  : "Unlock Quick Scan — $9.99"}
-              </button>
-              <p className="text-slate-400 text-xs mt-3">
-                One-time payment · Instant PDF download included
+            {/* Paywall preview — CTA is in FOMO section above */}
+            <div className="bg-white rounded-xl border border-slate-200 p-6">
+              <p className="text-sm text-slate-500 text-center">
+                🔒 {report.hops.length} hop{report.hops.length !== 1 ? "s" : ""} traced — scroll up to unlock full access
               </p>
             </div>
           )}
