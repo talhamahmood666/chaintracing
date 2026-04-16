@@ -93,16 +93,28 @@ async function fetchEvmTransactions(
     next: { revalidate: 60 },
   });
   if (!res.ok) {
-    console.error(`[Tracer] Etherscan API error: ${res.status} for address ${address}`);
+    console.error(`[Tracer] Etherscan API HTTP error: ${res.status} for address ${address}`);
     return [];
   }
   const json = await res.json();
-  console.log(`[Tracer] Etherscan response for ${address}:`, JSON.stringify(json));
-  if (json.status !== "1" || !Array.isArray(json.result)) {
-    console.error(`[Tracer] Etherscan API returned status ${json.status} or invalid result for ${address}`);
+  console.log(`[Tracer] Etherscan V2 response for ${address}:`, JSON.stringify(json).slice(0, 500));
+
+  // V2 error response: { status: "0", message: "NOTOK", result: "Error message" }
+  if (json.status === "0" || json.status === 0) {
+    console.error(`[Tracer] Etherscan V2 API error: ${json.message} - ${json.result} for address ${address}`);
     return [];
   }
-  return json.result;
+  if (json.status !== "1" && json.status !== 1) {
+    console.error(`[Tracer] Etherscan V2 unexpected status: ${json.status} for address ${address}`);
+    return [];
+  }
+  // V2 returns result directly as array, or { result: [...] } wrapper
+  const result = Array.isArray(json.result) ? json.result : json.result?.result ?? [];
+  if (!Array.isArray(result)) {
+    console.error(`[Tracer] Etherscan V2 invalid result type for ${address}:`, typeof result);
+    return [];
+  }
+  return result;
 }
 
 interface RawEvmTx {
