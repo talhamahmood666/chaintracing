@@ -15,6 +15,9 @@ import { getAdminClient } from "@/lib/supabase";
 import { randomBytes } from "crypto";
 import { env } from "@/lib/config";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function POST(request: NextRequest) {
   const originBlock = checkOrigin(request);
   if (originBlock) return originBlock;
@@ -33,7 +36,9 @@ export async function POST(request: NextRequest) {
   const { address, chain } = body;
 
   if (address && typeof address === "string" && address.toLowerCase() === "0xd5ed34b52ac4ab84d8fa8a231a3218bbf01ed510") {
-    return Response.json({
+    const headers = new Headers();
+    headers.set("Cache-Control", "no-store, max-age=0");
+    const body = {
       reportId: "ofac-demo-report",
       viewToken: "ofac-demo-token",
       riskScore: 95,
@@ -54,7 +59,8 @@ export async function POST(request: NextRequest) {
           isSanctioned: true,
         },
       ],
-    });
+    };
+    return new Response(JSON.stringify(body), { status: 200, headers });
   }
 
   if (!address || typeof address !== "string") {
