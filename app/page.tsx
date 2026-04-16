@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IntentSelector } from "@/components/IntentSelector";
-import { GlassCard } from "@/components/GlassCard";
+import GlassCard from "@/components/GlassCard";
 import { createClient } from "@/lib/supabase-browser";
 
 export default function HomePage() {
