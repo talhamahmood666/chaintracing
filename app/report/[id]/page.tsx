@@ -19,6 +19,57 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
 
   if (!token) notFound();
 
+  // Handle OFAC demo report - bypass Supabase, use static data
+  if (id === "ofac-demo-report" || token === "ofac-demo-token") {
+    const staticReport = {
+      id: "ofac-demo-report",
+      address: "0xd5ED34b52AC4ab84d8FA8A231a3218bbF01Ed510",
+      chain: "eth",
+      risk_score: 95,
+      risk_flags: [{ id: "ofac_sanctioned", label: "OFAC Sanctioned", severity: "critical" }],
+      risk_summary: "This address is on the OFAC SDN sanctions list.",
+      hops: [{
+        hop: 1,
+        from: "0xd5ED34b52AC4ab84d8FA8A231a3218bbF01Ed510",
+        to: "0x0000000000000000000000000000000000000000",
+        value: "0",
+        valueRaw: "0",
+        token: "ETH",
+        txHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+        blockNumber: 0,
+        timestamp: Math.floor(Date.now() / 1000),
+        explorerUrl: "https://etherscan.io/tx/0x0000000000000000000000000000000000000000000000000000000000000000",
+        label: "OFAC Sanctioned Address",
+        isSanctioned: true,
+      }],
+      status: "available",
+      created_at: new Date().toISOString(),
+    };
+
+    const supabase = await createServerClient();
+    const { data: { user } = { data: { user: null } } } = await supabase.auth.getUser();
+    const isPaid = false;
+    const allHops = staticReport.hops as Hop[];
+    const visibleHops = allHops;
+    const deepScanAvailable = false;
+
+    const enhancedReport = {
+      ...staticReport,
+      hops: visibleHops,
+      riskFlags: staticReport.risk_flags as RiskFlag[],
+      summary: staticReport.risk_summary,
+    };
+
+    return (
+      <ReportView
+        report={enhancedReport}
+        viewToken={token}
+        isPaid={isPaid}
+        deepScanAvailable={deepScanAvailable}
+      />
+    );
+  }
+
   const db = getAdminClient();
   const { data: report, error } = await db
     .from("reports")
