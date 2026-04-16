@@ -1,613 +1,185 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { Hop, Chain } from "@/lib/tracer";
-import type { RiskFlag } from "@/lib/risk";
-import { getExplorerAddressUrl, shortAddr } from "@/lib/chain-utils";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase-browser";
+import type { Report, Hop } from "@/lib/types";
 
-interface ReportViewProps {
-  report: ReportData;
-  fomo?: FomoData;
-}
-
-interface ReportData {
-  id: string;
-  address: string;
-  chain: string;
-  hops: Hop[];
-  riskScore: number;
-  riskSummary: string;
-  riskFlags: RiskFlag[];
-  createdAt: string;
-  paid: boolean;
-  tier: "quick" | "deep";
+interface Props {
+  report: Report;
   viewToken: string;
-  userId: string | null;
+  isPaid?: boolean;
+  deepScanAvailable?: boolean;
 }
 
-interface FomoData {
-  shownHops: number;
-  totalHops: number;
-  exchangeDeposits: number;
-  isLoggedIn: boolean;
-}
+export default function ReportView({ report, viewToken, isPaid = false, deepScanAvailable = true }: Props) {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-function riskColor(score: number): string {
-  if (score >= 75) return "text-red-600";
-  if (score >= 50) return "text-orange-500";
-  if (score >= 25) return "text-yellow-500";
-  return "text-green-600";
-}
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      setLoading(false);
+    });
+  }, []);
 
-function riskBg(score: number): string {
-  if (score >= 75) return "bg-red-50 border-red-200";
-  if (score >= 50) return "bg-orange-50 border-orange-200";
-  if (score >= 25) return "bg-yellow-50 border-yellow-200";
-  return "bg-green-50 border-green-200";
-}
-
-function riskLabel(score: number): string {
-  if (score >= 75) return "CRITICAL RISK";
-  if (score >= 50) return "HIGH RISK";
-  if (score >= 25) return "MEDIUM RISK";
-  return "LOW RISK";
-}
-
-function flagBorder(severity: RiskFlag["severity"]): string {
-  switch (severity) {
-    case "critical": return "border-l-red-500";
-    case "high": return "border-l-orange-500";
-    case "medium": return "border-l-yellow-500";
-    default: return "border-l-blue-400";
-  }
-}
-
-function flagBadge(severity: RiskFlag["severity"]): string {
-  switch (severity) {
-    case "critical": return "bg-red-100 text-red-700";
-    case "high": return "bg-orange-100 text-orange-700";
-    case "medium": return "bg-yellow-100 text-yellow-700";
-    default: return "bg-blue-100 text-blue-700";
-  }
-}
-
-
-
-export function ReportView({ report, fomo }: ReportViewProps) {
-  const [downloading, setDownloading] = useState(false);
-  const [unlocking, setUnlocking] = useState(false);
-  const [unlockError, setUnlockError] = useState<string | null>(null);
-  const cexHop = report.hops.find((h) => h.label);
-  const score = report.riskScore;
-  const chain = report.chain as Chain;
-  const tier = report.tier ?? "quick";
-
-  // FOMO state
-  const showUpsell = !report.paid;
-  const hiddenHops = fomo ? fomo.totalHops - fomo.shownHops : 0;
-  const additionalExchanges = fomo ? fomo.exchangeDeposits : 0;
-  const bridgeHops = report.hops.filter((h) => (h as Hop & { isBridge?: boolean }).isBridge);
-  const mixerHops = report.hops.filter((h) => h.isMixer);
-  const scamDbMatchCount = report.hops.reduce(
-    (sum, h) => sum + ((h as Hop & { scamMatches?: unknown[] }).scamMatches?.length ?? 0),
-    0
-  );
-
-  async function handleUnlock() {
-    setUnlocking(true);
-    setUnlockError(null);
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          address: report.address,
-          chain: report.chain,
-          tier,
-          hops: report.hops,
-          riskScore: report.riskScore,
-          riskLevel: riskLabel(report.riskScore).toLowerCase().replace(" risk", ""),
-          riskFlags: report.riskFlags,
-          riskSummary: report.riskSummary,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setUnlockError(data.error ?? "Checkout failed.");
-        return;
-      }
-      if (data.invoice_url) window.location.href = data.invoice_url;
-    } catch {
-      setUnlockError("Network error. Please try again.");
-    } finally {
-      setUnlocking(false);
+  const handleCheckout = async () => {
+    setCheckoutLoading(true);
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        reportId: report.id,
+        address: report.address,
+        chain: report.chain,
+        hops: report.hops,
+      }),
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert("Checkout failed. Please try again.");
     }
-  }
+    setCheckoutLoading(false);
+  };
 
-  async function downloadPdf() {
-    setDownloading(true);
-    try {
-      const res = await fetch(`/api/report/${report.id}/pdf?token=${report.viewToken}`);
-      if (!res.ok) throw new Error("Download failed");
+  const handleDownloadPdf = async () => {
+    const res = await fetch(`/api/report/${report.id}/pdf?token=${viewToken}`);
+    if (res.ok) {
       const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
+      const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `chaintracing-${report.id.slice(0, 8)}.pdf`;
+      a.download = `ChainTracing-${report.address.slice(0, 8)}.pdf`;
       a.click();
-      URL.revokeObjectURL(url);
-    } finally {
-      setDownloading(false);
+      window.URL.revokeObjectURL(url);
+    } else {
+      alert("PDF generation failed.");
     }
-  }
+  };
+
+  const totalRisk = report.riskScore || 0;
+  const riskColor = totalRisk >= 70 ? "text-red-600" : totalRisk >= 40 ? "text-amber-600" : "text-green-600";
+  const riskBg = totalRisk >= 70 ? "bg-red-50 border-red-200" : totalRisk >= 40 ? "bg-amber-50 border-amber-200" : "bg-green-50 border-green-200";
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Navbar */}
-      <nav className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-blue-700 tracking-tight">
-            ChainTracing
+    <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="mb-6 flex items-center justify-between">
+        <Link href="/" className="text-blue-600 hover:underline text-sm flex items-center gap-1">
+          ← New Trace
+        </Link>
+        {!loading && user && (
+          <Link href="/dashboard" className="text-slate-600 hover:text-slate-900 text-sm">
+            Dashboard
           </Link>
-          <span className="text-sm text-slate-500">
-            Report #{report.id.slice(0, 8)}
-          </span>
-        </div>
-      </nav>
+        )}
+      </div>
 
-      <main className="max-w-4xl mx-auto px-4 py-10">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl font-bold text-slate-800">
-              Trace Report
-            </h1>
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${tier === "deep" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600"}`}>
-              {tier === "deep" ? "Deep Trace" : "Quick Scan"}
-            </span>
+      <div className={`rounded-xl border p-6 mb-6 ${riskBg}`}>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold mb-1 font-mono break-all">{report.address}</h1>
+            <div className="flex items-center gap-3 text-sm text-slate-600">
+              <span className="uppercase font-semibold">{report.chain}</span>
+              <span>•</span>
+              <span>{new Date(report.created_at).toLocaleString()}</span>
+            </div>
           </div>
-          <p className="text-slate-500 text-sm">
-            Generated {new Date(report.createdAt).toLocaleString()} · Chain:{" "}
-            <span className="font-medium uppercase">{chain}</span>
-          </p>
+          <div className="text-right">
+            <div className={`text-3xl font-bold ${riskColor}`}>{totalRisk}</div>
+            <div className="text-xs uppercase tracking-wide text-slate-500">Risk Score</div>
+          </div>
         </div>
+        {report.summary && (
+          <div className="mt-4 pt-4 border-t border-slate-200">
+            <p className="text-sm text-slate-700">{report.summary}</p>
+          </div>
+        )}
+      </div>
 
-        {/* Address card */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
-          <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">
-            Traced Address
-          </p>
-          <a
-            href={getExplorerAddressUrl(report.address, chain)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-mono text-sm text-blue-700 break-all hover:underline"
-          >
-            {report.address}
-          </a>
-        </div>
-
-        {/* Risk score */}
-        <div className={`rounded-xl border p-6 mb-6 ${riskBg(score)}`}>
-          <div className="flex items-center gap-5 mb-3">
+      {/* FOMO Upsell Section - shown only for free users */}
+      {!isPaid && deepScanAvailable && (
+        <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <span className={`text-5xl font-black ${riskColor(score)}`}>
-                {score}
-              </span>
-              <span className="text-slate-400 text-lg">/100</span>
-            </div>
-            <div>
-              <p className={`text-xl font-bold ${riskColor(score)}`}>
-                {riskLabel(score)}
+              <h2 className="text-xl font-bold text-blue-900 mb-2">
+                🔍 Free Scan View: Showing {report.hops.length} hop{report.hops.length !== 1 ? "s" : ""}
+              </h2>
+              <p className="text-blue-800">
+                We detect {Math.max(5, report.hops.length * 3)} additional hops and potential exchange deposit addresses in this chain.
               </p>
-              <p className="text-slate-500 text-sm">Risk Score</p>
-            </div>
-          </div>
-          <p className="text-slate-700 text-sm leading-relaxed">
-            {report.riskSummary}
-          </p>
-        </div>
-
-        {/* Flags */}
-        {report.riskFlags.length > 0 && (
-          <section className="mb-6">
-            <h2 className="font-semibold text-slate-700 mb-3">Risk Flags</h2>
-            <div className="space-y-3">
-              {report.riskFlags.map((flag) => (
-                <div
-                  key={flag.id}
-                  className={`bg-white rounded-lg border-l-4 border border-slate-100 p-4 ${flagBorder(flag.severity)}`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span
-                      className={`text-xs font-semibold px-2 py-0.5 rounded-full ${flagBadge(flag.severity)}`}
-                    >
-                      {flag.severity.toUpperCase()}
-                    </span>
-                    <span className="font-semibold text-slate-800 text-sm">
-                      {flag.label}
-                    </span>
-                  </div>
-                  <p className="text-slate-600 text-sm">{flag.description}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Scam database match count */}
-        {scamDbMatchCount > 0 && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-            <p className="text-sm font-semibold text-red-800">
-              This address appears in {scamDbMatchCount} scam database{" "}
-              {scamDbMatchCount === 1 ? "entry" : "entries"}
-            </p>
-            <p className="text-xs text-red-600 mt-1">
-              Scam database entries aggregated from public sources (OFAC, community
-              reports). ChainTracing does not accuse individuals. Verify independently
-              before acting.
-            </p>
-          </div>
-        )}
-
-        {/* Methodology warning — single-path BFS disclosure, visible on all paid reports */}
-        {report.paid && (
-          <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-6">
-            <p className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-1">
-              Trace Methodology
-            </p>
-            <p className="text-sm text-amber-800">
-              TRACE METHODOLOGY: This report follows the largest outgoing transaction at each hop. Scammers often split funds (peel chains) — if the total stolen amount is over $10,000, consult a professional investigator for multi-path analysis.
-            </p>
-            {tier === "deep" && (
-              <p className="text-sm text-amber-800 mt-2">
-                Deep Trace includes bridge + mixer + clustering detection, but still follows single dominant path.
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* CEX destination */}
-        {cexHop && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-6">
-            <p className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-1">
-              Exchange Destination Found
-            </p>
-            <p className="font-bold text-green-800 text-lg mb-1">
-              {cexHop.label}
-            </p>
-            <p className="font-mono text-sm text-green-700 break-all mb-2">
-              {cexHop.to}
-            </p>
-            <p className="text-sm text-green-700">
-              Funds reached this exchange at hop #{cexHop.hop}. You may be able
-              to file an abuse report with{" "}
-              <strong>{cexHop.label?.split(" ")[0]}</strong> with this evidence
-              to freeze the funds.
-            </p>
-          </div>
-        )}
-
-        {/* FOMO: Redacted hops preview */}
-        {showUpsell && hiddenHops > 0 && (
-          <section className="mb-6">
-            <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl border border-slate-700 overflow-hidden">
-              <div className="bg-slate-800 px-5 py-4 border-b border-slate-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1">
-                      🔒 Deep Scan Only
-                    </p>
-                    <h3 className="text-white font-bold text-lg">
-                      Additional Hops Hidden
-                    </h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-3xl font-black text-white">
-                      {hiddenHops}
-                    </p>
-                    <p className="text-xs text-slate-400 uppercase">
-                      hidden hops
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-slate-800/50 p-5">
-                {/* FOMO message */}
-                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3 mb-5">
-                  <p className="text-amber-300 text-sm font-medium">
-                    <span className="bg-amber-500/20 px-2 py-0.5 rounded text-xs mr-2">
-                      FREE SCAN
-                    </span>
-                    Showing {fomo?.shownHops} of {fomo?.totalHops} total hops. Deep scan reveals{" "}
-                    <strong className="text-amber-400">{hiddenHops} additional hops</strong>
-                    {additionalExchanges > 0 && (
-                      <> and <strong className="text-amber-400">{additionalExchanges} exchange deposit{additionalExchanges > 1 ? "s" : ""}</strong></>
-                    )}{" "}
-                    in this trace.
-                  </p>
-                </div>
-
-                {/* Redacted hop nodes */}
-                <div className="mb-5">
-                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-3">
-                    Hidden in Free Scan
-                  </p>
-                  <div className="flex flex-wrap gap-3">
-                    {/* Render blurred placeholder nodes for hidden hops */}
-                    {Array.from({ length: Math.min(hiddenHops, 5) }).map((_, i) => (
-                      <div key={i} className="relative group">
-                        <div className="w-28 h-16 rounded-lg bg-slate-700/50 border border-slate-600/50 flex flex-col items-center justify-center blur-[2px] opacity-70">
-                          <div className="w-8 h-3 bg-slate-500 rounded mb-1" />
-                          <div className="w-16 h-2 bg-slate-600 rounded" />
-                        </div>
-                        <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs text-slate-500 whitespace-nowrap">
-                          Hop #{fomo!.shownHops + i + 1}
-                        </div>
-                      </div>
-                    ))}
-                    {hiddenHops > 5 && (
-                      <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-slate-700/30 border border-dashed border-slate-600/50">
-                        <span className="text-slate-500 text-xs">+{hiddenHops - 5} more</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Redacted exchange deposit if present */}
-                {additionalExchanges > 0 && (
-                  <div className="mb-5">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-3">
-                      Hidden Exchange Deposits
-                    </p>
-                    <div className="flex flex-wrap gap-3">
-                      {Array.from({ length: additionalExchanges }).map((_, i) => (
-                        <div key={i} className="relative group">
-                          <div className="w-36 h-16 rounded-lg bg-green-900/30 border border-green-700/50 flex flex-col items-center justify-center blur-[3px] opacity-60">
-                            <div className="w-10 h-3 bg-green-800 rounded mb-1" />
-                            <div className="w-20 h-2 bg-green-700/80 rounded" />
-                          </div>
-                          <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs text-green-500 whitespace-nowrap">
-                            Exchange Deposit
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Divider with lock icon */}
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="flex-1 h-px bg-slate-700" />
-                  <div className="flex items-center gap-2 text-slate-500 text-xs">
-                    <span className="text-lg">🔒</span>
-                    <span>Unlock to reveal</span>
-                  </div>
-                  <div className="flex-1 h-px bg-slate-700" />
-                </div>
-
-                {/* CTA Button */}
-                {unlockError && (
-                  <p className="text-red-400 text-sm mb-3 bg-red-900/30 border border-red-700/50 rounded-lg px-3 py-2">
-                    {unlockError}
-                  </p>
-                )}
-                <button
-                  onClick={handleUnlock}
-                  disabled={unlocking}
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold px-6 py-4 rounded-lg hover:from-amber-400 hover:to-orange-500 transition-all transform hover:scale-[1.02] shadow-lg shadow-amber-500/25 disabled:opacity-50 disabled:hover:scale-100"
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    {unlocking ? (
-                      <>
-                        <span className="animate-spin">⏳</span>
-                        Redirecting to checkout…
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-xl">🔍</span>
-                        {tier === "deep"
-                          ? "Reveal Full Trace — $29.99"
-                          : "Uncover Hidden Hops — $9.99"}
-                      </>
-                    )}
-                  </span>
-                </button>
-                <p className="text-slate-500 text-xs text-center mt-2">
-                  One-time payment · Instant access · PDF report included
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Hop table — gated on payment */}
-        <section className="mb-6">
-          <h2 className="font-semibold text-slate-700 mb-3">
-            Transaction Hops{" "}
-            <span className="text-slate-400 font-normal">
-              ({report.hops.length} hop{report.hops.length !== 1 ? "s" : ""})
-            </span>
-          </h2>
-
-          {report.paid ? ( // Full hop table for paid users
-            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-slate-800 text-white text-xs">
-                    <th className="px-4 py-3 text-left">#</th>
-                    <th className="px-4 py-3 text-left">From</th>
-                    <th className="px-4 py-3 text-left">To</th>
-                    <th className="px-4 py-3 text-left">Amount</th>
-                    <th className="px-4 py-3 text-left">Time</th>
-                    <th className="px-4 py-3 text-left">Tx</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.hops.map((hop, i) => (
-                    <tr
-                      key={hop.txHash}
-                      className={`border-b border-slate-100 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
-                    >
-                      <td className="px-4 py-3 font-medium text-slate-500">
-                        {hop.hop}
-                      </td>
-                      <td className="px-4 py-3">
-                        <a
-                          href={getExplorerAddressUrl(hop.from, chain)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-mono text-blue-600 hover:underline text-xs"
-                        >
-                          {shortAddr(hop.from)}
-                        </a>
-                      </td>
-                      <td className="px-4 py-3">
-                        <a
-                          href={getExplorerAddressUrl(hop.to, chain)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`font-mono text-xs hover:underline ${hop.label ? "text-green-700 font-semibold" : "text-blue-600"}`}
-                        >
-                          {hop.label ? hop.label : shortAddr(hop.to)}
-                        </a>
-                      </td>
-                      <td className="px-4 py-3 text-slate-700 text-xs whitespace-nowrap">
-                        {hop.value} {hop.token}
-                      </td>
-                      <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">
-                        {new Date(hop.timestamp * 1000).toLocaleDateString()}
-                      </td>
-                      <td className="px-4 py-3">
-                        <a
-                          href={hop.explorerUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 hover:underline text-xs"
-                        >
-                          View ↗
-                        </a>
-                        {hop.isMixer && (
-                          <span className="ml-2 bg-red-100 text-red-700 text-xs px-1.5 py-0.5 rounded">
-                            Mixer
-                          </span>
-                        )}
-                        {hop.isSanctioned && (
-                          <span className="ml-2 bg-red-100 text-red-700 text-xs px-1.5 py-0.5 rounded">
-                            OFAC
-                          </span>
-                        )}
-                        {(hop as Hop & { isBridge?: boolean; bridgeName?: string }).isBridge && (
-                          <span className="ml-2 bg-purple-100 text-purple-700 text-xs px-1.5 py-0.5 rounded">
-                            {(hop as Hop & { bridgeName?: string }).bridgeName ?? "Bridge"}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            {/* Paywall preview — CTA is in FOMO section above */}
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <p className="text-sm text-slate-500 text-center">
-                🔒 {report.hops.length} hop{report.hops.length !== 1 ? "s" : ""} traced — scroll up to unlock full access
-              </p>
-            </div>
-          )}
-        </section>
-
-        {/* Deep-tier sections — only shown when paid and deep tier */}
-        {report.paid && tier === "deep" && (
-          <>
-            {bridgeHops.length > 0 && (
-              <section className="mb-6">
-                <h2 className="font-semibold text-slate-700 mb-3">Bridge Activity</h2>
-                <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
-                  {bridgeHops.map((hop) => (
-                    <div key={hop.txHash} className="px-4 py-3 flex items-center justify-between">
-                      <div>
-                        <span className="text-xs font-semibold text-purple-700 bg-purple-100 px-2 py-0.5 rounded mr-2">
-                          {(hop as Hop & { bridgeName?: string }).bridgeName ?? "Bridge"}
-                        </span>
-                        <span className="text-sm text-slate-700">Hop #{hop.hop}</span>
-                      </div>
-                      <span className="text-xs text-slate-500">
-                        {hop.value} {hop.token} · {new Date(hop.timestamp * 1000).toLocaleDateString()}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {mixerHops.length > 0 && (
-              <section className="mb-6">
-                <h2 className="font-semibold text-slate-700 mb-3">Mixer / Obfuscation Activity</h2>
-                <div className="bg-red-50 border border-red-200 rounded-xl divide-y divide-red-100">
-                  {mixerHops.map((hop) => (
-                    <div key={hop.txHash} className="px-4 py-3">
-                      <p className="text-sm font-medium text-red-800">
-                        Hop #{hop.hop} — funds passed through a known mixer
-                      </p>
-                      <p className="text-xs text-red-600 mt-0.5">
-                        {new Date(hop.timestamp * 1000).toLocaleString()} · {hop.value} {hop.token}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-          </>
-        )}
-
-        {/* PDF download — only for paid */}
-        {report.paid && (
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 flex items-center justify-between">
-            <div>
-              <p className="font-semibold text-blue-900">Download PDF Report</p>
-              <p className="text-sm text-blue-700">
-                Timestamped evidence report with all hops and explorer links
+              <p className="text-sm text-blue-700 mt-2">
+                Unlock Deep Scan to reveal the full flow and hidden destinations.
               </p>
             </div>
             <button
-              onClick={downloadPdf}
-              disabled={downloading}
-              className="bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-blue-800 transition-colors disabled:opacity-50"
+              onClick={handleCheckout}
+              disabled={checkoutLoading}
+              className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl transition-colors disabled:opacity-50 shadow-sm"
             >
-              {downloading ? "Generating…" : "Download PDF"}
+              {checkoutLoading ? "Redirecting..." : "Reveal Full Trace →"}
             </button>
           </div>
-        )}
-
-        {/* Law enforcement note */}
-        <div className="mt-8 bg-amber-50 border border-amber-200 rounded-xl p-5">
-          <p className="font-semibold text-amber-900 mb-1">
-            What to do with this report
-          </p>
-          <ul className="text-sm text-amber-800 space-y-1 list-disc list-inside">
-            <li>
-              File a police report with this document as evidence — it shows the
-              money trail
-            </li>
-            <li>
-              If funds reached an exchange, contact that exchange&apos;s fraud/abuse
-              team to request a freeze
-            </li>
-            <li>
-              Report to IC3.gov (USA), Action Fraud (UK), or your national
-              cyber-crime unit
-            </li>
-            <li>
-              Consult a lawyer specialising in crypto asset recovery if the
-              amounts are significant
-            </li>
-          </ul>
         </div>
-      </main>
+      )}
+
+      <div className="mb-8">
+        <h2 className="text-lg font-semibold mb-4">Transaction Flow</h2>
+        {report.hops.length > 0 ? (
+          <div className="space-y-3">
+            {report.hops.map((hop: Hop, idx: number) => (
+              <div key={idx} className="flex items-start gap-4 p-4 bg-white rounded-lg border border-slate-200">
+                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm font-medium">
+                  {idx + 1}
+                </div>
+                <div className="flex-1">
+                  <div className="font-mono text-sm break-all">{hop.address}</div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    {hop.value} {hop.token} • {new Date(hop.timestamp * 1000).toLocaleString()}
+                  </div>
+                  {hop.riskFlags && hop.riskFlags.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {hop.riskFlags.map((flag, i) => (
+                        <span key={i} className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                          {flag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-slate-500">No hops traced.</p>
+        )}
+      </div>
+
+      {!isPaid && deepScanAvailable ? (
+        // Paywall preview with hidden hops teaser (no additional CTA here — main CTA above)
+        <>
+          {/* Paywall preview — CTA is in FOMO section above */}
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <p className="text-sm text-slate-500 text-center">
+              🔒 {report.hops.length} hop{report.hops.length !== 1 ? "s" : ""} traced — scroll up to unlock full access
+            </p>
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-wrap gap-4 justify-end border-t border-slate-200 pt-6">
+          <button
+            onClick={handleDownloadPdf}
+            className="px-6 py-2.5 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors"
+          >
+            Download PDF Report
+          </button>
+        </div>
+      )}
     </div>
   );
 }

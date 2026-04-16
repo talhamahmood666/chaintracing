@@ -1,22 +1,19 @@
 import { notFound } from "next/navigation";
 import { getAdminClient } from "@/lib/supabase";
-import { createClient } from "@/lib/auth-helpers";
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
+import { createClient as createServerClient } from "@/lib/supabase-server";
+import ReportView from "./report-view";
 import type { Hop } from "@/lib/tracer";
 import type { RiskFlag } from "@/lib/risk";
-import { ReportView } from "./report-view";
 
 /** Max hops shown in free scan before FOMO cut-off */
 export const FREE_HOP_CUTOFF = 2;
-export const MAX_HOPS_FOR_DEEP_SCAN = 20; // Total number of hops we can detect in deep scan
 
-interface Props {
+interface PageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<Record<string, string | undefined>>;
+  searchParams: Promise<{ token?: string }>;
 }
 
-export default async function ReportPage({ params, searchParams }: Props) {
+export default async function ReportPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const { token } = await searchParams;
 
@@ -32,44 +29,31 @@ export default async function ReportPage({ params, searchParams }: Props) {
 
   if (error || !report) notFound();
 
-  // Check auth so upsell can target only non-logged-in users
-  const cookieStore = await cookies();
-  // Build a minimal NextRequest so getUser doesn't require the full request object
-  const fakeReq = new NextRequest("http://localhost", {
-    headers: Object.fromEntries(
-      cookieStore.getAll().map((c) => [c.name, c.value])
-    ),
-  });
-  const { user } = await createClient().auth.getUser?.(fakeReq) ?? { user: null };
+  // Get current user (if any)
+  const supabase = await createServerClient();
+  const { data: { user } = { data: { user: null } } } = await supabase.auth.getUser();
 
   const allHops = report.hops as Hop[];
   const isPaid = report.status === "paid";
-  const isDeep = (report.tier as "quick" | "deep") === "deep";
+  const deepScanAvailable = !isPaid && allHops.length > FREE_HOP_CUTOFF;
 
-  const exchangeDepositCount = allHops.filter((h) => h.label).length;
+  // For free scans, only show first N hops
+  const visibleHops = isPaid ? allHops : allHops.slice(0, FREE_HOP_CUTOFF);
+
+  // Add a flag to the report object for the view
+  const enhancedReport = {
+    ...report,
+    hops: visibleHops,
+    riskFlags: report.risk_flags as RiskFlag[],
+    summary: report.summary || undefined,
+  };
 
   return (
     <ReportView
-      report={{
-        id: report.id,
-        address: report.address,
-        chain: report.chain,
-        hops: allHops,
-        riskScore: report.risk_score,
-        riskSummary: report.risk_summary,
-        riskFlags: report.risk_flags as RiskFlag[],
-        createdAt: report.created_at,
-        paid: isPaid,
-        tier: isDeep ? "deep" : "quick",
-        viewToken: token,
-        userId: user?.id ?? null,
-      }}
-      fomo={{
-        shownHops: isPaid ? allHops.length : Math.min(allHops.length, FREE_HOP_CUTOFF),
-        totalHops: allHops.length,
-        exchangeDeposits: exchangeDepositCount,
-        isLoggedIn: !!user,
-      }}
+      report={enhancedReport}
+      viewToken={token}
+      isPaid={isPaid}
+      deepScanAvailable={deepScanAvailable}
     />
   );
 }
