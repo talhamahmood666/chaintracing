@@ -33,6 +33,8 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   const supabase = await createServerClient();
   const { data: { user } = { data: { user: null } } } = await supabase.auth.getUser();
 
+  console.log("[ReportPage] DB report object:", JSON.stringify(report, null, 2));
+
   const allHops = report.hops as Hop[];
   const isPaid = report.status === "paid";
   const deepScanAvailable = !isPaid && allHops.length > FREE_HOP_CUTOFF;
@@ -40,12 +42,13 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // For free scans, only show first N hops
   const visibleHops = isPaid ? allHops : allHops.slice(0, FREE_HOP_CUTOFF);
 
-  // Add a flag to the report object for the view
+  // Add a flag to the report object for the view - normalize camelCase/underscore fields
   const enhancedReport = {
     ...report,
     hops: visibleHops,
-    riskFlags: report.risk_flags as RiskFlag[],
-    summary: report.summary || undefined,
+    riskScore: report.risk_score ?? report.riskScore ?? 0,
+    riskFlags: (report.risk_flags ?? report.riskFlags) as RiskFlag[],
+    summary: report.summary ?? report.risk_summary ?? undefined,
   };
 
   return (

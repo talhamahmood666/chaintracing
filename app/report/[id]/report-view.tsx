@@ -65,7 +65,9 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
     }
   };
 
-  const totalRisk = report.risk_score || 0;
+  console.log("[ReportView] Full report object:", JSON.stringify(report, null, 2));
+
+  const totalRisk = report.riskScore ?? report.risk_score ?? 0;
   const riskColor = totalRisk >= 70 ? "text-red-700" : totalRisk >= 40 ? "text-amber-700" : totalRisk >= 1 ? "text-green-700" : "text-gray-900";
   const riskBg = totalRisk >= 70 ? "bg-red-50 border-red-300" : totalRisk >= 40 ? "bg-amber-50 border-amber-300" : totalRisk >= 1 ? "bg-green-50 border-green-300" : "bg-gray-50 border-gray-300";
 
@@ -105,10 +107,16 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
             <div className="text-xs text-gray-700 mt-1">out of 100</div>
           </div>
         </div>
-        {report.risk_summary && (
+        {report.summary && (
           <div className="mt-6 pt-6 border-t border-gray-200">
             <h3 className="text-sm font-semibold text-gray-700 mb-2">Risk Analysis</h3>
-            <p className="text-gray-900 leading-relaxed">{report.risk_summary}</p>
+            <p className="text-gray-900 leading-relaxed">{report.summary}</p>
+          </div>
+        )}
+        {report.riskSummary && (
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">Risk Analysis</h3>
+            <p className="text-gray-900 leading-relaxed">{report.riskSummary}</p>
           </div>
         )}
       </div>
