@@ -11,6 +11,9 @@ import {
 import { logger } from "@/lib/logger";
 import { checkOrigin } from "@/lib/origin-check";
 import { getUser } from "@/lib/auth-helpers";
+import { getAdminClient } from "@/lib/supabase";
+import { randomBytes } from "crypto";
+import { env } from "@/lib/config";
 
 export async function POST(request: NextRequest) {
   const originBlock = checkOrigin(request);
@@ -57,11 +60,54 @@ export async function POST(request: NextRequest) {
     const hops = await traceAddress(address.trim(), typedChain);
     const risk = await scoreAddress(address.trim(), typedChain, hops);
 
-    // Return risk assessment for display and full hops for checkout passthrough.
+    // Create a report record in the database for the free trace
+    const db = getAdminClient();
+    const viewToken = randomBytes(16).toString("hex");
+
+    const { data: report, error: dbError } = await db
+      .from("reports")
+      .insert({
+        address: address.trim(),
+        chain,
+        status: "available", // Free traces are immediately available
+        tier: "free", // Mark as free tier
+        hops: hops,
+        risk_score: risk.score,
+        risk_level: risk.level,
+        risk_flags: risk.flags,
+        risk_summary: risk.summary,
+        view_token: viewToken,
+      })
+      .select("id")
+      .single();
+
+    if (dbError || !report) {
+      logger.error("Failed to create free trace report", dbError, {
+        address: address.slice(0, 10) + "...",
+        chain,
+        hopsCount: hops.length,
+      });
+      // Fallback to old behavior if DB fails
+      return Response.json({
+        error: "Failed to save trace. Please try again.",
+        fallback: {
+          address,
+          chain,
+          riskScore: risk.score,
+          riskLevel: risk.level,
+          riskSummary: risk.summary,
+          flags: risk.flags,
+          scamDbMatchCount: risk.scamDbMatchCount,
+          hopCount: hops.length,
+          hops,
+          firstHop: hops[0] ? { to: hops[0].to, label: hops[0].label } : null,
+        }
+      }, { status: 500 });
+    }
+
+    // Return risk assessment with reportId and viewToken for redirect
     // The UI shows only the first hop as a teaser — full hops are kept in state
     // so the client can forward them to /api/checkout without a re-trace.
-    // user_id is not stored for free traces — it's attached only at checkout
-    // when the user confirms payment and identity.
     return Response.json({
       address,
       chain,
@@ -76,11 +122,17 @@ export async function POST(request: NextRequest) {
         ? { to: hops[0].to, label: hops[0].label }
         : null,
       userId: user?.id ?? null,
+      reportId: report.id,
+      viewToken: viewToken,
     });
   } catch (err) {
     logger.error("Trace failed", err, { address: address?.slice(0, 10) + "...", chain });
+    const errorMessage = err instanceof Error ? err.message : String(err);
     return Response.json(
-      { error: "Trace failed. Check that the address and chain are correct." },
+      {
+        error: "Trace failed. Check that the address and chain are correct.",
+        details: env.isDevelopment ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
