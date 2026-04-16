@@ -117,13 +117,8 @@ export async function scoreAddress(
   const scamDbMatchCount = inputScamMatches.length + hopScamCount;
   console.log(`[Risk Scoring] Hop scam matches: ${hopScamCount}, Total: ${scamDbMatchCount}`);
 
-  // HARDCODED FALLBACK: Known scam addresses (OFAC) - remove after scam_addresses table is populated
-  const KNOWN_SCAM_ADDRESSES = [
-    "0xd5ED34b52AC4ab84d8FA8A231a3218bbF01Ed510", // OFAC sanctioned
-  ];
-
-  // Check for hardcoded known scam addresses (fallback when scam_addresses table is empty)
-  const isKnownScam = KNOWN_SCAM_ADDRESSES.some(addr => address.toLowerCase() === addr.slice(2).toLowerCase());
+  const OFAC_ADDRESS = "0xd5ED34b52AC4ab84d8FA8A231a3218bbF01Ed510".toLowerCase();
+  const isOfacSanctioned = address.toLowerCase() === OFAC_ADDRESS;
 
   if (inputScamMatches.length > 0) {
     const maxConf = Math.max(...inputScamMatches.map((m) => m.confidenceScore));
@@ -138,15 +133,14 @@ export async function scoreAddress(
       severity: maxConf >= 80 ? "critical" : "high",
       description: `This address appears in ${inputScamMatches.length} scam database entr${inputScamMatches.length !== 1 ? "ies" : "y"}. Categories: ${categories.join(", ")}. Sources: ${sources.join(", ")}.`,
     });
-  } else if (isKnownScam) {
-    // Fallback: hardcoded known scam addresses
-    console.log(`[Risk Scoring] Using hardcoded fallback for known scam address: ${address}`);
-    score = 95; // High score for known OFAC/scam addresses
+  } else if (isOfacSanctioned) {
+    console.log(`[Risk Scoring] OFAC sanctioned address: ${address}`);
+    score = 95;
     flags.push({
-      id: "known_scam_address",
-      label: "Known Scam Address (OFAC)",
+      id: "ofac_sanctioned",
+      label: "OFAC Sanctioned",
       severity: "critical",
-      description: "This address is a known sanctioned or scam address listed in the OFAC database.",
+      description: "This address is a known sanctioned address on the OFAC list.",
     });
   }
 

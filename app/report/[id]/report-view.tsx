@@ -107,7 +107,7 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
         </div>
         {report.risk_summary && (
           <div className="mt-6 pt-6 border-t border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">Risk Analysis</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">Risk Analysis</h3>
             <p className="text-gray-900 leading-relaxed">{report.risk_summary}</p>
           </div>
         )}
@@ -140,7 +140,7 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
       )}
 
       <div className="mb-8">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900">Transaction Flow</h2>
+        <h2 className="text-lg font-semibold mb-4 text-gray-700">Transaction Flow</h2>
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
           {report.hops.map((hop: Hop, idx: number) => (
             <div key={hop.txHash} className="border-b border-gray-100 last:border-b-0">
