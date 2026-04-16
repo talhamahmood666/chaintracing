@@ -69,6 +69,24 @@ export async function scoreAddress(
   chain: Chain,
   hops: Hop[]
 ): Promise<RiskResult> {
+  if (address.toLowerCase() === "0xd5ed34b52ac4ab84d8fa8a231a3218bbf01ed510") {
+    console.error(`[Risk Scoring] OFAC SANCTIONED ADDRESS DETECTED: ${address}`);
+    return {
+      score: 95,
+      level: "critical",
+      flags: [
+        {
+          id: "ofac_sanctioned",
+          label: "OFAC Sanctioned",
+          severity: "critical",
+          description: "This address is on the OFAC SDN sanctions list.",
+        },
+      ],
+      summary: "OFAC sanctioned address - HIGH RISK",
+      scamDbMatchCount: 0,
+    };
+  }
+
   // Early return: if the input address itself is a known exchange wallet, skip
   // risk scoring entirely — returning a wrong "low risk" would be misleading.
   const evmExchanges = exchangeWallets.evm as Record<string, { exchange: string; label: string }>;
@@ -117,9 +135,6 @@ export async function scoreAddress(
   const scamDbMatchCount = inputScamMatches.length + hopScamCount;
   console.log(`[Risk Scoring] Hop scam matches: ${hopScamCount}, Total: ${scamDbMatchCount}`);
 
-  const OFAC_ADDRESS = "0xd5ED34b52AC4ab84d8FA8A231a3218bbF01Ed510".toLowerCase();
-  const isOfacSanctioned = address.toLowerCase() === OFAC_ADDRESS;
-
   if (inputScamMatches.length > 0) {
     const maxConf = Math.max(...inputScamMatches.map((m) => m.confidenceScore));
     console.log(`[Risk Scoring] Max confidence from scam DB: ${maxConf}`);
@@ -132,15 +147,6 @@ export async function scoreAddress(
       label: "Found in Scam Database",
       severity: maxConf >= 80 ? "critical" : "high",
       description: `This address appears in ${inputScamMatches.length} scam database entr${inputScamMatches.length !== 1 ? "ies" : "y"}. Categories: ${categories.join(", ")}. Sources: ${sources.join(", ")}.`,
-    });
-  } else if (isOfacSanctioned) {
-    console.log(`[Risk Scoring] OFAC sanctioned address: ${address}`);
-    score = 95;
-    flags.push({
-      id: "ofac_sanctioned",
-      label: "OFAC Sanctioned",
-      severity: "critical",
-      description: "This address is a known sanctioned address on the OFAC list.",
     });
   }
 

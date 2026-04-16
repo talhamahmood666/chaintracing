@@ -92,9 +92,16 @@ async function fetchEvmTransactions(
   const res = await fetch(`${ETHERSCAN_V2}?${params}`, {
     next: { revalidate: 60 },
   });
-  if (!res.ok) return [];
+  if (!res.ok) {
+    console.error(`[Tracer] Etherscan API error: ${res.status} for address ${address}`);
+    return [];
+  }
   const json = await res.json();
-  if (json.status !== "1" || !Array.isArray(json.result)) return [];
+  console.log(`[Tracer] Etherscan response for ${address}:`, JSON.stringify(json));
+  if (json.status !== "1" || !Array.isArray(json.result)) {
+    console.error(`[Tracer] Etherscan API returned status ${json.status} or invalid result for ${address}`);
+    return [];
+  }
   return json.result;
 }
 
@@ -171,7 +178,26 @@ async function traceEvm(
     visited.add(address);
 
     const txs = await fetchEvmTransactions(address, config);
-    if (!txs.length) break;
+    if (!txs.length) {
+      console.error(`[Tracer] No transactions found for ${address}. API key present: ${!!env.ETHERSCAN_API_KEY}`);
+      if (process.env.NODE_ENV === "development" && hops.length === 0 && depth === 0) {
+        console.log(`[Tracer] DEV MODE: Adding dummy test hop for ${address}`);
+        hops.push({
+          hop: 1,
+          from: address,
+          to: "0x0000000000000000000000000000000000000001",
+          value: "1.000000",
+          valueRaw: "1000000000000000000",
+          token: config.nativeToken,
+          txHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+          blockNumber: 1,
+          timestamp: Math.floor(Date.now() / 1000),
+          explorerUrl: `${config.explorerBase}/tx/0x0000000000000000000000000000000000000000000000000000000000000000`,
+          label: "Test Hop",
+        });
+      }
+      break;
+    }
 
     // Pick the largest outgoing transfer from this address
     const outgoing = txs.filter(
