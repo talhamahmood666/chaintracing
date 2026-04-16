@@ -53,8 +53,16 @@ async function getWalletFirstSeen(
   try {
     const res = await fetch(`${ETHERSCAN_V2}?${params}`, { next: { revalidate: 300 } });
     const json = await res.json();
-    if (json.status === "1" && Array.isArray(json.result) && json.result.length > 0) {
-      return parseInt(json.result[0].timeStamp, 10);
+    if (json.status === "0" || json.status === 0) {
+      console.error(`[Risk] Etherscan V2 API error: ${json.message} - ${json.result}`);
+      return null;
+    }
+    if (json.status !== "1" && json.status !== 1) {
+      return null;
+    }
+    const result = Array.isArray(json.result) ? json.result : json.result?.result ?? [];
+    if (Array.isArray(result) && result.length > 0) {
+      return parseInt(result[0].timeStamp, 10);
     }
   } catch {
     // ignore
