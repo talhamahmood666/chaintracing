@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase-browser";
-import type { Report, Hop } from "@/lib/types";
+import TransactionFlowGraph from "@/components/TransactionFlowGraph";
+import ShareButtons from "@/components/ShareButtons";
+import type { Hop } from "@/lib/tracer";
 
 interface Props {
-  report: Report;
+  report: any;
   viewToken: string;
   isPaid?: boolean;
   deepScanAvailable?: boolean;
@@ -63,59 +65,68 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
     }
   };
 
-  const totalRisk = report.riskScore || 0;
-  const riskColor = totalRisk >= 70 ? "text-red-600" : totalRisk >= 40 ? "text-amber-600" : "text-green-600";
-  const riskBg = totalRisk >= 70 ? "bg-red-50 border-red-200" : totalRisk >= 40 ? "bg-amber-50 border-amber-200" : "bg-green-50 border-green-200";
+  const totalRisk = report.risk_score || 0;
+  const riskColor = totalRisk >= 70 ? "text-red-700" : totalRisk >= 40 ? "text-amber-700" : totalRisk >= 1 ? "text-green-700" : "text-gray-900";
+  const riskBg = totalRisk >= 70 ? "bg-red-50 border-red-300" : totalRisk >= 40 ? "bg-amber-50 border-amber-300" : totalRisk >= 1 ? "bg-green-50 border-green-300" : "bg-gray-50 border-gray-300";
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
-        <Link href="/" className="text-blue-600 hover:underline text-sm flex items-center gap-1">
+        <Link href="/" className="text-blue-700 hover:text-blue-800 hover:underline text-sm font-medium flex items-center gap-1">
           ← New Trace
         </Link>
         {!loading && user && (
-          <Link href="/dashboard" className="text-slate-600 hover:text-slate-900 text-sm">
+          <Link href="/dashboard" className="text-gray-900 hover:text-gray-800 font-medium text-sm">
             Dashboard
           </Link>
         )}
       </div>
 
-      <div className={`rounded-xl border p-6 mb-6 ${riskBg}`}>
+      <ShareButtons
+        reportId={report.id}
+        address={report.address}
+        chain={report.chain}
+        hopCount={report.hops.length}
+      />
+
+      <div className={`rounded-xl border p-6 mb-8 ${riskBg}`}>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold mb-1 font-mono break-all">{report.address}</h1>
-            <div className="flex items-center gap-3 text-sm text-slate-600">
-              <span className="uppercase font-semibold">{report.chain}</span>
+            <h1 className="text-2xl font-bold mb-2 font-mono break-all text-gray-900">{report.address}</h1>
+            <div className="flex items-center gap-3 text-sm text-gray-700">
+              <span className="uppercase font-semibold text-gray-900">{report.chain}</span>
               <span>•</span>
               <span>{new Date(report.created_at).toLocaleString()}</span>
             </div>
           </div>
           <div className="text-right">
-            <div className={`text-3xl font-bold ${riskColor}`}>{totalRisk}</div>
-            <div className="text-xs uppercase tracking-wide text-slate-500">Risk Score</div>
+            <div className={`text-5xl font-bold ${riskColor} mb-1`}>{totalRisk}</div>
+            <div className="text-sm uppercase font-semibold tracking-wide text-gray-900">Risk Score</div>
+            <div className="text-xs text-gray-700 mt-1">out of 100</div>
           </div>
         </div>
-        {report.summary && (
-          <div className="mt-4 pt-4 border-t border-slate-200">
-            <p className="text-sm text-slate-700">{report.summary}</p>
+        {report.risk_summary && (
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-900 mb-2">Risk Analysis</h3>
+            <p className="text-gray-900 leading-relaxed">{report.risk_summary}</p>
           </div>
         )}
       </div>
 
+      <TransactionFlowGraph hops={report.hops} />
+
       {/* FOMO Upsell Section - shown only for free users */}
       {!isPaid && deepScanAvailable && (
-        <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6">
+        <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-300 p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-bold text-blue-900 mb-2">
                 🔍 Free Scan View: Showing {report.hops.length} hop{report.hops.length !== 1 ? "s" : ""}
               </h2>
-              <p className="text-blue-800">
+              <p className="text-blue-800 mb-2">
                 We detect {Math.max(5, report.hops.length * 3)} additional hops and potential exchange deposit addresses in this chain.
               </p>
-              <p className="text-sm text-blue-700 mt-2">
-                Unlock Deep Scan to reveal the full flow and hidden destinations.
-              </p>
+              <p className="text-sm text-blue-700">Unlock Deep Scan to reveal the full flow and hidden destinations.</p>
             </div>
             <button
               onClick={handleCheckout}
@@ -129,54 +140,75 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
       )}
 
       <div className="mb-8">
-        <h2 className="text-lg font-semibold mb-4">Transaction Flow</h2>
-        {report.hops.length > 0 ? (
-          <div className="space-y-3">
-            {report.hops.map((hop: Hop, idx: number) => (
-              <div key={idx} className="flex items-start gap-4 p-4 bg-white rounded-lg border border-slate-200">
-                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm font-medium">
-                  {idx + 1}
+        <h2 className="text-lg font-semibold mb-4 text-gray-900">Transaction Flow</h2>
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          {report.hops.map((hop: Hop, idx: number) => (
+            <div key={hop.txHash} className="border-b border-gray-100 last:border-b-0">
+              <div className="flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors">
+                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-900 flex-shrink-0">
+                  {hop.hop}
                 </div>
-                <div className="flex-1">
-                  <div className="font-mono text-sm break-all">{hop.address}</div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    {hop.value} {hop.token} • {new Date(hop.timestamp * 1000).toLocaleString()}
-                  </div>
-                  {hop.riskFlags && hop.riskFlags.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {hop.riskFlags.map((flag, i) => (
-                        <span key={i} className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                          {flag}
-                        </span>
-                      ))}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-start gap-x-6 gap-y-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm text-gray-700 font-medium mb-1">From:</div>
+                      <div className="font-mono text-sm text-gray-900 break-all">{hop.from}</div>
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm text-gray-700 font-medium mb-1">To:</div>
+                      <div className="font-mono text-sm text-gray-900 break-all">{hop.to}</div>
+                      {hop.label && (
+                        <span className="inline-block mt-1 px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                          {hop.label}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-gray-700">
+                    <span className="font-semibold text-gray-900">{hop.value} {hop.token}</span>
+                    <span>{new Date(hop.timestamp * 1000).toLocaleString()}</span>
+                    {hop.gapFromPrevSeconds !== undefined && (
+                      <span>Gap: {hop.gapFromPrevSeconds < 3600
+                        ? `${hop.gapFromPrevSeconds}s`
+                        : hop.gapFromPrevSeconds < 86400
+                          ? `${Math.floor(hop.gapFromPrevSeconds / 3600)}h`
+                          : `${Math.floor(hop.gapFromPrevSeconds / 86400)}d`}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {hop.isSanctioned && (
+                    <span className="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">OFAC</span>
+                  )}
+                  {hop.isMixer && (
+                    <span className="text-xs px-2 py-1 bg-orange-100 text-orange-800 rounded-full">MIXER</span>
+                  )}
+                  {hop.isBridge && (
+                    <span className="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded-full">BRIDGE</span>
+                  )}
+                  {hop.scamMatches && hop.scamMatches.length > 0 && (
+                    <span className="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">SCAM</span>
                   )}
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-slate-500">No hops traced.</p>
-        )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {!isPaid && deepScanAvailable ? (
-        // Paywall preview with hidden hops teaser (no additional CTA here — main CTA above)
-        <>
-          {/* Paywall preview — CTA is in FOMO section above */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <p className="text-sm text-slate-500 text-center">
-              🔒 {report.hops.length} hop{report.hops.length !== 1 ? "s" : ""} traced — scroll up to unlock full access
-            </p>
-          </div>
-        </>
+        <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
+          <p className="text-sm text-gray-700">
+            🔒 {report.hops.length} hop{report.hops.length !== 1 ? "s" : ""} traced — scroll up to unlock full access
+          </p>
+        </div>
       ) : (
-        <div className="flex flex-wrap gap-4 justify-end border-t border-slate-200 pt-6">
+        <div className="flex flex-wrap gap-4 justify-end border-t border-gray-200 pt-6">
           <button
             onClick={handleDownloadPdf}
-            className="px-6 py-2.5 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors"
+            className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-900 hover:bg-gray-50 transition-colors font-medium"
           >
-            Download PDF Report
+            📄 Download PDF Report
           </button>
         </div>
       )}

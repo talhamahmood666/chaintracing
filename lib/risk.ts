@@ -98,20 +98,38 @@ export async function scoreAddress(
     };
   }
 
+  console.log(`[Risk Scoring] Starting risk assessment for ${address} on ${chain}`);
+  console.log(`[Risk Scoring] Number of hops: ${hops.length}`);
+  console.log(`[Risk Scoring] Hop data structure:`, JSON.stringify(hops.slice(0, 2), null, 2));
+
   const flags: RiskFlag[] = [];
   let score = 0;
 
   // ── Scam database lookup ───────────────────────────────────────────────────
+  console.log(`[Risk Scoring] Looking up scam database for ${address} on ${chain}`);
   const inputScamMatches = await lookupScamAddress(address, chain);
+  console.log(`[Risk Scoring] Found ${inputScamMatches.length} scam matches for input address`);
+
   const hopScamCount = hops.reduce(
     (sum, h) => sum + (h.scamMatches?.length ?? 0),
     0
   );
   const scamDbMatchCount = inputScamMatches.length + hopScamCount;
+  console.log(`[Risk Scoring] Hop scam matches: ${hopScamCount}, Total: ${scamDbMatchCount}`);
+
+  // HARDCODED FALLBACK: Known scam addresses (OFAC) - remove after scam_addresses table is populated
+  const KNOWN_SCAM_ADDRESSES = [
+    "0xd5ED34b52AC4ab84d8FA8A231a3218bbF01Ed510", // OFAC sanctioned
+  ];
+
+  // Check for hardcoded known scam addresses (fallback when scam_addresses table is empty)
+  const isKnownScam = KNOWN_SCAM_ADDRESSES.some(addr => address.toLowerCase() === addr.slice(2).toLowerCase());
 
   if (inputScamMatches.length > 0) {
     const maxConf = Math.max(...inputScamMatches.map((m) => m.confidenceScore));
+    console.log(`[Risk Scoring] Max confidence from scam DB: ${maxConf}`);
     score += Math.round(maxConf * 0.4); // up to +40 for confidence=100
+    console.log(`[Risk Scoring] Score after scam DB match: ${score}`);
     const categories = [...new Set(inputScamMatches.map((m) => m.category))];
     const sources = [...new Set(inputScamMatches.map((m) => m.source))];
     flags.push({
@@ -119,6 +137,16 @@ export async function scoreAddress(
       label: "Found in Scam Database",
       severity: maxConf >= 80 ? "critical" : "high",
       description: `This address appears in ${inputScamMatches.length} scam database entr${inputScamMatches.length !== 1 ? "ies" : "y"}. Categories: ${categories.join(", ")}. Sources: ${sources.join(", ")}.`,
+    });
+  } else if (isKnownScam) {
+    // Fallback: hardcoded known scam addresses
+    console.log(`[Risk Scoring] Using hardcoded fallback for known scam address: ${address}`);
+    score = 95; // High score for known OFAC/scam addresses
+    flags.push({
+      id: "known_scam_address",
+      label: "Known Scam Address (OFAC)",
+      severity: "critical",
+      description: "This address is a known sanctioned or scam address listed in the OFAC database.",
     });
   }
 
@@ -130,7 +158,9 @@ export async function scoreAddress(
       (sum, h) => sum + (h.scamMatches?.length ?? 0),
       0
     );
-    score += Math.min(30, scamHops.length * 10);
+    const hopScore = Math.min(30, scamHops.length * 10);
+    score += hopScore;
+    console.log(`[Risk Scoring] Adding ${hopScore} points for ${scamHops.length} scam hops (total matches: ${totalHopMatches})`);
     flags.push({
       id: "scam_db_hop_match",
       label: "Scam Database Match in Hop Chain",
@@ -141,8 +171,10 @@ export async function scoreAddress(
 
   // 1. Mixer interaction
   const mixerHops = hops.filter((h) => h.isMixer);
+  console.log(`[Risk Scoring] Found ${mixerHops.length} mixer hops`);
   if (mixerHops.length > 0) {
     score += 35;
+    console.log(`[Risk Scoring] Adding 35 points for mixer interaction, score now: ${score}`);
     flags.push({
       id: "mixer_interaction",
       label: "Mixer / Tumbler Interaction",
@@ -153,8 +185,10 @@ export async function scoreAddress(
 
   // 2. Sanctioned address hops
   const sanctionedHops = hops.filter((h) => h.isSanctioned);
+  console.log(`[Risk Scoring] Found ${sanctionedHops.length} sanctioned hops`);
   if (sanctionedHops.length > 0) {
     score += 40;
+    console.log(`[Risk Scoring] Adding 40 points for sanctioned hops, score now: ${score}`);
     flags.push({
       id: "sanctioned_hop",
       label: "OFAC Sanctioned Address",
