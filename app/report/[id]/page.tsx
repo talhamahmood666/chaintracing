@@ -19,8 +19,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
 
   if (!token) notFound();
 
-  // Handle OFAC demo report - bypass Supabase, use static data
-  if (id === "ofac-demo-report" || token === "ofac-demo-token") {
+  if (token === "ofac-demo-token") {
     const staticReport = {
       id: "ofac-demo-report",
       address: "0xd5ED34b52AC4ab84d8FA8A231a3218bbF01Ed510",
@@ -46,26 +45,12 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
       created_at: new Date().toISOString(),
     };
 
-    const supabase = await createServerClient();
-    const { data: { user } = { data: { user: null } } } = await supabase.auth.getUser();
-    const isPaid = false;
-    const allHops = staticReport.hops as Hop[];
-    const visibleHops = allHops;
-    const deepScanAvailable = false;
-
-    const enhancedReport = {
-      ...staticReport,
-      hops: visibleHops,
-      riskFlags: staticReport.risk_flags as RiskFlag[],
-      summary: staticReport.risk_summary,
-    };
-
     return (
       <ReportView
-        report={enhancedReport}
+        report={staticReport}
         viewToken={token}
-        isPaid={isPaid}
-        deepScanAvailable={deepScanAvailable}
+        isPaid={false}
+        deepScanAvailable={false}
       />
     );
   }
