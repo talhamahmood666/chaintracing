@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase-browser";
 export default function HomePage() {
   const router = useRouter();
   const [address, setAddress] = useState("");
-  const [chain, setChain] = useState("ethereum");
+  const [chain, setChain] = useState("eth");
   const [intent, setIntent] = useState<"curious" | "lost_money" | "law_enforcement">("lost_money");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,7 +72,7 @@ export default function HomePage() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="0x... or transaction hash"
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm text-gray-900 bg-white/20 backdrop-blur-sm placeholder:text-gray-500"
                 disabled={loading}
               />
               <p className="text-sm text-slate-500 mt-1">
@@ -85,10 +85,10 @@ export default function HomePage() {
               <select
                 value={chain}
                 onChange={(e) => setChain(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white/20 backdrop-blur-sm"
                 disabled={loading}
               >
-                <option value="ethereum">Ethereum</option>
+                <option value="eth">Ethereum</option>
                 <option value="bsc">BNB Smart Chain</option>
                 <option value="polygon">Polygon</option>
                 <option value="arbitrum">Arbitrum</option>
