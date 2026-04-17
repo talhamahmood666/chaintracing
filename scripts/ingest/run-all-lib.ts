@@ -1,8 +1,6 @@
 /**
- * Run all scam database ingest scripts sequentially.
- * Each ingester is imported in-process; failures are caught individually.
- *
- * Run: npm run ingest:all
+ * Library-only export of runAll — no top-level side-effects.
+ * Imported by the Vercel cron route at runtime.
  */
 
 import { main as runOfac } from "./ingest-ofac.js";
@@ -12,12 +10,7 @@ import { main as runEu } from "./ingest-eu-sanctions.js";
 import { main as runEthLists } from "./ingest-ethereum-lists-urls.js";
 import { main as runEtherscanLabels } from "./ingest-etherscan-labels.js";
 
-interface IngestJob {
-  label: string;
-  fn: () => Promise<number>;
-}
-
-const jobs: IngestJob[] = [
+const JOBS: { label: string; fn: () => Promise<number> }[] = [
   { label: "ofac",             fn: runOfac },
   { label: "mew_darklist",     fn: runCryptoScamDb },
   { label: "uk_hmt",           fn: runUkHmt },
@@ -28,25 +21,13 @@ const jobs: IngestJob[] = [
 
 export async function runAll(): Promise<Record<string, number | string>> {
   const summary: Record<string, number | string> = {};
-  for (const { label, fn } of jobs) {
-    console.log(`\n=== ${label.toUpperCase()} ===`);
+  for (const { label, fn } of JOBS) {
     try {
       summary[label] = await fn();
     } catch (err) {
-      console.error(`${label} failed:`, (err as Error).message);
+      console.error(`[runAll] ${label} failed:`, (err as Error).message);
       summary[label] = "ERROR";
     }
   }
   return summary;
 }
-
-runAll().then((summary) => {
-  console.log("\n=== INGEST SUMMARY ===");
-  for (const [source, count] of Object.entries(summary)) {
-    console.log(`  ${source}: ${count}`);
-  }
-  console.log("=== DONE ===");
-}).catch((err) => {
-  console.error("run-all failed:", err);
-  process.exit(1);
-});

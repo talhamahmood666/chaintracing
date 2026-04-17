@@ -5,39 +5,33 @@ interface IntentSelectorProps {
   onChange: (intent: Intent) => void;
 }
 
+const ICONS: Record<Intent, string> = {
+  curious: '🔍',
+  lost_money: '💸',
+  law_enforcement: '⚖️',
+};
+
 export function IntentSelector({ value, onChange }: IntentSelectorProps) {
   const options: { value: Intent; label: string; description: string }[] = [
-    {
-      value: "curious",
-      label: "I'm just curious about how this works.",
-      description: "Perfect for exploring the technology",
-    },
-    {
-      value: "lost_money",
-      label: "I've lost money and need to understand where it went.",
-      description: "Get the evidence you need to report the theft",
-    },
-    {
-      value: "law_enforcement",
-      label: "I'm reporting this to law enforcement and need documentation.",
-      description: "Generate court-ready evidence and compliance documents",
-    },
+    { value: "curious",          label: "Just exploring",             description: "Research how blockchain forensics works" },
+    { value: "lost_money",       label: "I've lost funds",            description: "Trace where stolen crypto went" },
+    { value: "law_enforcement",  label: "Law enforcement report",     description: "Court-ready evidence & compliance docs" },
   ];
 
   return (
-    <div className="mb-5">
-      <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-        What brings you here today?
+    <div>
+      <label className="block text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--text-muted)' }}>
+        Purpose
       </label>
       <div className="space-y-2">
         {options.map((option) => (
           <label
             key={option.value}
-            className={`flex items-center p-3 rounded-lg border transition-all cursor-pointer ${
-              value === option.value
-                ? "border-blue-500 bg-blue-50 ring-1 ring-blue-200"
-                : "border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50"
-            }`}
+            className="flex items-center p-3 rounded-xl cursor-pointer transition-all duration-200"
+            style={{
+              background: value === option.value ? 'rgba(0,217,255,0.08)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${value === option.value ? 'rgba(0,217,255,0.35)' : 'rgba(255,255,255,0.07)'}`,
+            }}
           >
             <input
               type="radio"
@@ -45,12 +39,18 @@ export function IntentSelector({ value, onChange }: IntentSelectorProps) {
               value={option.value}
               checked={value === option.value}
               onChange={() => onChange(option.value)}
-              className="mr-3 accent-blue-600"
+              className="sr-only"
             />
+            <span className="text-lg mr-3">{ICONS[option.value]}</span>
             <div className="flex-1">
-              <div className="font-medium text-slate-800 text-sm">{option.label}</div>
-              <div className="text-xs text-slate-500">{option.description}</div>
+              <div className="font-semibold text-sm" style={{ color: value === option.value ? '#00D9FF' : 'var(--text-primary)' }}>
+                {option.label}
+              </div>
+              <div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>{option.description}</div>
             </div>
+            {value === option.value && (
+              <div className="w-2 h-2 rounded-full ml-2 flex-shrink-0" style={{ background: '#00D9FF' }} />
+            )}
           </label>
         ))}
       </div>

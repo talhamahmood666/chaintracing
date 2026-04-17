@@ -75,7 +75,8 @@ async function getWalletFirstSeen(
 export async function scoreAddress(
   address: string,
   chain: Chain,
-  hops: Hop[]
+  hops: Hop[],
+  intent?: string
 ): Promise<RiskResult> {
   if (address.toLowerCase() === "0xd5ed34b52ac4ab84d8fa8a231a3218bbf01ed510") {
     console.error(`[Risk Scoring] OFAC SANCTIONED ADDRESS DETECTED: ${address}`);
@@ -296,7 +297,17 @@ export async function scoreAddress(
   else if (score >= 50) level = "high";
   else if (score >= 25) level = "medium";
 
-  const summary = buildSummary(score, level, flags, hops);
+  if (intent === "law_enforcement") {
+    flags.push({
+      id: "law_enforcement_priority",
+      label: "Law Enforcement Priority",
+      severity: "info",
+      description:
+        "This trace was submitted for law enforcement purposes. Preserve all transaction hashes, timestamps, and wallet addresses as evidence. A formal legal request (subpoena or MLA) to any exchange identified in the hop chain may compel them to disclose KYC records linked to these wallets.",
+    });
+  }
+
+  const summary = buildSummary(score, level, flags, hops, intent);
 
   return { score, level, flags, summary, scamDbMatchCount };
 }
@@ -305,7 +316,8 @@ function buildSummary(
   score: number,
   level: RiskResult["level"],
   flags: RiskFlag[],
-  hops: Hop[]
+  hops: Hop[],
+  intent?: string
 ): string {
   const cexHop = hops.find((h) => h.label);
   const parts: string[] = [];
@@ -334,6 +346,12 @@ function buildSummary(
   if (critFlags.length) {
     parts.push(
       `Critical flags: ${critFlags.map((f) => f.label).join(", ")}.`
+    );
+  }
+
+  if (intent === "law_enforcement") {
+    parts.push(
+      "For law enforcement use: export this report as PDF and retain the full transaction hash list as evidence. If funds reached an exchange, submit a formal legal request (subpoena / MLAT) to that exchange citing the transaction hashes and wallet addresses identified here. Document the chain of custody for all on-chain evidence before initiating any contact with suspects."
     );
   }
 

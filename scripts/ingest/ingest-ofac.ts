@@ -10,31 +10,9 @@ import { Agent, setGlobalDispatcher } from "undici";
 setGlobalDispatcher(new Agent({ connect: { family: 4 } }));
 
 import { parseStringPromise } from "xml2js";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseClient, upsertBatch, type ScamRow } from "./upsert-helper.js";
 
 const OFAC_SDN_URL = "https://www.treasury.gov/ofac/downloads/sdn.xml";
-const BATCH_SIZE = 500;
-
-interface ScamRow {
-  address: string;
-  chain: string;
-  category: string;
-  source: string;
-  source_url: string;
-  verified: boolean;
-  confidence_score: number;
-}
-
-function getSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY"
-    );
-  }
-  return createClient(url, key, { auth: { persistSession: false } });
-}
 
 /**
  * Map OFAC idType string to our chain identifier.
@@ -111,37 +89,13 @@ async function fetchAndParseXml(): Promise<ScamRow[]> {
   return rows;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function upsertBatch(db: any, rows: ScamRow[]): Promise<number> {
-  let upserted = 0;
-  for (let i = 0; i < rows.length; i += BATCH_SIZE) {
-    const batch = rows.slice(i, i + BATCH_SIZE);
-    const { error, count } = await db
-      .from("scam_addresses")
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .upsert(batch as any, { ignoreDuplicates: true, count: "exact" });
-    if (error) {
-      if (error.code === "23505") {
-        console.log(`Batch ${i / BATCH_SIZE + 1}: records already exist — skipped (re-run)`);
-      } else {
-        console.error(`Batch ${i / BATCH_SIZE + 1} error:`, error.message);
-      }
-    } else {
-      upserted += count ?? batch.length;
-    }
-  }
-  return upserted;
-}
 
-export async function main() {
+export async function main(): Promise<number> {
   const db = getSupabaseClient();
   const rows = await fetchAndParseXml();
   console.log(`Parsed ${rows.length} crypto addresses from OFAC SDN list`);
 
-  if (rows.length === 0) {
-    console.log("Nothing to ingest.");
-    return;
-  }
+  if (rows.length === 0) { console.log("Nothing to ingest."); return 0; }
 
   // Deduplicate within this batch (OFAC can have duplicate entries)
   const seen = new Set<string>();
@@ -155,6 +109,7 @@ export async function main() {
 
   const inserted = await upsertBatch(db, unique);
   console.log(`OFAC ingest complete — ${inserted} rows upserted`);
+  return inserted;
 }
 
 main().catch((err) => {

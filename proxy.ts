@@ -1,15 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-/**
- * Middleware responsibilities:
- * 1. Refresh the Supabase auth session on every request (keeps tokens alive).
- * 2. Redirect unauthenticated requests to /dashboard → /login.
- *
- * IMPORTANT (@supabase/ssr): do not write any logic between createServerClient
- * and supabase.auth.getUser() — it breaks session refresh.
- */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

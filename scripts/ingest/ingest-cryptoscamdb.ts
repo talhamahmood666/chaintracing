@@ -12,34 +12,10 @@
 import { Agent, setGlobalDispatcher } from "undici";
 setGlobalDispatcher(new Agent({ connect: { family: 4 } }));
 
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseClient, dedup, upsertBatch, type ScamRow } from "./upsert-helper.js";
 
 const SCAMDB_URL =
   "https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/addresses/addresses-darklist.json";
-const BATCH_SIZE = 500;
-
-interface ScamRow {
-  address: string;
-  chain: string;
-  category: string;
-  source: string;
-  source_url: string;
-  verified: boolean;
-  confidence_score: number;
-  notes?: string;
-  reported_at?: string;
-}
-
-function getSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY"
-    );
-  }
-  return createClient(url, key, { auth: { persistSession: false } });
-}
 
 interface DarklistEntry {
   address: string;
@@ -76,52 +52,18 @@ async function fetchAddresses(): Promise<ScamRow[]> {
   return rows;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function upsertBatch(db: any, rows: ScamRow[]): Promise<number> {
-  let upserted = 0;
-  for (let i = 0; i < rows.length; i += BATCH_SIZE) {
-    const batch = rows.slice(i, i + BATCH_SIZE);
-    const { error, count } = await db
-      .from("scam_addresses")
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .upsert(batch as any, { ignoreDuplicates: true, count: "exact" });
-    if (error) {
-      if (error.code === "23505") {
-        console.log(`Batch ${i / BATCH_SIZE + 1}: records already exist — skipped (re-run)`);
-      } else {
-        console.error(`Batch ${i / BATCH_SIZE + 1} error:`, error.message);
-      }
-    } else {
-      upserted += count ?? batch.length;
-    }
-  }
-  return upserted;
-}
-
-export async function main() {
+export async function main(): Promise<number> {
   const db = getSupabaseClient();
   const rows = await fetchAddresses();
-  console.log(
-    `Mapped to ${rows.length} rows with recognised chain identifiers`
-  );
+  console.log(`Mapped to ${rows.length} rows`);
+  if (rows.length === 0) { console.log("Nothing to ingest."); return 0; }
 
-  if (rows.length === 0) {
-    console.log("Nothing to ingest.");
-    return;
-  }
-
-  // Deduplicate
-  const seen = new Set<string>();
-  const unique = rows.filter((r) => {
-    const key = `${r.address}:${r.chain}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  const unique = dedup(rows);
   console.log(`Unique addresses after dedup: ${unique.length}`);
 
   const inserted = await upsertBatch(db, unique);
   console.log(`MEW darklist ingest complete — ${inserted} rows upserted`);
+  return inserted;
 }
 
 main().catch((err) => {

@@ -9,6 +9,10 @@
     "lint": "eslint",
     "ingest:ofac": "tsx --env-file=.env.local scripts/ingest/ingest-ofac.ts",
     "ingest:scamdb": "tsx --env-file=.env.local scripts/ingest/ingest-cryptoscamdb.ts",
+    "ingest:uk-hmt": "tsx --env-file=.env.local scripts/ingest/ingest-uk-hmt.ts",
+    "ingest:eu": "tsx --env-file=.env.local scripts/ingest/ingest-eu-sanctions.ts",
+    "ingest:eth-lists": "tsx --env-file=.env.local scripts/ingest/ingest-ethereum-lists-urls.ts",
+    "ingest:etherscan-labels": "tsx --env-file=.env.local scripts/ingest/ingest-etherscan-labels.ts",
     "ingest:all": "tsx --env-file=.env.local scripts/ingest/run-all.ts"
   },
   "dependencies": {

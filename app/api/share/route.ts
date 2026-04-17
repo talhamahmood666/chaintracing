@@ -4,20 +4,22 @@ import { getAdminClient } from "@/lib/supabase";
 import { checkOrigin } from "@/lib/origin-check";
 import { rateLimit, rateLimits } from "@/lib/rate-limit";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 export async function POST(request: NextRequest) {
   const originBlock = checkOrigin(request);
   if (originBlock) return originBlock;
 
-  // Rate limit: max 5 shares per minute per IP
   const limitRes = await rateLimit(request, rateLimits.shareLimit || { limit: 5, window: 60 });
   if (limitRes) return limitRes;
 
   let body: {
+    reportId?: string;
     txnHash?: string;
     hopAddress?: string;
     sharedText?: string;
-    hopCount?: number;
-    riskScore?: number;
+    platform?: string;
   };
 
   try {
@@ -26,30 +28,42 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { txnHash, hopAddress, sharedText, hopCount, riskScore } = body;
+  const { reportId, txnHash, hopAddress, sharedText, platform } = body;
 
-  if (!txnHash || !sharedText) {
-    return Response.json({ error: "txnHash and sharedText required" }, { status: 400 });
+  if (!reportId || typeof reportId !== "string") {
+    return Response.json({ error: "reportId is required" }, { status: 400 });
+  }
+  if (!sharedText) {
+    return Response.json({ error: "sharedText is required" }, { status: 400 });
   }
 
-  try {
-    const { user } = await getUser(request);
-    const db = getAdminClient();
+  const db = getAdminClient();
 
-    // Log the share attempt
-    await db.from("shares").insert({
-      user_id: user?.id ?? null,
-      platform: "unknown",
-      txn_hash: txnHash,
-      hop_address: hopAddress,
-      shared_text: sharedText,
-      hop_count: hopCount,
-      risk_score: riskScore,
-    });
+  const { data: report, error: reportError } = await db
+    .from("reports")
+    .select("id")
+    .eq("id", reportId)
+    .single();
 
-    return Response.json({ success: true });
-  } catch (err) {
-    console.error("Share tracking failed", err);
-    return Response.json({ success: true }); // Don't fail the share for analytics errors
+  if (reportError || !report) {
+    return Response.json({ error: "Invalid reportId" }, { status: 400 });
   }
+
+  const { user } = await getUser(request);
+
+  const { error } = await db.from("shares").insert({
+    report_id: reportId,
+    platform: platform ?? null,
+    txn_hash: txnHash ?? null,
+    hop_address: hopAddress ?? null,
+    shared_text: sharedText,
+  });
+
+  if (error) {
+    console.error("Share insert failed", error);
+    return Response.json({ error: "Failed to record share" }, { status: 500 });
+  }
+
+  void user; // user_id not in shares schema — attached via report_id
+  return Response.json({ success: true });
 }

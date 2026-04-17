@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { env } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 // No origin check here — Plisio sends server-to-server callbacks with no
 // Origin header. Authentication is handled by HMAC-SHA1 signature verification.

@@ -12,6 +12,9 @@ import { rateLimit, rateLimits } from "@/lib/rate-limit";
 import { checkOrigin } from "@/lib/origin-check";
 import "@/lib/config";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

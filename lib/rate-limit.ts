@@ -11,11 +11,12 @@ import { logger } from "./logger";
 // Fail-open: if Upstash is unreachable we log the error and allow the request
 // so that a Redis outage never takes down the app.
 
-type LimiterType = "trace" | "checkout";
+type LimiterType = "trace" | "checkout" | "share";
 
 // undefined = not yet initialised; null = init failed / env vars missing
 let traceRatelimit: Ratelimit | null | undefined = undefined;
 let checkoutRatelimit: Ratelimit | null | undefined = undefined;
+let shareRatelimit: Ratelimit | null | undefined = undefined;
 
 function initLimiters(): void {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -25,6 +26,7 @@ function initLimiters(): void {
     logger.warn("UPSTASH_REDIS_REST_URL or TOKEN not set — rate limiting disabled (fail-open)");
     traceRatelimit = null;
     checkoutRatelimit = null;
+    shareRatelimit = null;
     return;
   }
 
@@ -41,11 +43,19 @@ function initLimiters(): void {
     limiter: Ratelimit.slidingWindow(5, "3600 s"),
     prefix: "rl:checkout",
   });
+
+  shareRatelimit = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(5, "60 s"),
+    prefix: "rl:share",
+  });
 }
 
 function getLimiter(type: LimiterType): Ratelimit | null {
   if (traceRatelimit === undefined) initLimiters();
-  return type === "checkout" ? (checkoutRatelimit ?? null) : (traceRatelimit ?? null);
+  if (type === "checkout") return checkoutRatelimit ?? null;
+  if (type === "share") return shareRatelimit ?? null;
+  return traceRatelimit ?? null;
 }
 
 function getClientIp(request: NextRequest): string {
@@ -119,6 +129,6 @@ export const rateLimits = {
   traceLimit: { limiterType: "trace" as LimiterType, prefix: "trace" },
   // 5 requests per hour — for checkout endpoint
   checkoutLimit: { limiterType: "checkout" as LimiterType, prefix: "checkout" },
-  // 5 requests per minute — for share endpoint
-  shareLimit: { limiterType: "trace" as LimiterType, prefix: "share" },
+  // 5 requests per 60 seconds — isolated share bucket, does not consume trace quota
+  shareLimit: { limiterType: "share" as LimiterType, prefix: "share" },
 };

@@ -22,12 +22,14 @@ import { randomBytes } from "crypto";
 // WSL2 lacks IPv6 routing, causing undici to hang when it tries the AAAA record first.
 setGlobalDispatcher(new Agent({ connect: { family: 4 } }));
 
+export const maxDuration = 30;
+
 const SUPPORTED_CHAINS: Chain[] = ["eth", "bsc", "polygon", "arbitrum", "solana", "tron"];
 
-const TIER_PRICES: Record<string, string> = {
-  quick: "9.99",
-  deep: "29.99",
-};
+function getTierPrice(tier: string): string {
+  if (tier === "deep") return env.TIER_DEEP_PRICE_USD;
+  return env.TIER_QUICK_PRICE_USD;
+}
 
 // Minimal shape check for client-supplied hops — we re-score server-side anyway
 function isValidHopArray(val: unknown): val is Hop[] {
@@ -58,6 +60,7 @@ export async function POST(request: NextRequest) {
     chain?: string;
     email?: string;
     tier?: string;
+    intent?: string;
     hops?: unknown;
     riskScore?: unknown;
     riskLevel?: unknown;
@@ -70,7 +73,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { address, chain, email, tier = "quick" } = body;
+  const { address, chain, email, tier = "quick", intent } = body;
 
   if (!address || typeof address !== "string") {
     return Response.json({ error: "address is required" }, { status: 400 });
@@ -112,7 +115,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // Re-score server-side from the client-supplied hops to prevent tampering
-    const risk = await scoreAddress(address.trim(), chain as Chain, clientHops);
+    const risk = await scoreAddress(address.trim(), chain as Chain, clientHops, intent);
 
     const viewToken = randomBytes(16).toString("hex");
 
@@ -200,7 +203,7 @@ export async function POST(request: NextRequest) {
       })();
     }
 
-    const price = TIER_PRICES[tier] ?? "9.99";
+    const price = getTierPrice(tier);
     const orderName = tier === "deep" ? "ChainTracing Deep Trace" : "ChainTracing Quick Scan";
 
     // Create Plisio invoice
@@ -238,11 +241,17 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: "Could not create invoice" }, { status: 502 });
     }
 
-    return Response.json({
+    const responseBody: Record<string, unknown> = {
       invoice_url: plisioData.data.invoice_url,
       reportId: report.id,
       viewToken,
-    });
+    };
+
+    if (intent === "law_enforcement" && tier === "quick") {
+      responseBody.upsell = `For law enforcement cases, the Deep Trace tier ($${env.TIER_DEEP_PRICE_USD}) extends the hop chain to 20 transactions, includes wallet clustering and timing analysis, and produces a more comprehensive PDF — which may be useful for formal evidence submissions.`;
+    }
+
+    return Response.json(responseBody);
   } catch (err) {
     logger.error("Checkout failed", err, { address: address?.slice(0, 10) + "...", chain, tier });
     return Response.json({ error: "Checkout failed" }, { status: 500 });

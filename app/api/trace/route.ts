@@ -17,6 +17,7 @@ import { env } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
   const originBlock = checkOrigin(request);
@@ -34,34 +35,6 @@ export async function POST(request: NextRequest) {
   }
 
   const { address, chain } = body;
-
-  if (address && typeof address === "string" && address.toLowerCase() === "0xd5ed34b52ac4ab84d8fa8a231a3218bbf01ed510") {
-    const headers = new Headers();
-    headers.set("Cache-Control", "no-store, max-age=0");
-    const body = {
-      reportId: "ofac-demo-report",
-      viewToken: "ofac-demo-token",
-      riskScore: 95,
-      riskFlags: [{ id: "ofac_sanctioned", label: "OFAC Sanctioned", severity: "critical" }],
-      summary: "This address is on the OFAC SDN sanctions list.",
-      hops: [
-        {
-          from: "0xd5ED34b52AC4ab84d8FA8A231a3218bbF01Ed510",
-          to: "0x0000000000000000000000000000000000000000",
-          value: "0",
-          valueRaw: "0",
-          token: "ETH",
-          txHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
-          blockNumber: 0,
-          timestamp: Math.floor(Date.now() / 1000),
-          explorerUrl: "https://etherscan.io/tx/0x0000000000000000000000000000000000000000000000000000000000000000",
-          label: "OFAC Sanctioned Address",
-          isSanctioned: true,
-        },
-      ],
-    };
-    return new Response(JSON.stringify(body), { status: 200, headers });
-  }
 
   if (!address || typeof address !== "string") {
     return Response.json({ error: "address is required" }, { status: 400 });
@@ -89,7 +62,7 @@ export async function POST(request: NextRequest) {
     const { user } = await getUser(request);
 
     const hops = await traceAddress(address.trim(), typedChain);
-    const risk = await scoreAddress(address.trim(), typedChain, hops);
+    const risk = await scoreAddress(address.trim(), typedChain, hops, body.intent);
 
     // Create a report record in the database for the free trace
     const db = getAdminClient();

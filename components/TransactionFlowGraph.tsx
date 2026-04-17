@@ -1,115 +1,101 @@
 'use client';
 
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, BarChart, Bar, Cell,
+} from 'recharts';
 import type { Hop } from '@/lib/tracer';
 
 interface TransactionFlowGraphProps {
   hops: Hop[];
 }
 
-interface FlowData {
-  hop: number;
-  value: number;
-  timestamp: number;
-  address: string;
-  riskScore: number;
-}
+const GRID_COLOR = 'rgba(255,255,255,0.05)';
+const TICK_COLOR = 'rgba(232,244,253,0.35)';
 
 export default function TransactionFlowGraph({ hops }: TransactionFlowGraphProps) {
-  const flowData = useMemo(() => {
-    return hops.map((hop, index) => ({
-      hop: hop.hop,
-      value: parseFloat(hop.value) || 0,
-      timestamp: hop.timestamp,
-      address: hop.to.slice(0, 8) + '...' + hop.to.slice(-6),
-      riskScore:
-        (hop.isMixer ? 35 : 0) +
-        (hop.isSanctioned ? 40 : 0) +
-        (hop.isBridge ? 20 : 0) +
-        (hop.scamMatches && hop.scamMatches.length > 0 ? 25 : 0),
-    }));
-  }, [hops]);
+  const flowData = useMemo(() => hops.map((hop) => ({
+    hop: hop.hop,
+    value: parseFloat(hop.value) || 0,
+    address: hop.to.slice(0, 6) + '…' + hop.to.slice(-4),
+    riskScore:
+      (hop.isMixer ? 35 : 0) +
+      (hop.isSanctioned ? 40 : 0) +
+      (hop.isBridge ? 20 : 0) +
+      (hop.scamMatches && hop.scamMatches.length > 0 ? 25 : 0),
+  })), [hops]);
 
   if (hops.length === 0) {
     return (
-      <div className="bg-gray-50 rounded-lg p-8 text-center">
-        <p className="text-gray-600">No transaction data available for graph</p>
+      <div className="glass rounded-2xl p-8 text-center" style={{ color: 'var(--text-muted)' }}>
+        No transaction data
       </div>
     );
   }
 
+  const barColor = (risk: number) =>
+    risk >= 40 ? '#FF4757' : risk >= 20 ? '#FFA500' : '#00D9FF';
+
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold mb-4">Transaction Flow Over Time</h3>
+    <div className="glass rounded-2xl p-6">
+      <h3 className="text-sm font-bold uppercase tracking-widest mb-5" style={{ color: 'var(--text-muted)' }}>
+        Transaction Flow
+      </h3>
+
       <div className="mb-6">
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={flowData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="hop"
-              label={{ value: 'Hop Number', position: 'insideBottom', offset: -5 }}
-            />
-            <YAxis
-              label={{ value: 'Value (Native Token)', angle: -90, position: 'insideLeft' }}
-            />
+        <ResponsiveContainer width="100%" height={220}>
+          <LineChart data={flowData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} />
+            <XAxis dataKey="hop" tick={{ fill: TICK_COLOR, fontSize: 11 }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fill: TICK_COLOR, fontSize: 11 }} axisLine={false} tickLine={false} />
             <Tooltip
-              formatter={(value: any, name: any, props: any) => {
-                if (name === 'value') {
-                  return [`${value} ${hops[0]?.token || ''}`, 'Transaction Value'];
-                }
-                return [value, name];
-              }}
-              labelFormatter={(label: any, payload: any) => {
-                const data = payload && payload[0]?.payload;
-                return `Hop ${label} - ${data?.address || ''}`;
+              contentStyle={{ background: '#0D1B2A', border: '1px solid rgba(0,217,255,0.2)', borderRadius: 10, color: '#E8F4FD', fontSize: 12 }}
+              labelStyle={{ color: '#00D9FF' }}
+              formatter={(v: unknown) => [`${v} ${hops[0]?.token ?? ''}`, 'Value']}
+              labelFormatter={(l: unknown, p: readonly { payload?: { address?: string } }[]) => {
+                const d = p[0]?.payload;
+                return `Hop ${l} · ${d?.address ?? ''}`;
               }}
             />
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              dot={{ fill: '#3b82f6' }}
-              name="Transaction Value"
-            />
+            <Line type="monotone" dataKey="value" stroke="#00D9FF" strokeWidth={2}
+              dot={{ fill: '#00D9FF', r: 3, strokeWidth: 0 }}
+              activeDot={{ r: 5, fill: '#00D9FF', stroke: 'rgba(0,217,255,0.4)', strokeWidth: 4 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
       {hops.length > 1 && (
         <div>
-          <h4 className="text-md font-medium mb-3">Risk Indicators by Hop</h4>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={flowData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="hop" />
-              <YAxis label={{ value: 'Risk Score', angle: -90, position: 'insideLeft' }} />
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--text-muted)' }}>
+            Risk by Hop
+          </p>
+          <ResponsiveContainer width="100%" height={140}>
+            <BarChart data={flowData} margin={{ top: 0, right: 4, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} />
+              <XAxis dataKey="hop" tick={{ fill: TICK_COLOR, fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: TICK_COLOR, fontSize: 11 }} axisLine={false} tickLine={false} />
               <Tooltip
-                formatter={(value: any) => {
-                  const riskLevel = value >= 40 ? 'Critical' : value >= 25 ? 'High' : value >= 15 ? 'Medium' : 'Low';
-                  return [`${value} - ${riskLevel}`, 'Risk Score'];
+                contentStyle={{ background: '#0D1B2A', border: '1px solid rgba(255,71,87,0.2)', borderRadius: 10, color: '#E8F4FD', fontSize: 12 }}
+                formatter={(v: unknown) => {
+                  const n = Number(v);
+                  const lvl = n >= 40 ? 'Critical' : n >= 25 ? 'High' : n >= 15 ? 'Medium' : 'Low';
+                  return [`${n} — ${lvl}`, 'Risk'];
                 }}
               />
-              <Bar
-                dataKey="riskScore"
-                fill="#ef4444"
-                radius={[4, 4, 0, 0]}
-              />
+              <Bar dataKey="riskScore" radius={[3, 3, 0, 0]}>
+                {flowData.map((d, i) => (
+                  <Cell key={i} fill={barColor(d.riskScore)} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-2 text-xs">
-        <span className="inline-flex items-center gap-1">
-          <span className="w-3 h-3 bg-blue-500 rounded"></span>
-          Transaction Value
-        </span>
-        <span className="inline-flex items-center gap-1">
-          <span className="w-3 h-3 bg-red-500 rounded"></span>
-          Risk Score
-        </span>
+      <div className="mt-4 flex gap-4 text-xs" style={{ color: 'var(--text-muted)' }}>
+        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full inline-block" style={{ background: '#00D9FF' }} />Value</span>
+        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full inline-block" style={{ background: '#FF4757' }} />Risk</span>
       </div>
     </div>
   );
