@@ -47,7 +47,7 @@ export async function main(): Promise<number> {
   try {
     res = await fetch(SOURCE_URL, {
       headers: { "Accept": "application/xml, text/xml, */*" },
-      signal: AbortSignal.timeout(30_000),
+      signal: AbortSignal.timeout(60_000),
     });
   } catch (e) {
     console.warn("EU sanctions fetch network error — skipping:", (e as Error).message);

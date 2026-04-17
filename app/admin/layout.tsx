@@ -13,6 +13,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           { href: '/admin/reports', label: 'Reports' },
           { href: '/admin/users', label: 'Users' },
           { href: '/admin/scam-db', label: 'Scam DB' },
+          { href: '/admin/submissions', label: 'Submissions' },
         ].map(({ href, label }) => (
           <Link key={href} href={href}
             className="font-medium transition-colors hover:text-white"

@@ -7,7 +7,8 @@ import { lookupScamAddressBatch, type ScamMatch } from "./scam-db";
 
 export type { ScamMatch };
 
-export type Chain = "eth" | "bsc" | "polygon" | "arbitrum" | "solana" | "tron";
+export type Chain = "eth" | "bsc" | "polygon" | "arbitrum" | "solana" | "tron" | "btc" | "base";
+export const SUPPORTED_CHAINS: Chain[] = ["eth", "bsc", "polygon", "arbitrum", "solana", "tron", "btc", "base"];
 
 export interface Hop {
   hop: number;
@@ -67,6 +68,7 @@ const CHAIN_CONFIG: Record<string, ChainConfig> = {
   bsc:      { chainId: "56",    nativeToken: "BNB",  explorerBase: "https://bscscan.com" },
   polygon:  { chainId: "137",   nativeToken: "MATIC", explorerBase: "https://polygonscan.com" },
   arbitrum: { chainId: "42161", nativeToken: "ETH",  explorerBase: "https://arbiscan.io" },
+  base:     { chainId: "8453",  nativeToken: "ETH",  explorerBase: "https://basescan.org" },
 };
 
 // ─── EVM tracer ───────────────────────────────────────────────────────────────
@@ -403,6 +405,89 @@ async function traceTron(startAddress: string, maxDepth = 10): Promise<Hop[]> {
   return hops;
 }
 
+// ─── Bitcoin tracer ───────────────────────────────────────────────────────────
+
+const BTC_ADDRESS_RE = /^(1|3|bc1)[a-zA-Z0-9]{25,62}$/;
+
+interface BlockchairOutput {
+  recipient: string;
+  value: number; // satoshis
+}
+
+interface BlockchairTx {
+  transaction: { hash: string; block_id: number; time: string };
+  outputs: BlockchairOutput[];
+}
+
+async function traceBitcoin(startAddress: string, maxDepth = 10): Promise<Hop[]> {
+  if (!BTC_ADDRESS_RE.test(startAddress)) return [];
+
+  const hops: Hop[] = [];
+  const visited = new Set<string>();
+  const queue: Array<{ address: string; depth: number }> = [
+    { address: startAddress, depth: 0 },
+  ];
+
+  while (queue.length > 0 && hops.length < maxDepth) {
+    const item = queue.shift();
+    if (!item) break;
+    const { address, depth } = item;
+    if (visited.has(address) || depth >= maxDepth) continue;
+    visited.add(address);
+
+    let json: { data?: Record<string, { transactions?: BlockchairTx[] }> };
+    try {
+      const res = await fetch(
+        `https://api.blockchair.com/bitcoin/dashboards/address/${address}?limit=100&transaction_details=true`,
+        { next: { revalidate: 60 }, signal: AbortSignal.timeout(15_000) }
+      );
+      if (!res.ok) break;
+      json = await res.json();
+    } catch {
+      break;
+    }
+
+    const addrData = json.data?.[address];
+    const txs: BlockchairTx[] = addrData?.transactions ?? [];
+    if (!txs.length) break;
+
+    // Find largest outgoing tx: one where address is NOT a recipient (i.e. it's the sender)
+    // Blockchair doesn't give per-tx sender directly in this endpoint; use output to find next hops
+    // Take the first tx where address appears to have sent (outputs don't include the address itself)
+    const outgoing = txs.find((tx) =>
+      tx.outputs.length > 0 &&
+      !tx.outputs.every((o) => o.recipient === address)
+    );
+    if (!outgoing) break;
+
+    const dest = outgoing.outputs.find((o) => o.recipient !== address);
+    if (!dest) break;
+
+    const timestamp = Math.floor(new Date(outgoing.transaction.time).getTime() / 1000);
+    const prevHop = hops[hops.length - 1];
+    const gapFromPrevSeconds = prevHop ? timestamp - prevHop.timestamp : undefined;
+    const btcValue = (dest.value / 1e8).toFixed(8);
+
+    hops.push({
+      hop: hops.length + 1,
+      from: address,
+      to: dest.recipient,
+      value: btcValue,
+      valueRaw: String(dest.value),
+      token: "BTC",
+      txHash: outgoing.transaction.hash,
+      blockNumber: outgoing.transaction.block_id,
+      timestamp,
+      explorerUrl: `https://mempool.space/tx/${outgoing.transaction.hash}`,
+      gapFromPrevSeconds,
+    });
+
+    queue.push({ address: dest.recipient, depth: depth + 1 });
+  }
+
+  return hops;
+}
+
 // ─── Deep analysis helpers ────────────────────────────────────────────────────
 
 export function detectBridges(hops: Hop[]): Hop[] {
@@ -467,6 +552,7 @@ export async function traceAddress(
     case "bsc":
     case "polygon":
     case "arbitrum":
+    case "base":
       hops = await traceEvm(address, chain, maxHops);
       break;
     case "solana":
@@ -474,6 +560,9 @@ export async function traceAddress(
       break;
     case "tron":
       hops = await traceTron(address, maxHops);
+      break;
+    case "btc":
+      hops = await traceBitcoin(address, maxHops);
       break;
     default:
       throw new Error(`Unknown chain: ${chain}`);
@@ -532,6 +621,7 @@ export async function continueTrace(
     case "bsc":
     case "polygon":
     case "arbitrum":
+    case "base":
       extraHops = await traceEvm(lastDest, chain, remaining);
       break;
     case "solana":
@@ -539,6 +629,9 @@ export async function continueTrace(
       break;
     case "tron":
       extraHops = await traceTron(lastDest, remaining);
+      break;
+    case "btc":
+      extraHops = await traceBitcoin(lastDest, remaining);
       break;
     default:
       throw new Error(`Unknown chain: ${chain}`);
@@ -564,8 +657,10 @@ export function getExplorerAddressUrl(address: string, chain: Chain): string {
     bsc: "https://bscscan.com/address",
     polygon: "https://polygonscan.com/address",
     arbitrum: "https://arbiscan.io/address",
+    base: "https://basescan.org/address",
     solana: "https://solscan.io/account",
     tron: "https://tronscan.org/#/address",
+    btc: "https://mempool.space/address",
   };
   return `${explorers[chain]}/${address}`;
 }

@@ -1,16 +1,18 @@
 /**
  * Run all scam database ingest scripts sequentially.
- * Each ingester is imported in-process; failures are caught individually.
  *
  * Run: npm run ingest:all
  */
 
+import { Agent, setGlobalDispatcher } from "undici";
+setGlobalDispatcher(new Agent({ connect: { family: 4 } }));
+
 import { main as runOfac } from "./ingest-ofac.js";
+import { main as runOfacMultichain } from "./ingest-ofac-multichain.js";
 import { main as runCryptoScamDb } from "./ingest-cryptoscamdb.js";
-import { main as runUkHmt } from "./ingest-uk-hmt.js";
 import { main as runEu } from "./ingest-eu-sanctions.js";
-import { main as runEthLists } from "./ingest-ethereum-lists-urls.js";
-import { main as runEtherscanLabels } from "./ingest-etherscan-labels.js";
+import { main as runScamSniffer } from "./ingest-scamsniffer.js";
+import { main as runScamSnifferDomains } from "./ingest-scamsniffer-domains.js";
 
 interface IngestJob {
   label: string;
@@ -18,12 +20,12 @@ interface IngestJob {
 }
 
 const jobs: IngestJob[] = [
-  { label: "ofac",             fn: runOfac },
-  { label: "mew_darklist",     fn: runCryptoScamDb },
-  { label: "uk_hmt",           fn: runUkHmt },
-  { label: "eu",               fn: runEu },
-  { label: "ethereum_lists",   fn: runEthLists },
-  { label: "etherscan_labels", fn: runEtherscanLabels },
+  { label: "ofac",                fn: runOfac },
+  { label: "ofac_multichain",     fn: runOfacMultichain },
+  { label: "mew_darklist",        fn: runCryptoScamDb },
+  { label: "eu_sanctions",        fn: runEu },
+  { label: "scamsniffer",         fn: runScamSniffer },
+  { label: "scamsniffer_domains", fn: runScamSnifferDomains },
 ];
 
 export async function runAll(): Promise<Record<string, number | string>> {

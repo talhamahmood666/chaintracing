@@ -11,13 +11,14 @@ import { logger } from "./logger";
 // Fail-open: if Upstash is unreachable we log the error and allow the request
 // so that a Redis outage never takes down the app.
 
-type LimiterType = "trace" | "checkout" | "share" | "paymentStatus";
+type LimiterType = "trace" | "checkout" | "share" | "paymentStatus" | "submit";
 
 // undefined = not yet initialised; null = init failed / env vars missing
 let traceRatelimit: Ratelimit | null | undefined = undefined;
 let checkoutRatelimit: Ratelimit | null | undefined = undefined;
 let shareRatelimit: Ratelimit | null | undefined = undefined;
 let paymentStatusRatelimit: Ratelimit | null | undefined = undefined;
+let submitRatelimit: Ratelimit | null | undefined = undefined;
 
 function initLimiters(): void {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -29,6 +30,7 @@ function initLimiters(): void {
     checkoutRatelimit = null;
     shareRatelimit = null;
     paymentStatusRatelimit = null;
+    submitRatelimit = null;
     return;
   }
 
@@ -57,6 +59,12 @@ function initLimiters(): void {
     limiter: Ratelimit.slidingWindow(20, "60 s"),
     prefix: "rl:payment-status",
   });
+
+  submitRatelimit = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(5, "86400 s"),
+    prefix: "rl:submit",
+  });
 }
 
 function getLimiter(type: LimiterType): Ratelimit | null {
@@ -64,6 +72,7 @@ function getLimiter(type: LimiterType): Ratelimit | null {
   if (type === "checkout") return checkoutRatelimit ?? null;
   if (type === "share") return shareRatelimit ?? null;
   if (type === "paymentStatus") return paymentStatusRatelimit ?? null;
+  if (type === "submit") return submitRatelimit ?? null;
   return traceRatelimit ?? null;
 }
 
@@ -142,4 +151,6 @@ export const rateLimits = {
   shareLimit: { limiterType: "share" as LimiterType, prefix: "share" },
   // 20 requests per 60 seconds — payment status polling
   paymentStatusLimit: { limiterType: "paymentStatus" as LimiterType, prefix: "payment-status" },
+  // 5 submissions per 24 hours per user
+  submitLimit: { limiterType: "submit" as LimiterType, prefix: "submit" },
 };

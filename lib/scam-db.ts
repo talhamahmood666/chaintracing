@@ -19,9 +19,15 @@ function getScamDbClient() {
 
 // EVM addresses are identical across ETH / BSC / Polygon / Arbitrum.
 // We store them once under 'eth' and normalize lookups accordingly.
+const EVM_CHAINS = new Set(["eth", "bsc", "polygon", "arbitrum", "base"]);
+
 function normalizeChain(chain: string): string {
-  if (chain === "bsc" || chain === "polygon" || chain === "arbitrum") return "eth";
+  if (chain === "bsc" || chain === "polygon" || chain === "arbitrum" || chain === "base") return "eth";
   return chain;
+}
+
+function isEvmChain(chain: string): boolean {
+  return EVM_CHAINS.has(chain);
 }
 
 /** Look up a single address in the scam database. Fails open (returns []). */
@@ -36,7 +42,8 @@ export async function lookupScamAddress(
       .from("scam_addresses")
       .select("category, source, source_url, confidence_score, verified")
       .eq("address", address.toLowerCase())
-      .eq("chain", normalizeChain(chain))
+      .in("chain", isEvmChain(chain) ? [normalizeChain(chain), "evm-multi"] : [normalizeChain(chain)])
+      .or("verified.eq.true,confidence_score.gte.50")
       .limit(10);
     if (error || !data) return [];
     return (data as Array<Record<string, unknown>>).map((row) => ({
@@ -71,7 +78,8 @@ export async function lookupScamAddressBatch(
       .from("scam_addresses")
       .select("address, category, source, source_url, confidence_score, verified")
       .in("address", lowerAddrs)
-      .eq("chain", searchChain);
+      .in("chain", isEvmChain(chain) ? [searchChain, "evm-multi"] : [searchChain])
+      .or("verified.eq.true,confidence_score.gte.50");
     if (error || !data) return result;
     for (const row of data as Array<Record<string, unknown>>) {
       const key = (row.address as string).toLowerCase();

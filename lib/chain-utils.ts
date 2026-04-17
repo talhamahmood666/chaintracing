@@ -2,26 +2,30 @@
 import type { Chain } from "./tracer";
 
 // Supported chains
-export const SUPPORTED_CHAINS: Chain[] = ["eth", "bsc", "polygon", "arbitrum", "solana", "tron"];
+export const SUPPORTED_CHAINS: Chain[] = ["eth", "bsc", "polygon", "arbitrum", "base", "solana", "tron", "btc"];
 
 // Chain display names (for UI)
 export const CHAIN_DISPLAY_NAMES: Record<Chain, string> = {
-  eth: "Ethereum (ETH)",
-  bsc: "BNB Smart Chain (BSC)",
-  polygon: "Polygon (MATIC)",
+  eth:      "Ethereum (ETH)",
+  bsc:      "BNB Smart Chain (BSC)",
+  polygon:  "Polygon (MATIC)",
   arbitrum: "Arbitrum (ARB)",
-  solana: "Solana (SOL)",
-  tron: "Tron (TRX)",
+  base:     "Base (ETH)",
+  solana:   "Solana (SOL)",
+  tron:     "Tron (TRX)",
+  btc:      "Bitcoin (BTC)",
 };
 
 // Address input placeholders
 export const ADDRESS_PLACEHOLDERS: Record<Chain, string> = {
-  eth: "0x...",
-  bsc: "0x...",
-  polygon: "0x...",
+  eth:      "0x...",
+  bsc:      "0x...",
+  polygon:  "0x...",
   arbitrum: "0x...",
-  solana: "Wallet address...",
-  tron: "T...",
+  base:     "0x...",
+  solana:   "Wallet address...",
+  tron:     "T...",
+  btc:      "1... or 3... or bc1...",
 };
 
 // Address validation patterns
@@ -30,8 +34,10 @@ export const ADDRESS_PATTERNS: Record<Chain, RegExp> = {
   bsc:      /^0x[a-fA-F0-9]{40}$/,
   polygon:  /^0x[a-fA-F0-9]{40}$/,
   arbitrum: /^0x[a-fA-F0-9]{40}$/,
+  base:     /^0x[a-fA-F0-9]{40}$/,
   solana:   /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
   tron:     /^T[1-9A-HJ-NP-Za-km-z]{33}$/,
+  btc:      /^(1|3|bc1)[a-zA-Z0-9]{25,62}$/,
 };
 
 // Address validation error messages
@@ -40,8 +46,10 @@ export const ADDRESS_HINTS: Record<Chain, string> = {
   bsc:      "Invalid BSC address. Expected a 42-character hex string starting with 0x.",
   polygon:  "Invalid Polygon address. Expected a 42-character hex string starting with 0x.",
   arbitrum: "Invalid Arbitrum address. Expected a 42-character hex string starting with 0x.",
+  base:     "Invalid Base address. Expected a 42-character hex string starting with 0x.",
   solana:   "Invalid Solana address. Expected a base58 string between 32 and 44 characters.",
   tron:     "Invalid Tron address. Expected a 34-character string starting with T.",
+  btc:      "Invalid Bitcoin address. Expected a legacy (1.../3...) or bech32 (bc1...) address.",
 };
 
 // EVM chain configuration (for Etherscan V2 multichain API)
@@ -56,8 +64,10 @@ export const EVM_CHAIN_CONFIG: Record<Chain, EvmChainConfig | null> = {
   bsc:      { chainId: "56",    nativeToken: "BNB",  explorerBase: "https://bscscan.com" },
   polygon:  { chainId: "137",   nativeToken: "MATIC", explorerBase: "https://polygonscan.com" },
   arbitrum: { chainId: "42161", nativeToken: "ETH",  explorerBase: "https://arbiscan.io" },
+  base:     { chainId: "8453",  nativeToken: "ETH",  explorerBase: "https://basescan.org" },
   solana:   null,
   tron:     null,
+  btc:      null,
 };
 
 // Block explorer URL bases
@@ -66,8 +76,10 @@ const EXPLORER_BASES: Record<Chain, string> = {
   bsc:      "https://bscscan.com",
   polygon:  "https://polygonscan.com",
   arbitrum: "https://arbiscan.io",
+  base:     "https://basescan.org",
   solana:   "https://solscan.io",
   tron:     "https://tronscan.org/#",
+  btc:      "https://mempool.space",
 };
 
 // Explorer URL paths
@@ -76,8 +88,10 @@ const EXPLORER_ADDRESS_PATHS: Record<Chain, string> = {
   bsc:      "/address",
   polygon:  "/address",
   arbitrum: "/address",
+  base:     "/address",
   solana:   "/account",
   tron:     "/address",
+  btc:      "/address",
 };
 
 const EXPLORER_TX_PATHS: Record<Chain, string> = {
@@ -85,8 +99,10 @@ const EXPLORER_TX_PATHS: Record<Chain, string> = {
   bsc:      "/tx",
   polygon:  "/tx",
   arbitrum: "/tx",
+  base:     "/tx",
   solana:   "/tx",
   tron:     "/transaction",
+  btc:      "/tx",
 };
 
 /**
@@ -124,6 +140,7 @@ export function getExplorerTxUrl(txHash: string, chain: Chain): string {
 export function getNativeToken(chain: Chain): string {
   if (chain === "solana") return "SOL";
   if (chain === "tron") return "TRX";
+  if (chain === "btc") return "BTC";
   return EVM_CHAIN_CONFIG[chain]?.nativeToken || "ETH";
 }
 
@@ -131,7 +148,7 @@ export function getNativeToken(chain: Chain): string {
  * Check if a chain is EVM-based
  */
 export function isEvmChain(chain: Chain): boolean {
-  return ["eth", "bsc", "polygon", "arbitrum"].includes(chain);
+  return ["eth", "bsc", "polygon", "arbitrum", "base"].includes(chain);
 }
 
 /**

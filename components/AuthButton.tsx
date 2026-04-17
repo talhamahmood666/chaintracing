@@ -83,6 +83,12 @@ export default function AuthButton() {
               onClick={() => setMenuOpen(false)}>
               Dashboard
             </a>
+            <a href="/report-scam"
+              className="block px-4 py-2.5 text-sm font-medium transition-colors duration-200 min-h-[44px] flex items-center"
+              style={{ color: '#FF4757' }}
+              onClick={() => setMenuOpen(false)}>
+              Report a Scam
+            </a>
             <button
               onClick={handleSignOut}
               className="w-full text-left px-4 py-2.5 text-sm font-medium transition-colors duration-200 min-h-[44px]"

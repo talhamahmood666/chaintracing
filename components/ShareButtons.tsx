@@ -56,7 +56,8 @@ export default function ShareButtons({ reportId, address, chain, hopCount, riskS
     } catch {}
   };
 
-  const btn = "px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 min-h-[40px]";
+  const btn = "px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 min-h-[40px]"
+    + " transition-all duration-200 hover:scale-[1.02]";
 
   return (
     <div className="glass rounded-xl p-5 mb-6 glow-cyan" style={{ border: '1px solid rgba(0,217,255,0.2)' }}>
@@ -68,15 +69,21 @@ export default function ShareButtons({ reportId, address, chain, hopCount, riskS
       </div>
       <div className="flex flex-wrap gap-2">
         <button onClick={handleX} className={btn}
-          style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: '#E8F4FD' }}>
+          style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: '#E8F4FD' }}
+          onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 16px rgba(0,217,255,0.25)')}
+          onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
           𝕏 Twitter/X
         </button>
         <button onClick={handleReddit} className={btn}
-          style={{ background: 'rgba(255,69,0,0.12)', border: '1px solid rgba(255,69,0,0.3)', color: '#FF4500' }}>
+          style={{ background: 'rgba(255,69,0,0.12)', border: '1px solid rgba(255,69,0,0.3)', color: '#FF4500' }}
+          onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 16px rgba(255,69,0,0.3)')}
+          onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
           Reddit
         </button>
         <button onClick={handleTelegram} className={btn}
-          style={{ background: 'rgba(0,136,204,0.12)', border: '1px solid rgba(0,136,204,0.3)', color: '#0088CC' }}>
+          style={{ background: 'rgba(0,136,204,0.12)', border: '1px solid rgba(0,136,204,0.3)', color: '#0088CC' }}
+          onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 16px rgba(0,136,204,0.3)')}
+          onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
           Telegram
         </button>
         <button onClick={handleCopy} className={btn}
@@ -84,7 +91,9 @@ export default function ShareButtons({ reportId, address, chain, hopCount, riskS
             background: copied ? 'rgba(0,230,118,0.15)' : 'rgba(255,255,255,0.05)',
             border: `1px solid ${copied ? 'rgba(0,230,118,0.3)' : 'rgba(255,255,255,0.1)'}`,
             color: copied ? '#00E676' : 'var(--text-secondary)',
-          }}>
+          }}
+          onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 16px rgba(0,230,118,0.2)')}
+          onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
           {copied ? '✓ Copied!' : '📋 Copy Link'}
         </button>
       </div>

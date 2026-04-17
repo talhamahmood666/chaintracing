@@ -37,7 +37,7 @@ export async function upsertBatch(db: any, rows: ScamRow[]): Promise<number> {
   for (let i = 0; i < rows.length; i += BATCH_SIZE) {
     const batch = rows.slice(i, i + BATCH_SIZE);
     const { data, error } = await db.rpc("upsert_scam_addresses_batch", {
-      rows: JSON.stringify(batch),
+      rows: batch,
     });
     if (error) {
       console.error(`Batch ${Math.floor(i / BATCH_SIZE) + 1} error:`, error.message);

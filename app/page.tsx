@@ -113,8 +113,10 @@ export default function HomePage() {
                 <option value="bsc" style={{ background: '#0D1B2A' }}>BNB Smart Chain</option>
                 <option value="polygon" style={{ background: '#0D1B2A' }}>Polygon</option>
                 <option value="arbitrum" style={{ background: '#0D1B2A' }}>Arbitrum</option>
+                <option value="base" style={{ background: '#0D1B2A' }}>Base</option>
                 <option value="solana" style={{ background: '#0D1B2A' }}>Solana</option>
                 <option value="tron" style={{ background: '#0D1B2A' }}>Tron</option>
+                <option value="btc" style={{ background: '#0D1B2A' }}>Bitcoin</option>
               </select>
             </div>
 

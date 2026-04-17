@@ -24,7 +24,7 @@ setGlobalDispatcher(new Agent({ connect: { family: 4 } }));
 
 export const maxDuration = 30;
 
-const SUPPORTED_CHAINS: Chain[] = ["eth", "bsc", "polygon", "arbitrum", "solana", "tron"];
+const SUPPORTED_CHAINS: Chain[] = ["eth", "bsc", "polygon", "arbitrum", "solana", "tron", "btc", "base"];
 
 function getTierPrice(tier: string): string {
   if (tier === "deep") return env.TIER_DEEP_PRICE_USD;
