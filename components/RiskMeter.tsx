@@ -23,7 +23,7 @@ function scoreToLabel(score: number): string {
 
 export default function RiskMeter({ score, size = 160 }: RiskMeterProps) {
   const progressRef = useRef<SVGCircleElement>(null);
-  const clampedScore = Math.max(0, Math.min(100, score));
+  const clampedScore = Math.max(0, Math.min(100, Number(score) || 0));
   const color = scoreToColor(clampedScore);
   const label = scoreToLabel(clampedScore);
 
