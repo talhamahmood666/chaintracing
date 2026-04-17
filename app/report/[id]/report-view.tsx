@@ -78,7 +78,7 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
         )}
       </div>
 
-      <ShareButtons reportId={report.id} address={report.address} chain={report.chain} hopCount={report.hops.length} />
+      <ShareButtons reportId={report.id} address={report.address} chain={report.chain} hopCount={report.hops.length} riskScore={totalRisk} />
 
       {/* Risk header */}
       <div className="glass rounded-2xl p-6 mb-6" style={{ border: `1px solid ${riskColor}33` }}>

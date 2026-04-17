@@ -1,9 +1,57 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getAdminClient } from "@/lib/supabase";
 import { createClient as createServerClient } from "@/lib/supabase-server";
 import ReportView from "./report-view";
 import type { Hop } from "@/lib/tracer";
 import type { RiskFlag } from "@/lib/risk";
+
+const BASE_URL = "https://chaintracing-app.vercel.app";
+
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const db = getAdminClient();
+  const { data: report } = await db
+    .from("reports")
+    .select("risk_score, risk_level, hops, address, chain")
+    .eq("id", id)
+    .single();
+
+  const riskScore = report?.risk_score ?? 0;
+  const levelText =
+    riskScore >= 75 ? "CRITICAL" : riskScore >= 50 ? "HIGH" : riskScore >= 25 ? "MEDIUM" : "LOW";
+  const hopCount = Array.isArray(report?.hops) ? report.hops.length : 0;
+  const hops: any[] = Array.isArray(report?.hops) ? report.hops : [];
+  const lastHop = hops[hops.length - 1];
+  const destType = lastHop?.isSanctioned
+    ? "a sanctioned address"
+    : lastHop?.isMixer
+    ? "a mixer"
+    : lastHop?.isBridge
+    ? "a bridge"
+    : "an unknown destination";
+
+  const title = `Crypto trace: ${levelText} risk — ChainTracing`;
+  const description = `Traced ${hopCount} hop${hopCount !== 1 ? "s" : ""}. Funds reached ${destType}.`;
+  const imageUrl = `${BASE_URL}/api/share-image/${id}`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: imageUrl, width: 1200, height: 630 }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
+}
 
 /** Max hops shown in free scan before FOMO cut-off */
 export const FREE_HOP_CUTOFF = 2;
