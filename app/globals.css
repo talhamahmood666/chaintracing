@@ -24,7 +24,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; color-scheme: dark; }
 
 body {
   background: linear-gradient(135deg, #0A1628 0%, #0D1B2A 100%);
