@@ -31,7 +31,10 @@ export default function HomePage() {
     const data = await res.json();
     if (!res.ok) { setError(data.error || "Trace failed. Please try again."); setLoading(false); return; }
     if (data.reportId) {
-      router.push(`/report/${data.reportId}?token=${data.viewToken}`);
+      const reportUrl = data.isAdmin
+        ? `/report/${data.reportId}?token=${data.viewToken}&admin=1`
+        : `/report/${data.reportId}?token=${data.viewToken}`;
+      router.push(reportUrl);
     } else {
       setError("Something went wrong. Please try again.");
       setLoading(false);

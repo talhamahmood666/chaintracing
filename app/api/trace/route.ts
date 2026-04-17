@@ -12,6 +12,7 @@ import { logger } from "@/lib/logger";
 import { checkOrigin } from "@/lib/origin-check";
 import { getUser } from "@/lib/auth-helpers";
 import { getAdminClient } from "@/lib/supabase";
+import { isAdminById } from "@/lib/auth-admin";
 import { randomBytes } from "crypto";
 import { env } from "@/lib/config";
 
@@ -60,6 +61,7 @@ export async function POST(request: NextRequest) {
   try {
     // Attempt to attach user_id from session — auth is optional for free traces
     const { user } = await getUser(request);
+    const adminUser = user ? await isAdminById(user.id) : false;
 
     const hops = await traceAddress(address.trim(), typedChain);
     const risk = await scoreAddress(address.trim(), typedChain, hops, body.intent);
@@ -73,8 +75,8 @@ export async function POST(request: NextRequest) {
       .insert({
         address: address.trim(),
         chain,
-        status: "available", // Free traces are immediately available
-        tier: "free", // Mark as free tier
+        status: adminUser ? "paid" : "available",
+        tier: adminUser ? "quick" : "free",
         hops: hops,
         risk_score: risk.score,
         risk_level: risk.level,
@@ -128,6 +130,7 @@ export async function POST(request: NextRequest) {
       userId: user?.id ?? null,
       reportId: report.id,
       viewToken: viewToken,
+      isAdmin: adminUser,
     });
   } catch (err) {
     logger.error("Trace failed", err, { address: address?.slice(0, 10) + "...", chain });

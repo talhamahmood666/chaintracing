@@ -43,7 +43,9 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
       body: JSON.stringify({ reportId: report.id, address: report.address, chain: report.chain, hops: report.hops }),
     });
     const data = await res.json();
-    if (data.reportId && data.viewToken) {
+    if (data.adminBypass && data.reportId && data.viewToken) {
+      window.location.href = `/report/${data.reportId}?token=${data.viewToken}&admin=1`;
+    } else if (data.reportId && data.viewToken) {
       window.location.href = `/pay/${data.reportId}?token=${data.viewToken}`;
     } else { alert("Checkout failed. Please try again."); setCheckoutLoading(false); }
   };

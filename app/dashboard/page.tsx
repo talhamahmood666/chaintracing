@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 import DashboardClient from "./DashboardClient";
 import { getAdminClient } from "@/lib/supabase";
+import { isAdminUser } from "@/lib/auth-admin";
 import { env } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
@@ -17,13 +18,17 @@ export default async function DashboardPage({
 
   const { tab } = await searchParams;
   const db = getAdminClient();
+  const isAdmin = await isAdminUser();
 
-  const { data: reports } = await db
+  let reportsQuery = db
     .from("reports")
-    .select("id, address, chain, risk_score, risk_level, tier, status, created_at, view_token")
-    .eq("user_id", user.id)
+    .select("id, address, chain, risk_score, risk_level, tier, status, created_at, view_token, user_id")
     .order("created_at", { ascending: false })
     .limit(200);
+
+  if (!isAdmin) reportsQuery = reportsQuery.eq("user_id", user.id);
+
+  const { data: reports } = await reportsQuery;
 
   const paidReports = (reports ?? []).filter(r => r.status === "paid");
   const quickPrice = parseFloat(env.TIER_QUICK_PRICE_USD);
@@ -37,6 +42,7 @@ export default async function DashboardPage({
       totalSpent={totalSpent}
       activeTab={tab ?? "traces"}
       tierPrices={{ quick: quickPrice, deep: deepPrice }}
+      isAdmin={isAdmin}
     />
   );
 }

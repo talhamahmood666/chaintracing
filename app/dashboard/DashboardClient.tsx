@@ -22,6 +22,7 @@ interface Props {
   totalSpent: number;
   activeTab: string;
   tierPrices: { quick: number; deep: number };
+  isAdmin?: boolean;
 }
 
 const NAV = [
@@ -65,7 +66,7 @@ function StatCard({ label, value, color = '#00D9FF' }: { label: string; value: s
 }
 
 // ── Traces tab ─────────────────────────────────────────────────────────────
-function TracesTab({ reports }: { reports: Report[] }) {
+function TracesTab({ reports, isAdmin }: { reports: Report[]; isAdmin?: boolean }) {
   const [search, setSearch] = useState("");
   const [chainFilter, setChainFilter] = useState("");
   const [riskFilter, setRiskFilter] = useState("");
@@ -95,6 +96,13 @@ function TracesTab({ reports }: { reports: Report[] }) {
 
   return (
     <div>
+      {isAdmin && (
+        <div className="mb-4 px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-2"
+          style={{ background: 'rgba(255,71,87,0.1)', border: '1px solid rgba(255,71,87,0.25)', color: '#FF4757' }}>
+          <span>⬡ ADMIN MODE</span>
+          <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>— showing all {reports.length} reports from all users</span>
+        </div>
+      )}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <StatCard label="Total Traces" value={reports.length} />
         <StatCard label="High Risk Found" value={high} color="#FF4757" />
@@ -176,14 +184,14 @@ function TracesTab({ reports }: { reports: Report[] }) {
                     <td className="px-4 py-3"><StatusBadge status={r.status} /></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        {r.view_token && (
-                          <a href={`/report/${r.id}?token=${r.view_token}`}
+                        {(r.view_token || isAdmin) && (
+                          <a href={isAdmin ? `/report/${r.id}?token=${r.view_token}&admin=1` : `/report/${r.id}?token=${r.view_token}`}
                             className="text-xs font-bold transition-colors hover:underline" style={{ color: '#00D9FF' }}>
                             View →
                           </a>
                         )}
-                        {r.status === "paid" && r.view_token && (
-                          <a href={`/api/report/${r.id}/pdf?token=${r.view_token}`}
+                        {(r.status === "paid" || isAdmin) && (r.view_token || isAdmin) && (
+                          <a href={isAdmin ? `/api/report/${r.id}/pdf?admin=1` : `/api/report/${r.id}/pdf?token=${r.view_token}`}
                             className="text-xs font-medium transition-colors hover:underline" style={{ color: 'var(--text-muted)' }}>
                             PDF
                           </a>
@@ -391,7 +399,7 @@ function HelpTab() {
 }
 
 // ── Main Dashboard ─────────────────────────────────────────────────────────
-export default function DashboardClient({ user, reports, totalSpent, activeTab, tierPrices }: Props) {
+export default function DashboardClient({ user, reports, totalSpent, activeTab, tierPrices, isAdmin = false }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState(activeTab);
   const [signingOut, setSigningOut] = useState(false);
@@ -481,7 +489,7 @@ export default function DashboardClient({ user, reports, totalSpent, activeTab, 
             </button>
           </div>
 
-          {tab === "traces" && <TracesTab reports={reports} />}
+          {tab === "traces" && <TracesTab reports={reports} isAdmin={isAdmin} />}
           {tab === "billing" && <BillingTab reports={reports} totalSpent={totalSpent} tierPrices={tierPrices} />}
           {tab === "settings" && <SettingsTab email={user.email} />}
           {tab === "help" && <HelpTab />}

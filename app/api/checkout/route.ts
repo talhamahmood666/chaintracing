@@ -15,6 +15,7 @@ import { rateLimit, rateLimits } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { checkOrigin } from "@/lib/origin-check";
 import { getUser } from "@/lib/auth-helpers";
+import { isAdminById } from "@/lib/auth-admin";
 import { env } from "@/lib/config";
 import { randomBytes } from "crypto";
 
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
 
   // Auth — optional for checkout (user may have scanned anonymously, then logs in)
   const { user, supabase: _sessionSupabase } = await getUser(request);
+  const adminUser = user ? await isAdminById(user.id) : false;
 
   let body: {
     address?: string;
@@ -104,6 +106,49 @@ export async function POST(request: NextRequest) {
       { error: "Hop data does not match the provided address." },
       { status: 400 }
     );
+  }
+
+  // Admin bypass: skip payment entirely, create fully-unlocked paid report
+  if (adminUser) {
+    try {
+      const extendedHops = await continueTrace(clientHops, chain as Chain, 20);
+      const risk = await scoreAddress(address.trim(), chain as Chain, extendedHops, intent);
+      const bridges = detectBridges(extendedHops);
+      const mixers = detectDeepMixers(extendedHops);
+      const cluster = clusterWallets(extendedHops);
+      const timingFlags = analyzeTimings(extendedHops);
+
+      const viewToken = randomBytes(16).toString("hex");
+      const db = getAdminClient();
+      const { data: report, error: dbError } = await db
+        .from("reports")
+        .insert({
+          address: address.trim(),
+          chain,
+          status: "paid",
+          tier: "deep",
+          hops: extendedHops,
+          risk_score: risk.score,
+          risk_level: risk.level,
+          risk_flags: risk.flags,
+          risk_summary: risk.summary,
+          deep_analysis: { bridges, mixers, cluster, timingFlags },
+          view_token: viewToken,
+          user_id: user!.id,
+        })
+        .select("id")
+        .single();
+
+      if (dbError || !report) {
+        logger.error("Admin bypass: failed to create report", dbError);
+        return Response.json({ error: "Failed to create report" }, { status: 500 });
+      }
+
+      return Response.json({ reportId: report.id, viewToken, adminBypass: true });
+    } catch (err) {
+      logger.error("Admin bypass checkout failed", err);
+      return Response.json({ error: "Admin checkout failed" }, { status: 500 });
+    }
   }
 
   const baseUrl = env.baseUrl;

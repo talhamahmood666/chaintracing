@@ -87,45 +87,97 @@ body {
 .animate-fade-up    { animation: fade-up 0.4s ease forwards; }
 
 /* ── Global interactive element hover glows ──────────────────────────────── */
-button:not([disabled]):not([data-no-glow]),
-[role="button"]:not([disabled]) {
-  transition: box-shadow 200ms ease, transform 200ms ease, background 200ms ease, border-color 200ms ease;
+
+/* 1. Transitions on all interactive elements */
+:where(button, [role="button"], a[href], input[type="submit"], input[type="button"]) {
+  transition: box-shadow 200ms ease, transform 150ms ease, background-color 150ms ease;
 }
-button:not([disabled]):not([data-no-glow]):hover,
-[role="button"]:not([disabled]):hover {
+
+/* 2. Text-only inline links — only color shift, no scale/glow */
+:where(a[href]):not(:where(
+  [role="button"],
+  [class*="btn"],
+  [class*="px-"],
+  [class*="py-"],
+  button a
+)) {
+  transition: color 150ms ease;
+}
+:where(a[href]):not(:where([role="button"], [class*="px-"], [class*="py-"])):hover {
+  opacity: 0.85;
+}
+
+/* 3. Default cyan glow on all buttons/button-role elements */
+:where(
+  button:not(:disabled):not([aria-disabled="true"]):not([data-no-glow]),
+  [role="button"]:not(:disabled):not([aria-disabled="true"]):not([data-no-glow]),
+  a[class*="px-"]:not([data-no-glow]),
+  a[class*="btn"]:not([data-no-glow])
+):hover {
+  box-shadow: 0 0 20px rgba(0,217,255,0.35);
   transform: scale(1.02);
 }
 
-/* Cyan primary buttons */
-button.btn-primary:not([disabled]):hover,
-a.btn-primary:not([disabled]):hover {
-  box-shadow: 0 0 20px rgba(0,217,255,0.4);
-}
-
-/* Destructive / red buttons */
-button.btn-danger:not([disabled]):hover,
-a.btn-danger:not([disabled]):hover {
+/* 4. Red-accented buttons — detect via inline style or utility classes */
+:where(
+  button[style*="#FF4757"],
+  button[style*="red"],
+  button[style*="rgba(255,71,87"],
+  a[style*="#FF4757"],
+  a[style*="rgba(255,71,87"]
+):not(:disabled):hover {
   box-shadow: 0 0 20px rgba(255,71,87,0.4);
 }
 
-/* Infer glow color from inline style for generic buttons */
-button[style*="#00D9FF"]:not([disabled]):not([data-no-glow]):hover,
-a[style*="#00D9FF"]:not([disabled]):not([data-no-glow]):hover {
-  box-shadow: 0 0 20px rgba(0,217,255,0.35);
-}
-button[style*="#FF4757"]:not([disabled]):not([data-no-glow]):hover,
-a[style*="#FF4757"]:not([disabled]):not([data-no-glow]):hover {
-  box-shadow: 0 0 20px rgba(255,71,87,0.35);
-}
-button[style*="#00E676"]:not([disabled]):not([data-no-glow]):hover,
-a[style*="#00E676"]:not([disabled]):not([data-no-glow]):hover {
+/* 5. Green-accented */
+:where(
+  button[style*="#00E676"],
+  button[style*="rgba(0,230,118"],
+  a[style*="#00E676"],
+  a[style*="rgba(0,230,118"]
+):not(:disabled):hover {
   box-shadow: 0 0 20px rgba(0,230,118,0.35);
 }
-button[style*="#FFA500"]:not([disabled]):not([data-no-glow]):hover,
-a[style*="#FFA500"]:not([disabled]):not([data-no-glow]):hover {
+
+/* 6. Amber-accented */
+:where(
+  button[style*="#FFA500"],
+  button[style*="rgba(255,165"],
+  a[style*="#FFA500"],
+  a[style*="rgba(255,165"]
+):not(:disabled):hover {
   box-shadow: 0 0 20px rgba(255,165,0,0.35);
 }
-button[disabled] { cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+/* 7. Explicit cyan-accented */
+:where(
+  button[style*="#00D9FF"],
+  button[style*="rgba(0,217,255"],
+  a[style*="#00D9FF"],
+  a[style*="rgba(0,217,255"]
+):not(:disabled):hover {
+  box-shadow: 0 0 24px rgba(0,217,255,0.45);
+}
+
+/* 8. Sidebar / nav <a> and <button> items */
+:where(nav a, nav button, aside a, aside button):not(:disabled):not([data-no-glow]):hover {
+  box-shadow: 0 0 16px rgba(0,217,255,0.25);
+  transform: scale(1.01);
+}
+
+/* 9. Disabled state — always no glow */
+:where(button:disabled, button[aria-disabled="true"], [role="button"][aria-disabled="true"]) {
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  opacity: 0.5;
+}
+
+/* 10. data-no-glow escape hatch */
+[data-no-glow]:hover {
+  box-shadow: none !important;
+  transform: none !important;
+}
 
 :focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 
