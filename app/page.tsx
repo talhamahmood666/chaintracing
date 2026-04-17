@@ -1,9 +1,10 @@
 import { getAdminClient } from "@/lib/supabase";
 import ThreeBackground from "@/components/ThreeBackground";
 import TraceForm from "@/components/TraceForm";
-import { 
-  Search, ArrowRight, Shield, FileText, 
-  Globe, AlertTriangle, Users, FileCheck, Scale, Zap, 
+import AnimatedStatsCounter from "@/components/AnimatedStatsCounter";
+import {
+  Search, ArrowRight, Shield, FileText,
+  Globe, AlertTriangle, Users, FileCheck, Scale, Zap,
   TrendingUp, Layers, Cpu, Network, Briefcase, ShieldCheck,
   Wallet, Banknote, Clock, HelpCircle, ChevronDown, ChevronUp
 } from "lucide-react";
@@ -27,43 +28,58 @@ export default async function HomePage() {
     <main className="min-h-screen animate-fade-up">
       <ThreeBackground />
       
-      {/* a) HERO */}
-      <section className="pt-32 pb-24 px-4 text-center relative z-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-xs font-bold uppercase tracking-widest"
-          style={{ background: 'rgba(0,217,255,0.08)', border: '1px solid rgba(0,217,255,0.2)', color: '#00D9FF' }}>
-          <span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" style={{ background: '#00D9FF' }} />
-          Live Blockchain Forensics
-        </div>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-4 leading-tight" style={{ color: 'var(--text-primary)' }}>
-          Trace Stolen Crypto<br />
-          <span className="text-glow-cyan" style={{ color: '#00D9FF' }}>Hop-by-Hop</span>
-        </h1>
-        <p className="text-lg max-w-xl mx-auto mb-10" style={{ color: 'var(--text-secondary)' }}>
-          Professional forensic lab follow-the-money across 8 blockchains. Free risk score, paid evidence reports.
-        </p>
-        
-        <div className="inline-flex items-center gap-3 px-4 py-2.5 rounded-full mb-10 glass-strong">
-          <TrendingUp className="w-5 h-5" style={{ color: '#00E676' }} />
-          <span className="font-mono font-black text-2xl" style={{ color: '#00D9FF' }}>{formattedCount}</span>
-          <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>scams traced</span>
-        </div>
-        
-        <a 
-          href="#trace-form"
-          className="inline-block px-8 py-4 rounded-xl font-bold text-sm transition-all duration-200"
-          style={{
-            background: 'linear-gradient(135deg, #00D9FF, #0099BB)',
-            color: '#0A1628',
-            cursor: 'pointer',
-          }}
-        >
-          Start Free Trace
-        </a>
-      </section>
+      {/* a) HERO — split layout */}
+      <section id="trace-form" className="relative z-10 min-h-screen flex items-center">
+        {/* Mobile: form first (flex-col-reverse stacks form on top) */}
+        <div className="w-full max-w-7xl mx-auto px-4 py-32 flex flex-col-reverse md:flex-row md:items-center gap-12 md:gap-8">
 
-      {/* b) TRACE FORM */}
-      <section id="trace-form" className="max-w-2xl mx-auto px-4 pb-24">
-        <TraceForm />
+          {/* LEFT 60% — wordmark + tagline + stats + CTA */}
+          <div className="md:w-[60%] flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-xs font-bold uppercase tracking-widest"
+              style={{ background: 'rgba(0,217,255,0.08)', border: '1px solid rgba(0,217,255,0.2)', color: '#00D9FF' }}>
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" style={{ background: '#00D9FF' }} />
+              Live Blockchain Forensics
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-none mb-6 tracking-tight" style={{ color: 'var(--text-primary)' }}>
+              Chain<br />
+              <span style={{ color: '#00D9FF' }}>Tracing</span>
+            </h1>
+
+            <p className="text-lg md:text-xl max-w-lg mb-10" style={{ color: 'var(--text-secondary)' }}>
+              Professional forensic lab — follow stolen crypto hop-by-hop across 8 blockchains. Free risk score, paid evidence reports.
+            </p>
+
+            <AnimatedStatsCounter reportsCount={reportsCount} />
+
+            <a
+              href="#hero-form-anchor"
+              className="mt-10 inline-block px-8 py-4 rounded-xl font-bold text-sm transition-all duration-200"
+              style={{
+                background: 'linear-gradient(135deg, #00D9FF, #0099BB)',
+                color: '#0A1628',
+                cursor: 'pointer',
+              }}
+            >
+              Start Free Trace
+            </a>
+          </div>
+
+          {/* RIGHT 40% — trace form card */}
+          <div id="hero-form-anchor" className="md:w-[40%] md:sticky md:top-24">
+            <div style={{
+              background: 'rgba(10,22,40,0.7)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(0,217,255,0.25)',
+              borderRadius: '1.25rem',
+              boxShadow: '0 0 40px rgba(0,217,255,0.15), 0 0 80px rgba(0,217,255,0.07), 0 20px 60px rgba(0,0,0,0.5)',
+            }}>
+              <TraceForm />
+            </div>
+          </div>
+
+        </div>
       </section>
 
       {/* c) HOW IT WORKS */}
