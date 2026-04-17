@@ -11,12 +11,13 @@ import { logger } from "./logger";
 // Fail-open: if Upstash is unreachable we log the error and allow the request
 // so that a Redis outage never takes down the app.
 
-type LimiterType = "trace" | "checkout" | "share";
+type LimiterType = "trace" | "checkout" | "share" | "paymentStatus";
 
 // undefined = not yet initialised; null = init failed / env vars missing
 let traceRatelimit: Ratelimit | null | undefined = undefined;
 let checkoutRatelimit: Ratelimit | null | undefined = undefined;
 let shareRatelimit: Ratelimit | null | undefined = undefined;
+let paymentStatusRatelimit: Ratelimit | null | undefined = undefined;
 
 function initLimiters(): void {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -27,6 +28,7 @@ function initLimiters(): void {
     traceRatelimit = null;
     checkoutRatelimit = null;
     shareRatelimit = null;
+    paymentStatusRatelimit = null;
     return;
   }
 
@@ -49,12 +51,19 @@ function initLimiters(): void {
     limiter: Ratelimit.slidingWindow(5, "60 s"),
     prefix: "rl:share",
   });
+
+  paymentStatusRatelimit = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(20, "60 s"),
+    prefix: "rl:payment-status",
+  });
 }
 
 function getLimiter(type: LimiterType): Ratelimit | null {
   if (traceRatelimit === undefined) initLimiters();
   if (type === "checkout") return checkoutRatelimit ?? null;
   if (type === "share") return shareRatelimit ?? null;
+  if (type === "paymentStatus") return paymentStatusRatelimit ?? null;
   return traceRatelimit ?? null;
 }
 
@@ -131,4 +140,6 @@ export const rateLimits = {
   checkoutLimit: { limiterType: "checkout" as LimiterType, prefix: "checkout" },
   // 5 requests per 60 seconds — isolated share bucket, does not consume trace quota
   shareLimit: { limiterType: "share" as LimiterType, prefix: "share" },
+  // 20 requests per 60 seconds — payment status polling
+  paymentStatusLimit: { limiterType: "paymentStatus" as LimiterType, prefix: "payment-status" },
 };

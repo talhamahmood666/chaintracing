@@ -236,15 +236,30 @@ export async function POST(request: NextRequest) {
 
     const plisioData = await plisioRes.json();
 
-    if (plisioData.status !== "success" || !plisioData.data?.invoice_url) {
+    if (plisioData.status !== "success" || !plisioData.data?.txn_id) {
       logger.error("Plisio API error", plisioData, { reportId: report.id, tier, price });
       return Response.json({ error: "Could not create invoice" }, { status: 502 });
     }
 
+    const pd = plisioData.data;
+    const paymentData = {
+      walletAddress: pd.wallet_hash as string,
+      amount: pd.amount as string,
+      currency: pd.currency as string,
+      qrCode: pd.qr_code as string,
+      expiresAt: pd.expire_utc as string,
+      txnId: pd.txn_id as string,
+    };
+
+    await db
+      .from("reports")
+      .update({ plisio_txn_id: pd.txn_id, payment_data: paymentData })
+      .eq("id", report.id);
+
     const responseBody: Record<string, unknown> = {
-      invoice_url: plisioData.data.invoice_url,
       reportId: report.id,
       viewToken,
+      paymentData,
     };
 
     if (intent === "law_enforcement" && tier === "quick") {
