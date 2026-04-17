@@ -27,24 +27,30 @@ export async function GET(
   if (limitRes) return limitRes;
 
   const token = _request.nextUrl.searchParams.get("token");
-  if (!token) {
+  const adminParam = _request.nextUrl.searchParams.get("admin");
+
+  if (adminParam === "1") {
+    try {
+      const { requireAdmin } = await import("@/lib/auth-admin");
+      await requireAdmin();
+    } catch {
+      return Response.json({ error: "Forbidden" }, { status: 403 });
+    }
+  } else if (!token) {
     return Response.json({ error: "Missing token" }, { status: 403 });
   }
 
   const { id } = await params;
   const db = getAdminClient();
 
-  const { data: report, error } = await db
-    .from("reports")
-    .select("*")
-    .eq("id", id)
-    .eq("view_token", token)
-    .single();
+  let query = db.from("reports").select("*").eq("id", id);
+  if (adminParam !== "1") query = query.eq("view_token", token);
+  const { data: report, error } = await query.single();
 
   if (error || !report) {
     return Response.json({ error: "Report not found" }, { status: 404 });
   }
-  if (report.status !== "paid") {
+  if (report.status !== "paid" && adminParam !== "1") {
     return Response.json({ error: "Payment required" }, { status: 402 });
   }
 

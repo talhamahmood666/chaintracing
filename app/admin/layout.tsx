@@ -1,6 +1,17 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+const ADMIN_LABELS: Record<string, string> = {
+  '/admin': 'Overview',
+  '/admin/reports': 'Reports',
+  '/admin/users': 'Users',
+  '/admin/scam-db': 'Scam DB',
+  '/admin/submissions': 'Submissions',
+};
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const hdrs = await headers();
+  const pathname = hdrs.get("x-invoke-path") ?? hdrs.get("x-pathname") ?? "";
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
       <nav className="px-6 py-3 flex items-center gap-6 text-sm"
@@ -22,7 +33,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
         ))}
       </nav>
-      <main className="max-w-7xl mx-auto px-6 py-8">{children}</main>
+      <div className="max-w-7xl mx-auto px-6 pt-4">
+        <nav className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--text-muted)' }}>
+          <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
+          {Object.entries(ADMIN_LABELS).filter(([path]) => path !== '/admin' && pathname?.startsWith(path)).map(([path, label]) => (
+            <span key={path} className="flex items-center gap-1.5">
+              <span>/</span>
+              <Link href={path} className="hover:text-white transition-colors">{label}</Link>
+            </span>
+          ))}
+        </nav>
+      </div>
+      <main className="max-w-7xl mx-auto px-6 py-6">{children}</main>
     </div>
   );
 }

@@ -58,14 +58,24 @@ export const FREE_HOP_CUTOFF = 2;
 
 interface PageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ token?: string }>;
+  searchParams: Promise<{ token?: string; admin?: string }>;
 }
 
 export default async function ReportPage({ params, searchParams }: PageProps) {
   const { id } = await params;
-  const { token } = await searchParams;
+  const { token, admin: adminParam } = await searchParams;
 
-  if (!token) notFound();
+  // Admin override: allow viewing any report without token
+  if (adminParam === "1") {
+    try {
+      const { requireAdmin } = await import("@/lib/auth-admin");
+      await requireAdmin();
+    } catch {
+      notFound();
+    }
+  } else if (!token) {
+    notFound();
+  }
 
   if (token === "ofac-demo-token") {
     const staticReport = {
@@ -104,12 +114,9 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   }
 
   const db = getAdminClient();
-  const { data: report, error } = await db
-    .from("reports")
-    .select("*")
-    .eq("id", id)
-    .eq("view_token", token)
-    .single();
+  let query = db.from("reports").select("*").eq("id", id);
+  if (adminParam !== "1") query = query.eq("view_token", token);
+  const { data: report, error } = await query.single();
 
   if (error || !report) notFound();
 
@@ -165,7 +172,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   return (
     <ReportView
       report={enhancedReport}
-      viewToken={token}
+      viewToken={token ?? ""}
       isPaid={isPaid}
       deepScanAvailable={deepScanAvailable}
     />

@@ -50,23 +50,31 @@ export default function PayPage() {
     if (secs === 0 && paymentData) setExpired(true);
   }, [secs, paymentData]);
 
-  // Load payment data from DB via server component pattern — use admin client indirectly
   useEffect(() => {
     if (!reportId || !token) return;
+
+    // Check status first — skip countdown if already resolved
     fetch(`/api/payment-status/${reportId}?token=${token}`)
       .then(r => r.json())
       .then(d => {
-        if (d.status === "paid") {
-          router.replace(`/report/${reportId}?token=${token}`);
+        if (d.status === "paid" || d.status === "failed") {
+          if (d.status === "paid") router.replace(`/report/${reportId}?token=${token}`);
+          else setPollStatus(d.status);
         }
       })
       .catch(() => {});
 
-    // Fetch payment data from a dedicated lightweight endpoint
     fetch(`/api/payment-data/${reportId}?token=${token}`)
       .then(r => r.json())
       .then(d => {
-        if (d.paymentData) setPaymentData(d.paymentData);
+        if (d.paymentData) {
+          const pd: PaymentData = d.paymentData;
+          // If already expired on load, show expired (CTA to restart — handled below)
+          if (pd.expiresAt && new Date(pd.expiresAt).getTime() < Date.now()) {
+            setExpired(true);
+          }
+          setPaymentData(pd);
+        }
         if (d.orderLabel) setOrderLabel(d.orderLabel);
       })
       .catch(() => {});

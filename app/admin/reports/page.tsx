@@ -138,11 +138,11 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
                   {r.plisio_txn_id ?? "—"}
                 </td>
                 <td className="px-3 py-2">
-                  <div className="flex gap-3 flex-wrap">
-                    {r.status === "paid" && r.view_token && (
-                      <a href={`/report/${r.id}?token=${r.view_token}`} target="_blank"
-                        className="font-bold hover:underline" style={{ color: '#00D9FF' }}>View</a>
-                    )}
+                  <div className="flex gap-3 flex-wrap items-center">
+                    <a href={`/report/${r.id}?admin=1`} target="_blank"
+                      className="font-bold hover:underline" style={{ color: '#00D9FF' }}>View</a>
+                    <a href={`/api/report/${r.id}/pdf?admin=1`} target="_blank"
+                      className="font-bold hover:underline" style={{ color: 'var(--text-muted)' }}>PDF</a>
                     <AdminActionButton reportId={r.id} action="refund" currentStatus={r.status} />
                     <AdminActionButton reportId={r.id} action="mark_paid" currentStatus={r.status} />
                   </div>
