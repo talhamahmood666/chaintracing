@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth-admin";
 import { getAdminClient } from "@/lib/supabase";
 import { env } from "@/lib/config";
+import { ScansLineChart } from "./ScansLineChart";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,7 @@ export default async function AdminOverviewPage() {
     db.from("shares").select("*", { count: "exact", head: true }),
     db.from("reports")
       .select("created_at, status, tier")
-      .gte("created_at", new Date(Date.now() - 7 * 86400_000).toISOString())
+      .gte("created_at", new Date(Date.now() - 30 * 86400_000).toISOString())
       .order("created_at", { ascending: true }),
   ]);
 
@@ -41,7 +42,7 @@ export default async function AdminOverviewPage() {
   const revenue = ((quickPaid ?? 0) * quickPrice + (deepPaid ?? 0) * deepPrice).toFixed(2);
 
   const dayMap: Record<string, { total: number; paid: number }> = {};
-  for (let i = 6; i >= 0; i--) {
+  for (let i = 29; i >= 0; i--) {
     const d = new Date(Date.now() - i * 86400_000).toISOString().slice(0, 10);
     dayMap[d] = { total: 0, paid: 0 };
   }
@@ -49,6 +50,7 @@ export default async function AdminOverviewPage() {
     const d = r.created_at.slice(0, 10);
     if (dayMap[d]) { dayMap[d].total++; if (r.status === "paid") dayMap[d].paid++; }
   }
+  const chartData = Object.entries(dayMap).map(([date, { total }]) => ({ date, scans: total }));
 
   return (
     <div>
@@ -62,9 +64,16 @@ export default async function AdminOverviewPage() {
         <AdminStatCard label="Total Shares" value={totalShares ?? 0} color="var(--text-secondary)" />
       </div>
 
+      <div className="glass rounded-xl p-5 mb-6">
+        <h2 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
+          Scans — Last 30 Days
+        </h2>
+        <ScansLineChart data={chartData} />
+      </div>
+
       <div className="glass rounded-xl p-5">
         <h2 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
-          Last 7 Days — Scans &amp; Paid
+          Last 30 Days — Scans &amp; Paid
         </h2>
         <table className="w-full text-sm">
           <thead>
