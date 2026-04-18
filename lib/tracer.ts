@@ -130,35 +130,48 @@ export class RateLimitError extends Error {
   }
 }
 
+// Per-chain pacing: track last request time so we stay under 5 req/sec.
+const _chainLastCall: Map<string, number> = new Map();
+const PACE_MS = 220; // ~4.5 req/sec, safely under the 5/sec free-tier limit
+
+async function _pace(chainId: string): Promise<void> {
+  const last = _chainLastCall.get(chainId) ?? 0;
+  const wait = PACE_MS - (Date.now() - last);
+  if (wait > 0) await new Promise(r => setTimeout(r, wait));
+  _chainLastCall.set(chainId, Date.now());
+}
+
+// Retry backoff delays in ms: attempt 0→250ms, attempt 1→1000ms, attempt 2→throw
+const RATE_BACKOFFS = [250, 1000];
+
 async function etherscanFetch(
   params: Record<string, string>,
   attempt = 0
 ): Promise<unknown[]> {
+  await _pace(params.chainid ?? "default");
   const p = new URLSearchParams({
     ...params,
     apikey: env.ETHERSCAN_API_KEY ?? "",
   });
   try {
     const res = await fetch(`${ETHERSCAN_V2}?${p}`, { next: { revalidate: 60 } });
-    // 429 or Etherscan "Max rate limit reached" message
     if (res.status === 429) {
-      if (attempt === 0) {
-        await new Promise(r => setTimeout(r, 1100));
-        return etherscanFetch(params, 1);
+      if (attempt < RATE_BACKOFFS.length) {
+        await new Promise(r => setTimeout(r, RATE_BACKOFFS[attempt]));
+        return etherscanFetch(params, attempt + 1);
       }
       throw new RateLimitError(params.chainid ?? "unknown");
     }
     if (!res.ok) return [];
     const json = await res.json();
-    // Etherscan signals rate-limit in the result field too
     if (
       (json.status === "0" || json.status === 0) &&
       typeof json.result === "string" &&
       json.result.toLowerCase().includes("rate limit")
     ) {
-      if (attempt === 0) {
-        await new Promise(r => setTimeout(r, 1100));
-        return etherscanFetch(params, 1);
+      if (attempt < RATE_BACKOFFS.length) {
+        await new Promise(r => setTimeout(r, RATE_BACKOFFS[attempt]));
+        return etherscanFetch(params, attempt + 1);
       }
       throw new RateLimitError(params.chainid ?? "unknown");
     }
@@ -284,6 +297,33 @@ function getBridgeName(address: string, chain: string): string | null {
   return chainBridges[address.toLowerCase()] ?? null;
 }
 
+// ─── Per-request Etherscan cache ─────────────────────────────────────────────
+
+interface TxCache {
+  native: NormalizedTx[];
+  token: NormalizedTx[];
+  fetchedAt: number;
+}
+const TX_CACHE_TTL_MS = 60_000;
+
+async function fetchWithCache(
+  address: string,
+  config: ChainConfig,
+  cache: Map<string, TxCache>
+): Promise<{ native: NormalizedTx[]; token: NormalizedTx[] }> {
+  const hit = cache.get(address);
+  if (hit && Date.now() - hit.fetchedAt < TX_CACHE_TTL_MS) {
+    return { native: hit.native, token: hit.token };
+  }
+  // Both fetches fire in parallel — halves wall time per hop
+  const [native, token] = await Promise.all([
+    fetchNativeTxs(address, config),
+    fetchTokenTxs(address, config),
+  ]);
+  cache.set(address, { native, token, fetchedAt: Date.now() });
+  return { native, token };
+}
+
 // ─── EVM tracer ───────────────────────────────────────────────────────────────
 
 async function traceEvm(
@@ -298,6 +338,7 @@ async function traceEvm(
 
   const hops: Hop[] = [];
   const visited = seedVisited ?? new Set<string>();
+  const txCache = new Map<string, TxCache>(); // per-trace address cache
   const queue: Array<{ address: string; depth: number }> = [
     { address: startAddress.toLowerCase(), depth: 0 },
   ];
@@ -322,16 +363,15 @@ async function traceEvm(
       outgoingCount: 0,
     };
 
-    // Fetch both native and token transfers in parallel; handle rate-limit gracefully
+    // Fetch native + token in parallel via cache; retry with backoff on rate limit
     let nativeTxs: NormalizedTx[], tokenTxs: NormalizedTx[];
     try {
-      [nativeTxs, tokenTxs] = await Promise.all([
-        fetchNativeTxs(address, config),
-        fetchTokenTxs(address, config),
-      ]);
+      const fetched = await fetchWithCache(address, config, txCache);
+      nativeTxs = fetched.native;
+      tokenTxs = fetched.token;
     } catch (err) {
       if (err instanceof RateLimitError) {
-        // M4: annotate last hop and surface warning; don't lose what we have
+        // Exhausted retries — mark partial and stop this chain
         logEntry.skipReason = "rate limit hit";
         bfsLog?.push(logEntry);
         if (hops.length > 0) hops[hops.length - 1] = { ...hops[hops.length - 1], partial_trace: true };
