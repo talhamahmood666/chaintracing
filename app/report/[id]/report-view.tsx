@@ -13,6 +13,8 @@ interface Props {
   viewToken: string;
   isPaid?: boolean;
   deepScanAvailable?: boolean;
+  allHops?: Hop[];       // full hop list for checkout (server strips visible hops)
+  totalHopCount?: number; // actual detected hops for teaser display
 }
 
 const TAG_STYLES: Record<string, { bg: string; color: string; label: string }> = {
@@ -27,20 +29,28 @@ function HopTag({ label, bg, color }: { label: string; bg: string; color: string
   );
 }
 
-export default function ReportView({ report, viewToken, isPaid = false, deepScanAvailable = true }: Props) {
+export default function ReportView({ report, viewToken, isPaid = false, deepScanAvailable = true, allHops, totalHopCount }: Props) {
   const [user, setUser] = useState<any>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [firstReportDiscount, setFirstReportDiscount] = useState(false);
 
   useEffect(() => {
-    createClient().auth.getUser().then(({ data }) => setUser(data.user));
+    createClient().auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      if (data.user) {
+        fetch("/api/stats/discount-eligible").then(r => r.json()).then(d => setFirstReportDiscount(!!d.eligible)).catch(() => {});
+      }
+    });
   }, []);
 
   const handleCheckout = async () => {
     setCheckoutLoading(true);
+    // Use allHops (full detected hops) — not the truncated visible subset
+    const hopsForCheckout = allHops ?? report.hops;
     const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reportId: report.id, address: report.address, chain: report.chain, hops: report.hops }),
+      body: JSON.stringify({ reportId: report.id, address: report.address, chain: report.chain, hops: hopsForCheckout }),
     });
     const data = await res.json();
     if (data.adminBypass && data.reportId && data.viewToken) {
@@ -125,11 +135,19 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
         <div className="glass rounded-2xl p-6 mb-6" style={{ border: '1px solid rgba(0,217,255,0.25)', background: 'rgba(0,217,255,0.04)' }}>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
-                Showing {report.hops.length} of ~{Math.max(5, report.hops.length * 3)} detected hops
-              </h2>
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
+                  Showing {report.hops.length} of {totalHopCount ?? report.hops.length} detected hops
+                </h2>
+                {firstReportDiscount && (
+                  <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'rgba(0,230,118,0.15)', color: '#00E676', border: '1px solid rgba(0,230,118,0.3)' }}>
+                    50% OFF — first report
+                  </span>
+                )}
+              </div>
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                Unlock Deep Scan to reveal exchange deposits, mixer outputs, and full destination chain.
+                Unlock full trace to reveal exchange deposits, mixer outputs, and destination.
+                {firstReportDiscount && ' Quick Scan $4.99 · Deep Trace $14.99 for account holders.'}
               </p>
             </div>
             <button

@@ -53,8 +53,10 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   };
 }
 
-/** Max hops shown in free scan before FOMO cut-off */
-export const FREE_HOP_CUTOFF = 2;
+/** Max hops shown to anonymous users */
+export const FREE_HOP_CUTOFF_ANON = 2;
+/** Max hops shown to logged-in (free tier) users */
+export const FREE_HOP_CUTOFF_AUTH = 5;
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -155,10 +157,14 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
 
   const allHops = displayReport.hops as Hop[];
   const isPaid = displayReport.status === "paid";
-  const deepScanAvailable = !isPaid && allHops.length > FREE_HOP_CUTOFF;
 
-  // For free scans, only show first N hops
-  const visibleHops = isPaid ? allHops : allHops.slice(0, FREE_HOP_CUTOFF);
+  // Determine how many hops to show based on auth status
+  const isAuthenticated = !!user || !!displayReport.user_id;
+  const freeHopLimit = isAuthenticated ? FREE_HOP_CUTOFF_AUTH : FREE_HOP_CUTOFF_ANON;
+  const deepScanAvailable = !isPaid && allHops.length > freeHopLimit;
+
+  // For free scans, only show first N hops; pass full list separately for checkout
+  const visibleHops = isPaid ? allHops : allHops.slice(0, freeHopLimit);
 
   // Add a flag to the report object for the view - normalize camelCase/underscore fields
   const enhancedReport = {
@@ -175,6 +181,8 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
       viewToken={token ?? ""}
       isPaid={isPaid}
       deepScanAvailable={deepScanAvailable}
+      allHops={allHops}
+      totalHopCount={allHops.length}
     />
   );
 }

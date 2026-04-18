@@ -67,7 +67,7 @@ export default function TraceForm() {
             onFocus={e => (e.target.style.borderColor = 'rgba(0,217,255,0.5)')}
             onBlur={e => (e.target.style.borderColor = 'rgba(0,217,255,0.2)')}
           />
-          <p className="text-xs mt-1.5" style={{ color: 'var(--text-muted)' }}>Free for first 2 hops — no account required</p>
+          <p className="text-xs mt-1.5" style={{ color: 'var(--text-muted)' }}>2 hops free (anonymous) · 5 hops free (logged in) · <a href="#pricing" style={{ color: '#00D9FF' }}>See pricing ↓</a></p>
         </div>
 
         <div>
@@ -129,7 +129,7 @@ export default function TraceForm() {
         {[
           { label: 'Addresses Traced', value: '12,400+' },
           { label: 'Scams Flagged', value: '3,200+' },
-          { label: 'Funds Recovered', value: '$4.1M+' },
+          { label: 'Chains Supported', value: '8' },
         ].map((s) => (
           <div key={s.label} className="glass rounded-xl p-4 text-center">
             <p className="text-xl font-black mb-1" style={{ color: '#00D9FF', fontFamily: 'var(--font-geist-mono)' }}>{s.value}</p>

@@ -84,6 +84,96 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* b) PRICING — shown before scan so visitors know cost upfront */}
+      <section id="pricing" className="py-20 px-4" style={{ background: 'rgba(10,22,40,0.8)' }}>
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-black text-center mb-3" style={{ color: 'var(--text-primary)' }}>
+            Simple, Transparent Pricing
+          </h2>
+          <p className="text-center max-w-xl mx-auto mb-4" style={{ color: 'var(--text-secondary)' }}>
+            Run a free trace first — pay only if you want the full evidence report.
+          </p>
+          <p className="text-center text-sm font-semibold mb-12" style={{ color: '#00E676' }}>
+            🎁 First report 50% off for account holders — Quick $4.99 · Deep $14.99
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Free */}
+            <div className="glass rounded-2xl p-6" style={{ border: '1px solid rgba(0,217,255,0.15)' }}>
+              <div className="mb-5">
+                <h3 className="text-xl font-black mb-1" style={{ color: 'var(--text-primary)' }}>Free Preview</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black font-mono" style={{ color: '#00D9FF' }}>$0</span>
+                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>/trace</span>
+                </div>
+              </div>
+              <ul className="space-y-2 mb-6 text-sm">
+                {["2 hops (anonymous) · 5 hops (logged in)", "Live risk score + flags", "Scam database check", "No credit card needed"].map(f => (
+                  <li key={f} className="flex items-start gap-2">
+                    <span style={{ color: '#00E676', flexShrink: 0 }}>✓</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <a href="#trace-form" className="block w-full py-2.5 rounded-xl font-bold text-sm text-center transition-all duration-200"
+                style={{ background: 'rgba(0,217,255,0.1)', border: '1px solid rgba(0,217,255,0.3)', color: '#00D9FF' }}>
+                Start Free Trace
+              </a>
+            </div>
+
+            {/* Quick Scan — Most Popular */}
+            <div className="glass rounded-2xl p-6 relative" style={{ border: '2px solid #00D9FF', boxShadow: '0 0 30px rgba(0,217,255,0.15)' }}>
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
+                  style={{ background: '#00D9FF', color: '#0A1628' }}>Most Popular</span>
+              </div>
+              <div className="mb-5">
+                <h3 className="text-xl font-black mb-1" style={{ color: '#00D9FF' }}>Quick Scan</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black font-mono" style={{ color: '#00D9FF' }}>$9.99</span>
+                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>/report</span>
+                </div>
+              </div>
+              <ul className="space-y-2 mb-6 text-sm">
+                {["10 hops traced", "Exchange identification", "PDF evidence report", "Risk scoring + flags", "Shareable link"].map(f => (
+                  <li key={f} className="flex items-start gap-2">
+                    <span style={{ color: '#00E676', flexShrink: 0 }}>✓</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <a href="#trace-form" className="block w-full py-2.5 rounded-xl font-bold text-sm text-center transition-all duration-200"
+                style={{ background: 'linear-gradient(135deg, #00D9FF, #0099BB)', color: '#0A1628' }}>
+                Get Started
+              </a>
+            </div>
+
+            {/* Deep Trace */}
+            <div className="glass rounded-2xl p-6" style={{ border: '1px solid rgba(255,165,0,0.3)' }}>
+              <div className="mb-5">
+                <h3 className="text-xl font-black mb-1" style={{ color: '#FFA500' }}>Deep Trace</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black font-mono" style={{ color: '#FFA500' }}>$29.99</span>
+                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>/report</span>
+                </div>
+              </div>
+              <ul className="space-y-2 mb-6 text-sm">
+                {["20 hops traced", "Bridge + mixer detection", "Wallet clustering", "Timing analysis", "Compliance letter", "OFAC screening"].map(f => (
+                  <li key={f} className="flex items-start gap-2">
+                    <span style={{ color: '#FFA500', flexShrink: 0 }}>✓</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <a href="#trace-form" className="block w-full py-2.5 rounded-xl font-bold text-sm text-center transition-all duration-200"
+                style={{ background: 'linear-gradient(135deg, #FFA500, #CC8800)', color: '#0A1628' }}>
+                Get Started
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* c) HOW IT WORKS */}
       <section className="py-24 px-4" style={{ background: 'rgba(10,22,40,0.6)' }}>
         <div className="max-w-6xl mx-auto">
@@ -179,22 +269,31 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* f) PRICING */}
+      {/* f) PRICING (detailed post-scan) */}
       <section className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-black text-center mb-4" style={{ color: 'var(--text-primary)' }}>
             Forensic Report Tiers
           </h2>
-          <p className="text-center max-w-2xl mx-auto mb-16" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-center max-w-2xl mx-auto mb-4" style={{ color: 'var(--text-secondary)' }}>
             Pay only after you see the trace results. USDT (TRC-20) payment.
           </p>
-          
+          <p className="text-center text-sm font-semibold mb-16" style={{ color: '#00E676' }}>
+            🎁 First report 50% off — Quick $4.99 · Deep $14.99 (account holders)
+          </p>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
-              { title: "Quick Scan", price: "$9.99", features: ["10 hops max", "Exchange identification", "PDF evidence report", "Basic risk scoring", "Free first 2 hops"], color: "#00D9FF", icon: Zap },
-              { title: "Deep Trace", price: "$29.99", features: ["20 hops max", "Bridge/mixer detection", "Wallet clustering", "Compliance letter", "Timing analysis", "OFAC screening"], color: "#FFA500", icon: Layers },
+              { title: "Quick Scan", price: "$9.99", badge: "Most Popular", features: ["10 hops max", "Exchange identification", "PDF evidence report", "Risk scoring + flags", "5 hops free (logged in)"], color: "#00D9FF", icon: Zap },
+              { title: "Deep Trace", price: "$29.99", badge: null, features: ["20 hops max", "Bridge/mixer detection", "Wallet clustering", "Compliance letter", "Timing analysis", "OFAC screening"], color: "#FFA500", icon: Layers },
             ].map((tier, idx) => (
-              <div key={idx} className="glass rounded-2xl p-6 animate-fade-up glow-cyan" style={{ animationDelay: `${idx * 0.1}s`, borderColor: tier.color }}>
+              <div key={idx} className="glass rounded-2xl p-6 animate-fade-up glow-cyan relative" style={{ animationDelay: `${idx * 0.1}s`, borderColor: tier.color }}>
+                {tier.badge && (
+                  <div className="absolute -top-3 left-6">
+                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
+                      style={{ background: tier.color, color: '#0A1628' }}>{tier.badge}</span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h3 className="text-2xl font-black mb-1" style={{ color: tier.color }}>{tier.title}</h3>
@@ -213,7 +312,7 @@ export default async function HomePage() {
                     </li>
                   ))}
                 </ul>
-                <a 
+                <a
                   href="#trace-form"
                   className="block w-full py-3 rounded-xl font-bold text-sm transition-all duration-200 text-center"
                   style={{

@@ -27,9 +27,20 @@ export const maxDuration = 30;
 
 const SUPPORTED_CHAINS: Chain[] = ["eth", "bsc", "polygon", "arbitrum", "solana", "tron", "btc", "base"];
 
-function getTierPrice(tier: string): string {
-  if (tier === "deep") return env.TIER_DEEP_PRICE_USD;
-  return env.TIER_QUICK_PRICE_USD;
+function getTierPrice(tier: string, halfOff = false): string {
+  const base = tier === "deep" ? env.TIER_DEEP_PRICE_USD : env.TIER_QUICK_PRICE_USD;
+  if (!halfOff) return base;
+  return (parseFloat(base) / 2).toFixed(2);
+}
+
+async function isFirstReportUser(userId: string): Promise<boolean> {
+  const db = getAdminClient();
+  const { count } = await db
+    .from("reports")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("status", "paid");
+  return (count ?? 0) === 0;
 }
 
 // Minimal shape check for client-supplied hops — we re-score server-side anyway
@@ -159,6 +170,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Check first-report discount eligibility
+    const discountEligible = user ? await isFirstReportUser(user.id) : false;
+
     // Re-score server-side from the client-supplied hops to prevent tampering
     const risk = await scoreAddress(address.trim(), chain as Chain, clientHops, intent);
 
@@ -181,6 +195,7 @@ export async function POST(request: NextRequest) {
         risk_summary: risk.summary,
         view_token: viewToken,
         user_id: user?.id ?? null,
+        discount_applied: discountEligible,
       })
       .select("id")
       .single();
@@ -248,8 +263,10 @@ export async function POST(request: NextRequest) {
       })();
     }
 
-    const price = getTierPrice(tier);
-    const orderName = tier === "deep" ? "ChainTracing Deep Trace" : "ChainTracing Quick Scan";
+    const price = getTierPrice(tier, discountEligible);
+    const orderName = tier === "deep"
+      ? `ChainTracing Deep Trace${discountEligible ? " (50% off)" : ""}`
+      : `ChainTracing Quick Scan${discountEligible ? " (50% off)" : ""}`;
 
     // Create Plisio invoice
     const params = new URLSearchParams({
