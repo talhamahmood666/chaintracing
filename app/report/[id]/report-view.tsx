@@ -107,11 +107,17 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
         </div>
       )}
 
-      {/* M7: partial trace warning */}
-      {isPaid && report.hops.some((h: Hop) => h.partial_trace || h.likely_truncated) && (
+      {/* M7 / partial trace: only warn when BFS was cut short, not when it reached a CEX */}
+      {isPaid && !terminalExchange && report.hops.some((h: Hop) => h.partial_trace) && (
         <div className="rounded-xl px-4 py-2.5 mb-3 text-xs font-semibold text-center"
           style={{ background: "rgba(255,165,0,0.08)", border: "1px solid rgba(255,165,0,0.25)", color: "#FFA500" }}>
-          ⚠️ Trace may be incomplete — the on-chain API window was saturated. Some hops could be hidden beyond the visible range.
+          ⚠️ Trace may be incomplete — the API window was exhausted before reaching a known destination. Some hops may be missing.
+        </div>
+      )}
+      {isPaid && !terminalExchange && report.hops.some((h: Hop) => !h.partial_trace && h.likely_truncated) && (
+        <div className="rounded-xl px-4 py-2.5 mb-3 text-xs font-semibold text-center"
+          style={{ background: "rgba(255,165,0,0.06)", border: "1px solid rgba(255,165,0,0.18)", color: "#FFA500" }}>
+          ℹ️ High-volume address — more transactions may exist beyond the visible trace window.
         </div>
       )}
 

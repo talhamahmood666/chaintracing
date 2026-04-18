@@ -461,8 +461,12 @@ async function traceEvm(
       likely_truncated: windowFull || undefined, // M7
     });
 
-    // FIX: do NOT stop on scam/mixer/sanctioned flags — flag and continue tracing
-    if (cexMatch) break; // Only stop at a known exchange
+    // CEX reached = successful termination; clear any partial_trace that may have been
+    // set on an earlier hop to avoid false "incomplete" warnings in the UI.
+    if (cexMatch) {
+      for (const h of hops) delete (h as Partial<Hop>).partial_trace;
+      break;
+    }
 
     queue.push({ address: dest, depth: depth + 1 });
   }
