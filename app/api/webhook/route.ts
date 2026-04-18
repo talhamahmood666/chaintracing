@@ -63,12 +63,28 @@ export async function POST(request: Request) {
     timingSafeEqual(Buffer.from(expected), Buffer.from(verify_hash));
 
   if (!sigValid) {
-    logger.warn("Plisio verify_hash mismatch", {
+    logger.warn("Plisio verify_hash mismatch — rejecting callback", {
       orderId: rest.order_number,
       status: rest.status,
+      txnId: rest.txn_id,
     });
+    // Audit: record the rejected attempt so operators can investigate replays
+    try {
+      const db = getAdminClient();
+      await db.from("admin_actions").insert({
+        action_type: "webhook_rejected",
+        details: { reason: "hmac_mismatch", order_number: rest.order_number, status: rest.status },
+      }).select();
+    } catch { /* non-fatal */ }
     return new Response("Invalid signature", { status: 400 });
   }
+
+  // Audit: log every verified webhook arrival
+  logger.info("Plisio webhook verified", {
+    orderId: typeof rest.order_number === "string" ? rest.order_number : null,
+    txnId: typeof rest.txn_id === "string" ? rest.txn_id : null,
+    status: typeof rest.status === "string" ? rest.status : null,
+  });
 
   // ── Process callback ────────────────────────────────────────────────────────
   const status = typeof rest.status === "string" ? rest.status : null;

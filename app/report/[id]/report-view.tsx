@@ -228,8 +228,8 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
         </div>
       </div>
 
-      {/* Footer actions */}
-      {isPaid || !deepScanAvailable ? (
+      {/* Footer actions — PDF only available on paid reports (H5) */}
+      {isPaid ? (
         <div className="flex justify-end gap-3">
           <button
             onClick={handleDownloadPdf}

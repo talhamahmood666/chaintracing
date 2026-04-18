@@ -12,6 +12,7 @@ import {
 } from "@/lib/tracer";
 import { scoreAddress } from "@/lib/risk";
 import { rateLimit, rateLimits } from "@/lib/rate-limit";
+import { validateAddress } from "@/lib/chain-utils";
 import { logger } from "@/lib/logger";
 import { checkOrigin } from "@/lib/origin-check";
 import { getUser } from "@/lib/auth-helpers";
@@ -34,12 +35,15 @@ function getTierPrice(tier: string, halfOff = false): string {
 }
 
 async function isFirstReportUser(userId: string): Promise<boolean> {
+  // Count BOTH paid AND pending reports — prevents double-discount via concurrent tabs (C3/M2).
+  // The actual atomicity guard is the partial unique index reports_one_discount_per_user;
+  // this check is a fast pre-flight to avoid hitting the index on most requests.
   const db = getAdminClient();
   const { count } = await db
     .from("reports")
     .select("*", { count: "exact", head: true })
     .eq("user_id", userId)
-    .eq("status", "paid");
+    .in("status", ["paid", "pending"]);
   return (count ?? 0) === 0;
 }
 
@@ -98,6 +102,12 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Invalid tier" }, { status: 400 });
   }
 
+  // H4: re-validate address format per chain (same as trace route)
+  const addrValidationError = validateAddress(address.trim(), chain as Chain);
+  if (addrValidationError) {
+    return Response.json({ error: addrValidationError }, { status: 400 });
+  }
+
   // Client must supply the hops from the free scan
   if (!isValidHopArray(body.hops)) {
     return Response.json(
@@ -106,7 +116,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const clientHops = body.hops as Hop[];
+  // H1: cap client-supplied hops to the tier's entitlement server-side.
+  // Free users are entitled to 5 hops (auth) or 2 hops (anon). Quick = 10, Deep = 20.
+  // Slicing here prevents a client from submitting more hops than their tier allows.
+  const TIER_MAX_HOPS: Record<string, number> = { quick: 10, deep: 20 };
+  const rawHops = body.hops as Hop[];
+  const clientHops = rawHops.slice(0, TIER_MAX_HOPS[tier] ?? 10);
 
   // Sanity check: first hop must originate from the claimed address
   if (
@@ -180,25 +195,46 @@ export async function POST(request: NextRequest) {
 
     // For quick tier: use client hops as-is. For deep tier: we'll extend later.
     const db = getAdminClient();
-    const { data: report, error: dbError } = await db
-      .from("reports")
-      .insert({
-        address: address.trim(),
-        chain,
-        email: email ?? null,
-        status: tier === "deep" ? "tracing" : "pending",
-        tier,
-        hops: clientHops,
-        risk_score: risk.score,
-        risk_level: risk.level,
-        risk_flags: risk.flags,
-        risk_summary: risk.summary,
-        view_token: viewToken,
-        user_id: user?.id ?? null,
-        discount_applied: discountEligible,
-      })
-      .select("id")
-      .single();
+
+    // C3: The partial unique index (reports_one_discount_per_user) makes the
+    // discount atomic. If two concurrent requests both try to insert discount_applied=true
+    // for the same user, the second will fail with a unique-constraint error.
+    // We catch that and retry without the discount so the user still gets their report.
+    let report: { id: string } | null = null;
+    let dbError: { message?: string } | null = null;
+    let appliedDiscount = discountEligible;
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const { data, error } = await db
+        .from("reports")
+        .insert({
+          address: address.trim(),
+          chain,
+          email: email ?? null,
+          status: tier === "deep" ? "tracing" : "pending",
+          tier,
+          hops: clientHops,
+          risk_score: risk.score,
+          risk_level: risk.level,
+          risk_flags: risk.flags,
+          risk_summary: risk.summary,
+          view_token: viewToken,
+          user_id: user?.id ?? null,
+          discount_applied: attempt === 0 ? appliedDiscount : false,
+        })
+        .select("id")
+        .single();
+
+      if (!error) { report = data; break; }
+      // If index conflict (duplicate discount for user), retry at full price
+      if (error.code === "23505" && attempt === 0) {
+        appliedDiscount = false;
+        logger.warn("Discount index conflict — falling back to full price", { userId: user?.id });
+        continue;
+      }
+      dbError = error;
+      break;
+    }
 
     if (dbError || !report) {
       logger.error("Failed to create report in database", dbError, {
@@ -263,10 +299,10 @@ export async function POST(request: NextRequest) {
       })();
     }
 
-    const price = getTierPrice(tier, discountEligible);
+    const price = getTierPrice(tier, appliedDiscount);
     const orderName = tier === "deep"
-      ? `ChainTracing Deep Trace${discountEligible ? " (50% off)" : ""}`
-      : `ChainTracing Quick Scan${discountEligible ? " (50% off)" : ""}`;
+      ? `ChainTracing Deep Trace${appliedDiscount ? " (50% off)" : ""}`
+      : `ChainTracing Quick Scan${appliedDiscount ? " (50% off)" : ""}`;
 
     // Create Plisio invoice
     const params = new URLSearchParams({

@@ -83,6 +83,7 @@ export async function POST(request: NextRequest) {
         risk_flags: risk.flags,
         risk_summary: risk.summary,
         view_token: viewToken,
+        user_id: user?.id ?? null,  // C2: attach user so dashboard + hop-cutoff work
       })
       .select("id")
       .single();

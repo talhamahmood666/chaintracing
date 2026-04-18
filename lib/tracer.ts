@@ -252,13 +252,14 @@ async function traceEvm(
   startAddress: string,
   chain: Chain,
   maxDepth = 10,
-  bfsLog?: BfsLogEntry[]
+  bfsLog?: BfsLogEntry[],
+  seedVisited?: Set<string>
 ): Promise<Hop[]> {
   const config = CHAIN_CONFIG[chain];
   if (!config) throw new Error(`Unsupported chain: ${chain}`);
 
   const hops: Hop[] = [];
-  const visited = new Set<string>();
+  const visited = seedVisited ?? new Set<string>();
   const queue: Array<{ address: string; depth: number }> = [
     { address: startAddress.toLowerCase(), depth: 0 },
   ];
@@ -381,10 +382,11 @@ interface SolscanTx {
 async function traceSolana(
   startAddress: string,
   maxDepth = 10,
-  bfsLog?: BfsLogEntry[]
+  bfsLog?: BfsLogEntry[],
+  seedVisited?: Set<string>
 ): Promise<Hop[]> {
   const hops: Hop[] = [];
-  const visited = new Set<string>();
+  const visited = seedVisited ?? new Set<string>();
   const queue: Array<{ address: string; depth: number }> = [
     { address: startAddress, depth: 0 },
   ];
@@ -477,10 +479,11 @@ async function traceSolana(
 async function traceTron(
   startAddress: string,
   maxDepth = 10,
-  bfsLog?: BfsLogEntry[]
+  bfsLog?: BfsLogEntry[],
+  seedVisited?: Set<string>
 ): Promise<Hop[]> {
   const hops: Hop[] = [];
-  const visited = new Set<string>();
+  const visited = seedVisited ?? new Set<string>();
   const queue: Array<{ address: string; depth: number }> = [
     { address: startAddress, depth: 0 },
   ];
@@ -637,12 +640,13 @@ interface BlockchairTx {
 async function traceBitcoin(
   startAddress: string,
   maxDepth = 10,
-  bfsLog?: BfsLogEntry[]
+  bfsLog?: BfsLogEntry[],
+  seedVisited?: Set<string>
 ): Promise<Hop[]> {
   if (!BTC_ADDRESS_RE.test(startAddress)) return [];
 
   const hops: Hop[] = [];
-  const visited = new Set<string>();
+  const visited = seedVisited ?? new Set<string>();
   const queue: Array<{ address: string; depth: number }> = [
     { address: startAddress, depth: 0 },
   ];
@@ -824,6 +828,13 @@ export async function continueTrace(
 
   const lastDest = lastHop.to;
 
+  // H2: seed visited from existing hops so BFS never re-enters an already-traced address
+  const priorVisited = new Set<string>();
+  for (const h of existingHops) {
+    priorVisited.add(h.from.toLowerCase());
+    priorVisited.add(h.to.toLowerCase());
+  }
+
   let extraHops: Hop[];
   switch (chain) {
     case "eth":
@@ -831,16 +842,16 @@ export async function continueTrace(
     case "polygon":
     case "arbitrum":
     case "base":
-      extraHops = await traceEvm(lastDest, chain, remaining);
+      extraHops = await traceEvm(lastDest, chain, remaining, undefined, priorVisited);
       break;
     case "solana":
-      extraHops = await traceSolana(lastDest, remaining);
+      extraHops = await traceSolana(lastDest, remaining, undefined, priorVisited);
       break;
     case "tron":
-      extraHops = await traceTron(lastDest, remaining);
+      extraHops = await traceTron(lastDest, remaining, undefined, priorVisited);
       break;
     case "btc":
-      extraHops = await traceBitcoin(lastDest, remaining);
+      extraHops = await traceBitcoin(lastDest, remaining, undefined, priorVisited);
       break;
     default:
       throw new Error(`Unknown chain: ${chain}`);
