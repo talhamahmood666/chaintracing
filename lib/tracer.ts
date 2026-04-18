@@ -4,6 +4,7 @@ import mixerAddresses from "@/data/mixer-addresses.json";
 import { EVM_CHAIN_CONFIG, getExplorerTxUrl, type EvmChainConfig } from "@/lib/chain-utils";
 import { env } from "./config";
 import { lookupScamAddressBatch, type ScamMatch } from "./scam-db";
+import { getTraceCache, setTraceCache } from "./trace-cache";
 
 export type { ScamMatch };
 
@@ -315,7 +316,7 @@ async function fetchWithCache(
   if (hit && Date.now() - hit.fetchedAt < TX_CACHE_TTL_MS) {
     return { native: hit.native, token: hit.token };
   }
-  // Both fetches fire in parallel — halves wall time per hop
+  // Both fetches in parallel — halves wall time per hop
   const [native, token] = await Promise.all([
     fetchNativeTxs(address, config),
     fetchTokenTxs(address, config),
@@ -363,7 +364,7 @@ async function traceEvm(
       outgoingCount: 0,
     };
 
-    // Fetch native + token in parallel via cache; retry with backoff on rate limit
+    // Fetch native + token in parallel via per-trace cache; retry with backoff on 429
     let nativeTxs: NormalizedTx[], tokenTxs: NormalizedTx[];
     try {
       const fetched = await fetchWithCache(address, config, txCache);
@@ -371,7 +372,6 @@ async function traceEvm(
       tokenTxs = fetched.token;
     } catch (err) {
       if (err instanceof RateLimitError) {
-        // Exhausted retries — mark partial and stop this chain
         logEntry.skipReason = "rate limit hit";
         bfsLog?.push(logEntry);
         if (hops.length > 0) hops[hops.length - 1] = { ...hops[hops.length - 1], partial_trace: true };
@@ -880,6 +880,12 @@ export async function traceAddress(
   maxHops = 10,
   bfsLog?: BfsLogEntry[]
 ): Promise<Hop[]> {
+  // Cache check — skip if caller passed bfsLog (debug mode wants live data)
+  if (!bfsLog) {
+    const cached = await getTraceCache(address, chain);
+    if (cached) return cached.hops;
+  }
+
   let hops: Hop[];
   switch (chain) {
     case "eth":
@@ -901,8 +907,14 @@ export async function traceAddress(
     default:
       throw new Error(`Unknown chain: ${chain}`);
   }
-  return annotateHopsWithScam(hops, chain);
+  const annotated = await annotateHopsWithScam(hops, chain);
+
+  // Store result; partial traces get a 1-hour TTL so they'll be retried
+  if (!bfsLog) await setTraceCache(address, chain, annotated, bfsLog);
+
+  return annotated;
 }
+
 
 async function annotateHopsWithScam(hops: Hop[], chain: Chain): Promise<Hop[]> {
   if (hops.length === 0) return hops;
