@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Mail, Twitter, Linkedin, Github } from "lucide-react";
+import { Mail, ArrowUpRight } from "lucide-react";
 
 export const metadata = {
   title: "About — ChainTracing",
@@ -88,26 +88,10 @@ export default function AboutPage() {
             Contact
           </h2>
           <div className="flex flex-col gap-4">
-            <ContactRow
-              icon={<Mail size={16} />}
-              label="talha.mahmood666@gmail.com"
-              href="mailto:talha.mahmood666@gmail.com"
-            />
-            <ContactRow
-              icon={<Twitter size={16} />}
-              label="@talhamahmood666"
-              href="https://x.com/talhamahmood666"
-            />
-            <ContactRow
-              icon={<Linkedin size={16} />}
-              label="talha-m"
-              href="https://www.linkedin.com/in/talha-m-70732497/"
-            />
-            <ContactRow
-              icon={<Github size={16} />}
-              label="talhamahmood666"
-              href="https://github.com/talhamahmood666"
-            />
+            <ContactRow icon={<Mail size={16} />} label="talha.mahmood666@gmail.com" href="mailto:talha.mahmood666@gmail.com" platform="Email" />
+            <ContactRow icon={null} label="@talhamahmood666" href="https://x.com/talhamahmood666" platform="X" />
+            <ContactRow icon={null} label="talha-m" href="https://www.linkedin.com/in/talha-m-70732497/" platform="LinkedIn" />
+            <ContactRow icon={null} label="talhamahmood666" href="https://github.com/talhamahmood666" platform="GitHub" />
           </div>
         </div>
 
@@ -116,7 +100,7 @@ export default function AboutPage() {
   );
 }
 
-function ContactRow({ icon, label, href }: { icon: React.ReactNode; label: string; href: string }) {
+function ContactRow({ icon, label, href, platform }: { icon: React.ReactNode; label: string; href: string; platform: string }) {
   return (
     <a
       href={href}
@@ -125,8 +109,10 @@ function ContactRow({ icon, label, href }: { icon: React.ReactNode; label: strin
       className="flex items-center gap-3 group transition-colors duration-200"
       style={{ color: "var(--text-secondary)" }}
     >
-      <span style={{ color: "#00D9FF" }}>{icon}</span>
-      <span className="text-sm font-medium group-hover:text-white transition-colors duration-200">{label}</span>
+      {icon && <span style={{ color: "#00D9FF" }}>{icon}</span>}
+      <span className="text-sm font-semibold" style={{ color: "#00D9FF", minWidth: 64 }}>{platform}</span>
+      <span className="text-sm group-hover:text-white transition-colors duration-200">{label}</span>
+      <ArrowUpRight size={14} className="opacity-40 group-hover:opacity-100 transition-opacity duration-200" style={{ color: "#00D9FF" }} />
     </a>
   );
 }
