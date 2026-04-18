@@ -1,7 +1,23 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
 import { getAdminClient } from "@/lib/supabase";
-import { NextRequest } from "next/server";
+
+// L2: In-process admin status cache — avoids a DB round-trip on every request.
+// TTL is 5 minutes; on expiry the next call re-queries Supabase.
+// This is module-level so it persists across requests within the same worker process.
+const ADMIN_CACHE_TTL_MS = 5 * 60 * 1000;
+const adminCache = new Map<string, { isAdmin: boolean; expiresAt: number }>();
+
+function getCachedAdmin(userId: string): boolean | null {
+  const entry = adminCache.get(userId);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) { adminCache.delete(userId); return null; }
+  return entry.isAdmin;
+}
+
+function setCachedAdmin(userId: string, isAdmin: boolean) {
+  adminCache.set(userId, { isAdmin, expiresAt: Date.now() + ADMIN_CACHE_TTL_MS });
+}
 
 /**
  * Call at the top of any admin Server Component.
@@ -55,6 +71,8 @@ export async function isAdminUser(): Promise<boolean> {
  * user id from getUser(request). Avoids a second auth round-trip.
  */
 export async function isAdminById(userId: string): Promise<boolean> {
+  const cached = getCachedAdmin(userId);
+  if (cached !== null) return cached;
   try {
     const db = getAdminClient();
     const { data } = await db
@@ -62,7 +80,9 @@ export async function isAdminById(userId: string): Promise<boolean> {
       .select("user_id")
       .eq("user_id", userId)
       .single();
-    return !!data;
+    const result = !!data;
+    setCachedAdmin(userId, result);
+    return result;
   } catch {
     return false;
   }

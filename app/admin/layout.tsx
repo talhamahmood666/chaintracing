@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 const ADMIN_LABELS: Record<string, string> = {
   '/admin': 'Overview',
@@ -10,6 +11,14 @@ const ADMIN_LABELS: Record<string, string> = {
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  // M6: gate the entire admin section before rendering any child
+  try {
+    const { requireAdmin } = await import("@/lib/auth-admin");
+    await requireAdmin();
+  } catch {
+    redirect("/login");
+  }
+
   const hdrs = await headers();
   const pathname = hdrs.get("x-invoke-path") ?? hdrs.get("x-pathname") ?? "";
   return (

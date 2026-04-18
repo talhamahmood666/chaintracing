@@ -28,6 +28,8 @@ export interface Hop {
   bridgeName?: string;
   gapFromPrevSeconds?: number;
   scamMatches?: ScamMatch[];
+  partial_trace?: boolean;    // M4: stopped due to API rate limit
+  likely_truncated?: boolean; // M7: fetch window maxed out — more hops may exist
 }
 
 export interface ClusterResult {
@@ -120,8 +122,17 @@ interface RawErc20Tx {
   contractAddress: string;
 }
 
+// Typed error so BFS can distinguish rate-limit from empty-address
+export class RateLimitError extends Error {
+  constructor(public readonly chain: string) {
+    super(`Etherscan rate limit hit on ${chain}`);
+    this.name = "RateLimitError";
+  }
+}
+
 async function etherscanFetch(
-  params: Record<string, string>
+  params: Record<string, string>,
+  attempt = 0
 ): Promise<unknown[]> {
   const p = new URLSearchParams({
     ...params,
@@ -129,12 +140,33 @@ async function etherscanFetch(
   });
   try {
     const res = await fetch(`${ETHERSCAN_V2}?${p}`, { next: { revalidate: 60 } });
+    // 429 or Etherscan "Max rate limit reached" message
+    if (res.status === 429) {
+      if (attempt === 0) {
+        await new Promise(r => setTimeout(r, 1100));
+        return etherscanFetch(params, 1);
+      }
+      throw new RateLimitError(params.chainid ?? "unknown");
+    }
     if (!res.ok) return [];
     const json = await res.json();
+    // Etherscan signals rate-limit in the result field too
+    if (
+      (json.status === "0" || json.status === 0) &&
+      typeof json.result === "string" &&
+      json.result.toLowerCase().includes("rate limit")
+    ) {
+      if (attempt === 0) {
+        await new Promise(r => setTimeout(r, 1100));
+        return etherscanFetch(params, 1);
+      }
+      throw new RateLimitError(params.chainid ?? "unknown");
+    }
     if (json.status === "0" || json.status === 0) return [];
     const result = Array.isArray(json.result) ? json.result : json.result?.result ?? [];
     return Array.isArray(result) ? result : [];
-  } catch {
+  } catch (err) {
+    if (err instanceof RateLimitError) throw err;
     return [];
   }
 }
@@ -272,11 +304,25 @@ async function traceEvm(
     if (visited.has(address) || depth >= maxDepth) continue;
     visited.add(address);
 
-    // Fetch both native and token transfers in parallel
-    const [nativeTxs, tokenTxs] = await Promise.all([
-      fetchNativeTxs(address, config),
-      fetchTokenTxs(address, config),
-    ]);
+    // Fetch both native and token transfers in parallel; handle rate-limit gracefully
+    let nativeTxs: NormalizedTx[], tokenTxs: NormalizedTx[];
+    try {
+      [nativeTxs, tokenTxs] = await Promise.all([
+        fetchNativeTxs(address, config),
+        fetchTokenTxs(address, config),
+      ]);
+    } catch (err) {
+      if (err instanceof RateLimitError) {
+        // M4: annotate last hop and surface warning; don't lose what we have
+        if (hops.length > 0) hops[hops.length - 1] = { ...hops[hops.length - 1], partial_trace: true };
+        break;
+      }
+      throw err;
+    }
+
+    // M7: if fetch window is full, the API may have more txs beyond our limit
+    const FETCH_LIMIT = 100;
+    const windowFull = nativeTxs.length >= FETCH_LIMIT || tokenTxs.length >= FETCH_LIMIT;
 
     // Combine and deduplicate by hash+token (same tx can send both native + tokens)
     const seen = new Set<string>();
@@ -356,6 +402,7 @@ async function traceEvm(
       isBridge: bridgeName !== null,
       bridgeName: bridgeName ?? undefined,
       gapFromPrevSeconds,
+      likely_truncated: windowFull || undefined, // M7
     });
 
     // FIX: do NOT stop on scam/mixer/sanctioned flags — flag and continue tracing

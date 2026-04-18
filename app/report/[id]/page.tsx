@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { getAdminClient } from "@/lib/supabase";
 import { createClient as createServerClient } from "@/lib/supabase-server";
+import { rateLimit, rateLimits } from "@/lib/rate-limit";
 import ReportView from "./report-view";
 import type { Hop } from "@/lib/tracer";
 import type { RiskFlag } from "@/lib/risk";
@@ -66,6 +68,16 @@ interface PageProps {
 export default async function ReportPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const { token, admin: adminParam } = await searchParams;
+
+  // L1: rate-limit report page loads to prevent token brute-force
+  const hdrs = await headers();
+  const ip = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
+  // Construct a minimal NextRequest-like object for rateLimit()
+  const fakeReq = new Request(`http://localhost/report/${id}`, {
+    headers: { "x-forwarded-for": ip },
+  });
+  const limitRes = await rateLimit(fakeReq as Parameters<typeof rateLimit>[0], rateLimits.reportViewLimit);
+  if (limitRes) notFound(); // rate-limited — surface as 404 to avoid leaking token info
 
   // Admin override: allow viewing any report without token
   if (adminParam === "1") {

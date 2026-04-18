@@ -22,13 +22,24 @@ function useCountUp(target: number, duration = 1800, start = false) {
   return value;
 }
 
-export default function AnimatedStatsCounter({ reportsCount }: { reportsCount: number }) {
+export default function AnimatedStatsCounter({
+  reportsCount,
+  flaggedCount,
+}: {
+  reportsCount: number;
+  flaggedCount: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
-  const [stats, setStats] = useState({ scans: reportsCount, flagged: 0, chains: 8 });
+  // SSR values as fallback — never show stale 0 when we have real SSR data (M5)
+  const [stats, setStats] = useState({ scans: reportsCount, flagged: flaggedCount, chains: 8 });
+  const [fetchFailed, setFetchFailed] = useState(false);
 
   useEffect(() => {
-    fetch("/api/stats").then(r => r.json()).then(setStats).catch(() => {});
+    fetch("/api/stats")
+      .then(r => r.json())
+      .then(setStats)
+      .catch(() => setFetchFailed(true));
   }, []);
 
   useEffect(() => {
@@ -44,6 +55,9 @@ export default function AnimatedStatsCounter({ reportsCount }: { reportsCount: n
   const chains = useCountUp(stats.chains, 800, visible);
 
   const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n);
+  // M5: show "—" if both SSR and live fetch are unavailable (n===0 and fetchFailed)
+  const display = (n: number, raw: number) =>
+    fetchFailed && raw === 0 ? "—" : fmt(n);
 
   return (
     <div ref={ref} className="flex flex-wrap gap-6 justify-center md:justify-start">
@@ -51,14 +65,14 @@ export default function AnimatedStatsCounter({ reportsCount }: { reportsCount: n
         <div className="flex items-center justify-center gap-1.5 mb-1">
           <TrendingUp className="w-4 h-4" style={{ color: '#00E676' }} />
         </div>
-        <p className="font-mono font-black text-2xl" style={{ color: '#00D9FF' }}>{fmt(traced)}</p>
+        <p className="font-mono font-black text-2xl" style={{ color: '#00D9FF' }}>{display(traced, stats.scans)}</p>
         <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>scams traced</p>
       </div>
       <div className="glass rounded-2xl px-5 py-4 text-center min-w-[110px]">
         <div className="flex items-center justify-center gap-1.5 mb-1">
           <Shield className="w-4 h-4" style={{ color: '#00D9FF' }} />
         </div>
-        <p className="font-mono font-black text-2xl" style={{ color: '#00D9FF' }}>{fmt(flagged)}</p>
+        <p className="font-mono font-black text-2xl" style={{ color: '#00D9FF' }}>{display(flagged, stats.flagged)}</p>
         <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>addresses flagged</p>
       </div>
       <div className="glass rounded-2xl px-5 py-4 text-center min-w-[110px]">

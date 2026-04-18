@@ -3,6 +3,7 @@ import ThreeBackground from "@/components/ThreeBackground";
 import TraceForm from "@/components/TraceForm";
 import AnimatedStatsCounter from "@/components/AnimatedStatsCounter";
 import DisclaimerBanner from "@/components/DisclaimerBanner";
+import PricingTiers from "@/components/PricingTiers";
 import {
   Search, ArrowRight, Shield, FileText,
   Globe, AlertTriangle, Users, FileCheck, Scale, Zap,
@@ -10,19 +11,21 @@ import {
   Wallet, Banknote, Clock, HelpCircle, ChevronDown, ChevronUp
 } from "lucide-react";
 
-async function getReportsCount() {
+async function getSsrStats(): Promise<{ reportsCount: number; flaggedCount: number }> {
   try {
     const supabase = getAdminClient();
-    const { count, error } = await supabase.from('reports').select('*', { count: 'exact', head: true });
-    if (error) throw error;
-    return count || 0;
+    const [{ count: reports }, { count: flagged }] = await Promise.all([
+      supabase.from('reports').select('*', { count: 'exact', head: true }),
+      supabase.from('scam_addresses').select('*', { count: 'exact', head: true }),
+    ]);
+    return { reportsCount: reports ?? 0, flaggedCount: flagged ?? 0 };
   } catch {
-    return 4257;
+    return { reportsCount: 0, flaggedCount: 0 };
   }
 }
 
 export default async function HomePage() {
-  const reportsCount = await getReportsCount();
+  const { reportsCount, flaggedCount } = await getSsrStats();
   const formattedCount = new Intl.NumberFormat('en-US').format(reportsCount);
 
   return (
@@ -52,7 +55,7 @@ export default async function HomePage() {
               Professional forensic lab — follow stolen crypto hop-by-hop across 8 blockchains. Free risk score, paid evidence reports.
             </p>
 
-            <AnimatedStatsCounter reportsCount={reportsCount} />
+            <AnimatedStatsCounter reportsCount={reportsCount} flaggedCount={flaggedCount} />
 
             <a
               href="#hero-form-anchor"
@@ -96,81 +99,7 @@ export default async function HomePage() {
           <p className="text-center text-sm font-semibold mb-12" style={{ color: '#00E676' }}>
             🎁 First report 50% off for account holders — Quick $4.99 · Deep $14.99
           </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Free */}
-            <div className="glass rounded-2xl p-6" style={{ border: '1px solid rgba(0,217,255,0.15)' }}>
-              <div className="mb-5">
-                <h3 className="text-xl font-black mb-1" style={{ color: 'var(--text-primary)' }}>Free Preview</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black font-mono" style={{ color: '#00D9FF' }}>$0</span>
-                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>/trace</span>
-                </div>
-              </div>
-              <ul className="space-y-2 mb-6 text-sm">
-                {["2 hops (anonymous) · 5 hops (logged in)", "Live risk score + flags", "Scam database check", "No credit card needed"].map(f => (
-                  <li key={f} className="flex items-start gap-2">
-                    <span style={{ color: '#00E676', flexShrink: 0 }}>✓</span>
-                    <span style={{ color: 'var(--text-secondary)' }}>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <a href="#trace-form" className="block w-full py-2.5 rounded-xl font-bold text-sm text-center transition-all duration-200"
-                style={{ background: 'rgba(0,217,255,0.1)', border: '1px solid rgba(0,217,255,0.3)', color: '#00D9FF' }}>
-                Start Free Trace
-              </a>
-            </div>
-
-            {/* Quick Scan — Most Popular */}
-            <div className="glass rounded-2xl p-6 relative" style={{ border: '2px solid #00D9FF', boxShadow: '0 0 30px rgba(0,217,255,0.15)' }}>
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
-                  style={{ background: '#00D9FF', color: '#0A1628' }}>Most Popular</span>
-              </div>
-              <div className="mb-5">
-                <h3 className="text-xl font-black mb-1" style={{ color: '#00D9FF' }}>Quick Scan</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black font-mono" style={{ color: '#00D9FF' }}>$9.99</span>
-                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>/report</span>
-                </div>
-              </div>
-              <ul className="space-y-2 mb-6 text-sm">
-                {["10 hops traced", "Exchange identification", "PDF evidence report", "Risk scoring + flags", "Shareable link"].map(f => (
-                  <li key={f} className="flex items-start gap-2">
-                    <span style={{ color: '#00E676', flexShrink: 0 }}>✓</span>
-                    <span style={{ color: 'var(--text-secondary)' }}>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <a href="#trace-form" className="block w-full py-2.5 rounded-xl font-bold text-sm text-center transition-all duration-200"
-                style={{ background: 'linear-gradient(135deg, #00D9FF, #0099BB)', color: '#0A1628' }}>
-                Get Started
-              </a>
-            </div>
-
-            {/* Deep Trace */}
-            <div className="glass rounded-2xl p-6" style={{ border: '1px solid rgba(255,165,0,0.3)' }}>
-              <div className="mb-5">
-                <h3 className="text-xl font-black mb-1" style={{ color: '#FFA500' }}>Deep Trace</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black font-mono" style={{ color: '#FFA500' }}>$29.99</span>
-                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>/report</span>
-                </div>
-              </div>
-              <ul className="space-y-2 mb-6 text-sm">
-                {["20 hops traced", "Bridge + mixer detection", "Wallet clustering", "Timing analysis", "Compliance letter", "OFAC screening"].map(f => (
-                  <li key={f} className="flex items-start gap-2">
-                    <span style={{ color: '#FFA500', flexShrink: 0 }}>✓</span>
-                    <span style={{ color: 'var(--text-secondary)' }}>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <a href="#trace-form" className="block w-full py-2.5 rounded-xl font-bold text-sm text-center transition-all duration-200"
-                style={{ background: 'linear-gradient(135deg, #FFA500, #CC8800)', color: '#0A1628' }}>
-                Get Started
-              </a>
-            </div>
-          </div>
+          <PricingTiers />
         </div>
       </section>
 
@@ -278,54 +207,10 @@ export default async function HomePage() {
           <p className="text-center max-w-2xl mx-auto mb-4" style={{ color: 'var(--text-secondary)' }}>
             Pay only after you see the trace results. USDT (TRC-20) payment.
           </p>
-          <p className="text-center text-sm font-semibold mb-16" style={{ color: '#00E676' }}>
+          <p className="text-center text-sm font-semibold mb-12" style={{ color: '#00E676' }}>
             🎁 First report 50% off — Quick $4.99 · Deep $14.99 (account holders)
           </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              { title: "Quick Scan", price: "$9.99", badge: "Most Popular", features: ["10 hops max", "Exchange identification", "PDF evidence report", "Risk scoring + flags", "5 hops free (logged in)"], color: "#00D9FF", icon: Zap },
-              { title: "Deep Trace", price: "$29.99", badge: null, features: ["20 hops max", "Bridge/mixer detection", "Wallet clustering", "Compliance letter", "Timing analysis", "OFAC screening"], color: "#FFA500", icon: Layers },
-            ].map((tier, idx) => (
-              <div key={idx} className="glass rounded-2xl p-6 animate-fade-up glow-cyan relative" style={{ animationDelay: `${idx * 0.1}s`, borderColor: tier.color }}>
-                {tier.badge && (
-                  <div className="absolute -top-3 left-6">
-                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
-                      style={{ background: tier.color, color: '#0A1628' }}>{tier.badge}</span>
-                  </div>
-                )}
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h3 className="text-2xl font-black mb-1" style={{ color: tier.color }}>{tier.title}</h3>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-black font-mono" style={{ color: tier.color }}>{tier.price}</span>
-                      <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>/report</span>
-                    </div>
-                  </div>
-                  <tier.icon className="w-10 h-10" style={{ color: tier.color }} />
-                </div>
-                <ul className="space-y-2 mb-6">
-                  {tier.features.map((feat, fIdx) => (
-                    <li key={fIdx} className="flex items-center gap-2 text-sm">
-                      <span style={{ color: '#00E676' }}>✓</span>
-                      <span style={{ color: 'var(--text-secondary)' }}>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href="#trace-form"
-                  className="block w-full py-3 rounded-xl font-bold text-sm transition-all duration-200 text-center"
-                  style={{
-                    background: `linear-gradient(135deg, ${tier.color}, ${tier.color}BB)`,
-                    color: '#0A1628',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Get Started
-                </a>
-              </div>
-            ))}
-          </div>
+          <PricingTiers />
         </div>
       </section>
 

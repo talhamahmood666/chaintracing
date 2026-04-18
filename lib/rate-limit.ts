@@ -11,7 +11,7 @@ import { logger } from "./logger";
 // Fail-open: if Upstash is unreachable we log the error and allow the request
 // so that a Redis outage never takes down the app.
 
-type LimiterType = "trace" | "checkout" | "share" | "paymentStatus" | "submit";
+type LimiterType = "trace" | "checkout" | "share" | "paymentStatus" | "submit" | "reportView";
 
 // undefined = not yet initialised; null = init failed / env vars missing
 let traceRatelimit: Ratelimit | null | undefined = undefined;
@@ -19,6 +19,7 @@ let checkoutRatelimit: Ratelimit | null | undefined = undefined;
 let shareRatelimit: Ratelimit | null | undefined = undefined;
 let paymentStatusRatelimit: Ratelimit | null | undefined = undefined;
 let submitRatelimit: Ratelimit | null | undefined = undefined;
+let reportViewRatelimit: Ratelimit | null | undefined = undefined;
 
 function initLimiters(): void {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -65,6 +66,13 @@ function initLimiters(): void {
     limiter: Ratelimit.slidingWindow(5, "86400 s"),
     prefix: "rl:submit",
   });
+
+  // L1: 30 report page views per minute per IP — prevents token brute-force
+  reportViewRatelimit = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(30, "60 s"),
+    prefix: "rl:report-view",
+  });
 }
 
 function getLimiter(type: LimiterType): Ratelimit | null {
@@ -73,6 +81,7 @@ function getLimiter(type: LimiterType): Ratelimit | null {
   if (type === "share") return shareRatelimit ?? null;
   if (type === "paymentStatus") return paymentStatusRatelimit ?? null;
   if (type === "submit") return submitRatelimit ?? null;
+  if (type === "reportView") return reportViewRatelimit ?? null;
   return traceRatelimit ?? null;
 }
 
@@ -153,4 +162,6 @@ export const rateLimits = {
   paymentStatusLimit: { limiterType: "paymentStatus" as LimiterType, prefix: "payment-status" },
   // 5 submissions per 24 hours per user
   submitLimit: { limiterType: "submit" as LimiterType, prefix: "submit" },
+  // 30 report page loads per minute per IP (L1: prevents token brute-force)
+  reportViewLimit: { limiterType: "reportView" as LimiterType, prefix: "report-view" },
 };

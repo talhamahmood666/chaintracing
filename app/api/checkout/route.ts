@@ -170,6 +170,20 @@ export async function POST(request: NextRequest) {
         return Response.json({ error: "Failed to create report" }, { status: 500 });
       }
 
+      // M3: audit log admin-generated free reports
+      await Promise.resolve(
+        db.from("admin_actions").insert({
+          action_type: "admin_free_report",
+          details: {
+            target_report_id: report.id,
+            admin_user_id: user!.id,
+            address: address.trim(),
+            chain,
+            tier: "deep",
+          },
+        })
+      ).catch((e: unknown) => logger.warn("Admin audit log failed", e));
+
       return Response.json({ reportId: report.id, viewToken, adminBypass: true });
     } catch (err) {
       logger.error("Admin bypass checkout failed", err);
@@ -261,8 +275,13 @@ export async function POST(request: NextRequest) {
 
       // Fire-and-forget — errors are logged but don't block the response
       (async () => {
+        const DEEP_TRACE_TIMEOUT_MS = 28_000;
         try {
-          const extendedHops = await continueTrace(clientHops, tracedChain, 20);
+          const tracePromise = continueTrace(clientHops, tracedChain, 20);
+          const timeoutPromise = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("deep_trace_timeout")), DEEP_TRACE_TIMEOUT_MS)
+          );
+          const extendedHops = await Promise.race([tracePromise, timeoutPromise]);
           const deepRisk = await scoreAddress(tracedAddress, tracedChain, extendedHops);
           const bridges = detectBridges(extendedHops);
           const mixers = detectDeepMixers(extendedHops);
@@ -279,7 +298,7 @@ export async function POST(request: NextRequest) {
               risk_flags: deepRisk.flags,
               risk_summary: deepRisk.summary,
               deep_analysis: deepAnalysis,
-              status: "pending", // Ready for payment
+              status: "pending",
             })
             .eq("id", reportId);
 
@@ -287,12 +306,16 @@ export async function POST(request: NextRequest) {
             reportId,
             totalHops: extendedHops.length,
           });
-        } catch (err) {
-          logger.error("Background deep trace failed", err, { reportId });
-          // Fall back to the original hops so the report isn't stuck on 'tracing'
+        } catch (err: any) {
+          const isTimeout = err?.message === "deep_trace_timeout";
+          logger.error(isTimeout ? "Background deep trace timed out" : "Background deep trace failed", err, { reportId });
+          // On timeout: mark the last client hop as partial so UI can warn user
+          const fallbackHops = isTimeout
+            ? clientHops.map((h, i) => i === clientHops.length - 1 ? { ...h, partial_trace: true } : h)
+            : clientHops;
           await db
             .from("reports")
-            .update({ status: "pending" })
+            .update({ hops: fallbackHops, status: "pending" })
             .eq("id", reportId)
             .eq("status", "tracing");
         }

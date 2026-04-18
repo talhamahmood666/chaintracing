@@ -92,6 +92,22 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
 
       <ShareButtons reportId={report.id} address={report.address} chain={report.chain} hopCount={report.hops.length} riskScore={totalRisk} />
 
+      {/* L3: post-payment discount confirmation */}
+      {isPaid && report.discount_applied && (
+        <div className="rounded-xl px-4 py-2.5 mb-3 text-xs font-semibold text-center"
+          style={{ background: "rgba(0,230,118,0.08)", border: "1px solid rgba(0,230,118,0.25)", color: "#00E676" }}>
+          🎁 First-report discount applied — you saved 50%
+        </div>
+      )}
+
+      {/* M7: partial trace warning */}
+      {isPaid && report.hops.some((h: Hop) => h.partial_trace || h.likely_truncated) && (
+        <div className="rounded-xl px-4 py-2.5 mb-3 text-xs font-semibold text-center"
+          style={{ background: "rgba(255,165,0,0.08)", border: "1px solid rgba(255,165,0,0.25)", color: "#FFA500" }}>
+          ⚠️ Trace may be incomplete — the on-chain API window was saturated. Some hops could be hidden beyond the visible range.
+        </div>
+      )}
+
       {/* Evidence-only notice */}
       <div className="rounded-xl px-4 py-2.5 mb-4 text-xs font-medium text-center"
         style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)", color: "rgba(245,158,11,0.9)" }}>

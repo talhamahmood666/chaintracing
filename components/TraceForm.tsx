@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { IntentSelector, type Intent } from "@/components/IntentSelector";
 import { createClient } from "@/lib/supabase-browser";
@@ -12,6 +12,15 @@ export default function TraceForm() {
   const [intent, setIntent] = useState<Intent>("lost_money");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [liveScans, setLiveScans] = useState<number | null>(null);
+  const [liveFlagged, setLiveFlagged] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/stats").then(r => r.json()).then(d => {
+      if (d.scans) setLiveScans(d.scans);
+      if (d.flagged) setLiveFlagged(d.flagged);
+    }).catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,8 +136,8 @@ export default function TraceForm() {
       {/* Trust indicators */}
       <div className="mt-8 grid grid-cols-3 gap-4">
         {[
-          { label: 'Addresses Traced', value: '12,400+' },
-          { label: 'Scams Flagged', value: '3,200+' },
+          { label: 'Addresses Traced', value: liveScans != null ? new Intl.NumberFormat('en-US').format(liveScans) : '—' },
+          { label: 'Scams Flagged', value: liveFlagged != null ? new Intl.NumberFormat('en-US').format(liveFlagged) : '—' },
           { label: 'Chains Supported', value: '8' },
         ].map((s) => (
           <div key={s.label} className="glass rounded-xl p-4 text-center">

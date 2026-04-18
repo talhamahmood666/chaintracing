@@ -1,3 +1,7 @@
+// L6: compile-time enum for report status — keeps route files in sync with DB constraint
+export type ReportStatus = "available" | "pending" | "tracing" | "paid" | "failed";
+export type ReportTier = "free" | "quick" | "deep";
+
 export interface Hop {
   address: string;
   value: number;
@@ -14,8 +18,9 @@ export interface Report {
   riskScore: number;
   risk_flags?: string[];
   summary?: string;
-  status: string;
+  status: ReportStatus;
   created_at: string;
   user_id?: string | null;
   view_token?: string;
+  discount_applied?: boolean;
 }
