@@ -1,10 +1,20 @@
 import Image from "next/image";
-import { Mail, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { FaXTwitter, FaLinkedin, FaGithub } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md";
 
 export const metadata = {
   title: "About — ChainTracing",
   description: "Talha Mahmood, Founder of ChainTracing. Building forensic-grade crypto tracing tools for victims.",
 };
+
+const GLASS = {
+  background: "rgba(10,22,40,0.7)",
+  backdropFilter: "blur(20px)",
+  WebkitBackdropFilter: "blur(20px)",
+  border: "1px solid rgba(0,217,255,0.15)",
+  boxShadow: "0 0 40px rgba(0,217,255,0.07), 0 20px 60px rgba(0,0,0,0.4)",
+} as React.CSSProperties;
 
 export default function AboutPage() {
   return (
@@ -41,16 +51,7 @@ export default function AboutPage() {
         </div>
 
         {/* Bio */}
-        <div
-          className="w-full rounded-2xl p-8 flex flex-col gap-5"
-          style={{
-            background: "rgba(10,22,40,0.7)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            border: "1px solid rgba(0,217,255,0.15)",
-            boxShadow: "0 0 40px rgba(0,217,255,0.07), 0 20px 60px rgba(0,0,0,0.4)",
-          }}
-        >
+        <div className="w-full rounded-2xl p-8 flex flex-col gap-5" style={GLASS}>
           <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
             CEO of{" "}
             <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>Symbiote Technologies</span>{" "}
@@ -74,24 +75,15 @@ export default function AboutPage() {
         </div>
 
         {/* Contact card */}
-        <div
-          className="w-full rounded-2xl p-8"
-          style={{
-            background: "rgba(10,22,40,0.7)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            border: "1px solid rgba(0,217,255,0.15)",
-            boxShadow: "0 0 40px rgba(0,217,255,0.07), 0 20px 60px rgba(0,0,0,0.4)",
-          }}
-        >
+        <div className="w-full rounded-2xl p-8" style={GLASS}>
           <h2 className="text-sm font-bold uppercase tracking-widest mb-6" style={{ color: "#00D9FF" }}>
             Contact
           </h2>
-          <div className="flex flex-col gap-4">
-            <ContactRow icon={<Mail size={16} />} label="talha.mahmood666@gmail.com" href="mailto:talha.mahmood666@gmail.com" platform="Email" />
-            <ContactRow icon={null} label="@talhamahmood666" href="https://x.com/talhamahmood666" platform="X" />
-            <ContactRow icon={null} label="talha-m" href="https://www.linkedin.com/in/talha-m-70732497/" platform="LinkedIn" />
-            <ContactRow icon={null} label="talhamahmood666" href="https://github.com/talhamahmood666" platform="GitHub" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-px" style={{ borderColor: "rgba(0,217,255,0.08)" }}>
+            <ContactRow icon={<MdEmail size={20} />} platform="Email" label="talha.mahmood666@gmail.com" href="mailto:talha.mahmood666@gmail.com" first />
+            <ContactRow icon={<FaXTwitter size={20} />} platform="X" label="@talhamahmood666" href="https://x.com/talhamahmood666" />
+            <ContactRow icon={<FaLinkedin size={20} />} platform="LinkedIn" label="talha-m" href="https://www.linkedin.com/in/talha-m-70732497/" />
+            <ContactRow icon={<FaGithub size={20} />} platform="GitHub" label="talhamahmood666" href="https://github.com/talhamahmood666" />
           </div>
         </div>
 
@@ -100,19 +92,32 @@ export default function AboutPage() {
   );
 }
 
-function ContactRow({ icon, label, href, platform }: { icon: React.ReactNode; label: string; href: string; platform: string }) {
+function ContactRow({ icon, platform, label, href, first }: {
+  icon: React.ReactNode;
+  platform: string;
+  label: string;
+  href: string;
+  first?: boolean;
+}) {
+  const isMailto = href.startsWith("mailto");
   return (
     <a
       href={href}
-      target={href.startsWith("mailto") ? undefined : "_blank"}
+      target={isMailto ? undefined : "_blank"}
       rel="noopener noreferrer"
-      className="flex items-center gap-3 group transition-colors duration-200"
-      style={{ color: "var(--text-secondary)" }}
+      className="group flex items-center gap-3 px-4 py-3.5 transition-colors duration-150 rounded-xl hover:bg-white/[0.04]"
+      style={{ borderTop: first ? undefined : "1px solid rgba(0,217,255,0.06)" }}
     >
-      {icon && <span style={{ color: "#00D9FF" }}>{icon}</span>}
-      <span className="text-sm font-semibold" style={{ color: "#00D9FF", minWidth: 64 }}>{platform}</span>
-      <span className="text-sm group-hover:text-white transition-colors duration-200">{label}</span>
-      <ArrowUpRight size={14} className="opacity-40 group-hover:opacity-100 transition-opacity duration-200" style={{ color: "#00D9FF" }} />
+      <span className="flex-shrink-0 transition-transform duration-150 group-hover:scale-110" style={{ color: "#00D9FF" }}>
+        {icon}
+      </span>
+      <span className="flex-shrink-0 text-xs font-bold uppercase tracking-wider w-16" style={{ color: "#00D9FF" }}>
+        {platform}
+      </span>
+      <span className="flex-1 text-sm truncate transition-colors duration-150 group-hover:text-white" style={{ color: "var(--text-secondary)" }}>
+        {label}
+      </span>
+      <ArrowUpRight size={14} className="flex-shrink-0 opacity-30 group-hover:opacity-100 transition-opacity duration-150" style={{ color: "#00D9FF" }} />
     </a>
   );
 }
