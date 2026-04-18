@@ -75,6 +75,13 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
   const riskLevel = totalRisk >= 75 ? 'CRITICAL' : totalRisk >= 50 ? 'HIGH' : totalRisk >= 25 ? 'MEDIUM' : 'LOW';
   const riskColor = totalRisk >= 75 ? '#FF4757' : totalRisk >= 50 ? '#FFA500' : totalRisk >= 25 ? '#FFD700' : '#00E676';
 
+  // Detect terminal CEX hop — last hop that has a label (exchange name)
+  const allVisibleHops: Hop[] = report.hops;
+  const terminalCexHop = [...allVisibleHops].reverse().find((h: Hop) => h.label);
+  const terminalExchange = terminalCexHop
+    ? { name: terminalCexHop.label!.split(' Hot Wallet')[0].split(' Cold Wallet')[0].split(':')[0].trim(), label: terminalCexHop.label!, address: terminalCexHop.to }
+    : null;
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Nav */}
@@ -140,6 +147,36 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
           </div>
         </div>
       </div>
+
+      {/* CEX destination success banner */}
+      {terminalExchange && (
+        <div className="glass rounded-2xl p-5 mb-6" style={{ border: '1px solid rgba(0,230,118,0.3)', background: 'rgba(0,230,118,0.04)' }}>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">✓</span>
+                <h2 className="text-base font-black" style={{ color: '#00E676' }}>
+                  Funds traced to {terminalExchange.name}
+                </h2>
+                <span className="px-2 py-0.5 rounded-full text-xs font-black uppercase"
+                  style={{ background: 'rgba(0,230,118,0.15)', color: '#00E676', border: '1px solid rgba(0,230,118,0.3)' }}>
+                  CEX
+                </span>
+              </div>
+              <p className="text-xs font-mono break-all" style={{ color: 'var(--text-muted)' }}>
+                {terminalExchange.address}
+              </p>
+            </div>
+            {isPaid && (
+              <button onClick={handleDownloadPdf}
+                className="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap"
+                style={{ background: 'rgba(0,230,118,0.15)', border: '1px solid rgba(0,230,118,0.3)', color: '#00E676' }}>
+                Download Evidence PDF
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Chart */}
       <div className="mb-6">
@@ -243,6 +280,45 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
           })}
         </div>
       </div>
+
+      {/* Next Steps — shown when CEX destination identified */}
+      {terminalExchange && isPaid && (
+        <div className="glass rounded-2xl p-6 mb-6" style={{ border: '1px solid rgba(0,217,255,0.15)' }}>
+          <h2 className="text-sm font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
+            Next Steps
+          </h2>
+          <div className="space-y-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <div className="flex gap-3">
+              <span className="font-black text-base" style={{ color: '#00D9FF', flexShrink: 0 }}>1.</span>
+              <div>
+                <p className="font-semibold mb-0.5" style={{ color: 'var(--text-primary)' }}>Download your PDF evidence report</p>
+                <p>Contains all hop data, timestamps, block explorer links, and the {terminalExchange.name} destination address.</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="font-black text-base" style={{ color: '#00D9FF', flexShrink: 0 }}>2.</span>
+              <div>
+                <p className="font-semibold mb-0.5" style={{ color: 'var(--text-primary)' }}>Contact {terminalExchange.name} compliance</p>
+                <p>Submit a law enforcement or compliance request to {terminalExchange.name} citing their KYC obligations. Reference address: <span className="font-mono text-xs break-all" style={{ color: '#00D9FF' }}>{terminalExchange.address}</span></p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="font-black text-base" style={{ color: '#00D9FF', flexShrink: 0 }}>3.</span>
+              <div>
+                <p className="font-semibold mb-0.5" style={{ color: 'var(--text-primary)' }}>File a police report</p>
+                <p>Provide the PDF to local law enforcement or cybercrime units (FBI IC3, Action Fraud UK, etc.) — exchanges respond faster to official requests.</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="font-black text-base" style={{ color: '#00D9FF', flexShrink: 0 }}>4.</span>
+              <div>
+                <p className="font-semibold mb-0.5" style={{ color: 'var(--text-primary)' }}>Share this report</p>
+                <p>Use the share link at the top of this page to send the evidence to investigators or legal counsel.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer actions — PDF only available on paid reports (H5) */}
       {isPaid ? (

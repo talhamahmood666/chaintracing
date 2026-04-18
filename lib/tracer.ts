@@ -247,9 +247,15 @@ async function fetchTokenTxs(
 
 // ─── EVM label helpers ────────────────────────────────────────────────────────
 
-function isKnownExchange(address: string): { exchange: string; label: string } | null {
+function isKnownExchange(address: string, chain?: Chain): { exchange: string; label: string } | null {
   const lower = address.toLowerCase();
-  const entry = (exchangeWallets.evm as Record<string, { exchange: string; label: string }>)[lower];
+  type ExMap = Record<string, { exchange: string; label: string }>;
+  // Check chain-specific map first (bsc, polygon, arbitrum), then fall back to evm
+  if (chain && chain !== "eth" && chain !== "solana" && chain !== "tron" && chain !== "btc") {
+    const chainMap = (exchangeWallets as unknown as Record<string, ExMap>)[chain];
+    if (chainMap?.[lower]) return chainMap[lower];
+  }
+  const entry = (exchangeWallets.evm as ExMap)[lower];
   return entry ?? null;
 }
 
@@ -372,7 +378,7 @@ async function traceEvm(
     }
 
     const dest = bestTx.to;
-    const cexMatch = isKnownExchange(dest);
+    const cexMatch = isKnownExchange(dest, chain);
     const mixer = isMixerAddress(dest) || isMixerAddress(address);
     const sanctioned = isSanctionedAddress(dest) || isSanctionedAddress(address);
     const bridgeName = getBridgeName(dest, chain);
