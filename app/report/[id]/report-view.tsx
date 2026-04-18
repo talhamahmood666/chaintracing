@@ -82,6 +82,12 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
 
       <ShareButtons reportId={report.id} address={report.address} chain={report.chain} hopCount={report.hops.length} riskScore={totalRisk} />
 
+      {/* Evidence-only notice */}
+      <div className="rounded-xl px-4 py-2.5 mb-4 text-xs font-medium text-center"
+        style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)", color: "rgba(245,158,11,0.9)" }}>
+        ⚠️ This report is evidence only. ChainTracing is not a recovery service.
+      </div>
+
       {/* Risk header */}
       <div className="glass rounded-2xl p-6 mb-6" style={{ border: `1px solid ${riskColor}33` }}>
         <div className="flex flex-wrap items-center gap-8">

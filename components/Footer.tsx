@@ -1,4 +1,5 @@
 import Link from "next/link";
+import DisclaimerModal from "./DisclaimerModal";
 
 export default function Footer() {
   return (
@@ -10,6 +11,7 @@ export default function Footer() {
         <nav className="flex items-center gap-6 text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
           <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
           <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+          <DisclaimerModal />
           <a href="mailto:support@chaintracing.app" className="hover:text-white transition-colors">Contact</a>
         </nav>
       </div>
