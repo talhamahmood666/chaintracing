@@ -307,8 +307,20 @@ async function traceEvm(
     if (!item) break;
     const { address, depth } = item;
 
-    if (visited.has(address) || depth >= maxDepth) continue;
+    if (visited.has(address) || depth >= maxDepth) {
+      bfsLog?.push({ address, depth, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: visited.has(address) ? "already visited" : "max depth reached" });
+      continue;
+    }
     visited.add(address);
+
+    // Create logEntry before fetch so rate-limit/error exits are visible in bfsLog
+    const logEntry: BfsLogEntry = {
+      address,
+      depth,
+      nativeTxCount: 0,
+      tokenTxCount: 0,
+      outgoingCount: 0,
+    };
 
     // Fetch both native and token transfers in parallel; handle rate-limit gracefully
     let nativeTxs: NormalizedTx[], tokenTxs: NormalizedTx[];
@@ -320,6 +332,8 @@ async function traceEvm(
     } catch (err) {
       if (err instanceof RateLimitError) {
         // M4: annotate last hop and surface warning; don't lose what we have
+        logEntry.skipReason = "rate limit hit";
+        bfsLog?.push(logEntry);
         if (hops.length > 0) hops[hops.length - 1] = { ...hops[hops.length - 1], partial_trace: true };
         break;
       }
@@ -343,13 +357,9 @@ async function traceEvm(
       .filter(tx => tx.from === address)
       .sort((a, b) => a.timestamp - b.timestamp); // chronological
 
-    const logEntry: BfsLogEntry = {
-      address,
-      depth,
-      nativeTxCount: nativeTxs.filter(t => t.from === address).length,
-      tokenTxCount: tokenTxs.filter(t => t.from === address).length,
-      outgoingCount: outgoing.length,
-    };
+    logEntry.nativeTxCount = nativeTxs.filter(t => t.from === address).length;
+    logEntry.tokenTxCount = tokenTxs.filter(t => t.from === address).length;
+    logEntry.outgoingCount = outgoing.length;
 
     if (!outgoing.length) {
       logEntry.skipReason = "no outgoing txs found";
