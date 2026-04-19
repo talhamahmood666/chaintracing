@@ -34,6 +34,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           { href: '/admin/users', label: 'Users' },
           { href: '/admin/scam-db', label: 'Scam DB' },
           { href: '/admin/submissions', label: 'Submissions' },
+          { href: '/admin/community-reports', label: 'Community Reports' },
         ].map(({ href, label }) => (
           <Link key={href} href={href}
             className="font-medium transition-colors hover:text-white"

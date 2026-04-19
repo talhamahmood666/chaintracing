@@ -12,21 +12,22 @@ import {
   Wallet, Banknote, Clock, HelpCircle, ChevronDown, ChevronUp
 } from "lucide-react";
 
-async function getSsrStats(): Promise<{ reportsCount: number; flaggedCount: number }> {
+async function getSsrStats(): Promise<{ reportsCount: number; flaggedCount: number; communityReportsCount: number }> {
   try {
     const supabase = getAdminClient();
-    const [{ count: reports }, { count: flagged }] = await Promise.all([
+    const [{ count: reports }, { count: flagged }, { count: community }] = await Promise.all([
       supabase.from('reports').select('*', { count: 'exact', head: true }),
       supabase.from('scam_addresses').select('*', { count: 'exact', head: true }),
+      supabase.from('user_reports').select('*', { count: 'exact', head: true }),
     ]);
-    return { reportsCount: reports ?? 0, flaggedCount: flagged ?? 0 };
+    return { reportsCount: reports ?? 0, flaggedCount: flagged ?? 0, communityReportsCount: community ?? 0 };
   } catch {
-    return { reportsCount: 0, flaggedCount: 0 };
+    return { reportsCount: 0, flaggedCount: 0, communityReportsCount: 0 };
   }
 }
 
 export default async function HomePage() {
-  const { reportsCount, flaggedCount } = await getSsrStats();
+  const { reportsCount, flaggedCount, communityReportsCount } = await getSsrStats();
   const formattedCount = new Intl.NumberFormat('en-US').format(reportsCount);
 
   return (
@@ -56,7 +57,7 @@ export default async function HomePage() {
               Professional forensic lab — follow stolen crypto hop-by-hop across 8 blockchains. Free risk score, paid evidence reports.
             </p>
 
-            <AnimatedStatsCounter reportsCount={reportsCount} flaggedCount={flaggedCount} />
+            <AnimatedStatsCounter reportsCount={reportsCount} flaggedCount={flaggedCount} communityReportsCount={communityReportsCount} />
 
             <a
               href="#hero-form-anchor"

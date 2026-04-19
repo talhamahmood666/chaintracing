@@ -26,6 +26,13 @@ export default function Header() {
             Pricing
           </Link>
           <Link
+            href="/report-scammer"
+            className="text-sm font-semibold transition-colors duration-200"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            Report Scammer
+          </Link>
+          <Link
             href="/about"
             className="text-sm font-semibold transition-colors duration-200"
             style={{ color: 'var(--text-secondary)' }}
