@@ -142,12 +142,15 @@ async function _pace(chainId: string): Promise<void> {
   _chainLastCall.set(chainId, Date.now());
 }
 
-// Retry backoff delays in ms: attempt 0→250ms, attempt 1→1000ms, attempt 2→throw
-const RATE_BACKOFFS = [250, 1000];
+// Retry backoff delays in ms: attempt 0→250ms, attempt 1→1000ms, attempt 2→4000ms, attempt 3→throw
+const RATE_BACKOFFS = [250, 1000, 4000];
+const MAX_NETWORK_RETRIES = 3;
+const NETWORK_BACKOFFS = [500, 2000, 8000];
 
 async function etherscanFetch(
   params: Record<string, string>,
-  attempt = 0
+  attempt = 0,
+  networkRetry = 0
 ): Promise<unknown[]> {
   await _pace(params.chainid ?? "default");
   const p = new URLSearchParams({
@@ -155,24 +158,32 @@ async function etherscanFetch(
     apikey: env.ETHERSCAN_API_KEY ?? "",
   });
   try {
-    const res = await fetch(`${ETHERSCAN_V2}?${p}`, { next: { revalidate: 60 } });
+    const res = await fetch(`${ETHERSCAN_V2}?${p}`, { 
+      next: { revalidate: 60 },
+      signal: AbortSignal.timeout(15000)
+    });
     if (res.status === 429) {
+      console.log(`[ETHERSCAN] Rate limit (429) on chain ${params.chainid ?? "unknown"}, attempt ${attempt}`);
       if (attempt < RATE_BACKOFFS.length) {
         await new Promise(r => setTimeout(r, RATE_BACKOFFS[attempt]));
-        return etherscanFetch(params, attempt + 1);
+        return etherscanFetch(params, attempt + 1, networkRetry);
       }
       throw new RateLimitError(params.chainid ?? "unknown");
     }
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.log(`[ETHERSCAN] HTTP ${res.status} on chain ${params.chainid ?? "unknown"}`);
+      return [];
+    }
     const json = await res.json();
     if (
       (json.status === "0" || json.status === 0) &&
       typeof json.result === "string" &&
       json.result.toLowerCase().includes("rate limit")
     ) {
+      console.log(`[ETHERSCAN] Status 0 rate limit on chain ${params.chainid ?? "unknown"}, attempt ${attempt}`);
       if (attempt < RATE_BACKOFFS.length) {
         await new Promise(r => setTimeout(r, RATE_BACKOFFS[attempt]));
-        return etherscanFetch(params, attempt + 1);
+        return etherscanFetch(params, attempt + 1, networkRetry);
       }
       throw new RateLimitError(params.chainid ?? "unknown");
     }
@@ -181,6 +192,16 @@ async function etherscanFetch(
     return Array.isArray(result) ? result : [];
   } catch (err) {
     if (err instanceof RateLimitError) throw err;
+    
+    // Retry network errors (ETIMEDOUT, ECONNRESET, etc.)
+    if (networkRetry < MAX_NETWORK_RETRIES) {
+      const delay = NETWORK_BACKOFFS[networkRetry];
+      console.log(`[ETHERSCAN] Network error (${(err as Error)?.name || 'unknown'}), retry ${networkRetry + 1}/${MAX_NETWORK_RETRIES} after ${delay}ms`);
+      await new Promise(r => setTimeout(r, delay));
+      return etherscanFetch(params, attempt, networkRetry + 1);
+    }
+    
+    console.log(`[ETHERSCAN] Network error after ${MAX_NETWORK_RETRIES} retries:`, (err as Error)?.message || (err as Error)?.name);
     return [];
   }
 }
@@ -344,13 +365,24 @@ async function traceEvm(
     { address: startAddress.toLowerCase(), depth: 0 },
   ];
 
+  console.log(`[TRACE] Starting BFS: startAddress=${startAddress}, chain=${chain}, maxDepth=${maxDepth}`);
+  console.log(`[TRACE] Initial queue size: ${queue.length}, seedVisited size: ${visited.size}`);
+
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
     if (!item) break;
     const { address, depth } = item;
+    console.log(`[TRACE] Processing: hop=${hops.length + 1}, depth=${depth}, address=${address}, queueRemaining=${queue.length}, visited=${visited.size}, maxDepth=${maxDepth}`);
 
-    if (visited.has(address) || depth >= maxDepth) {
-      bfsLog?.push({ address, depth, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: visited.has(address) ? "already visited" : "max depth reached" });
+    if (visited.has(address)) {
+      console.log(`[TRACE] Skipping ${address}: already visited`);
+      bfsLog?.push({ address, depth, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "already visited" });
+      continue;
+    }
+    if (depth >= maxDepth) {
+      console.log(`[TRACE] Skipping ${address}: depth ${depth} >= maxDepth ${maxDepth}`);
+      bfsLog?.push({ address, depth, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "max depth reached" });
+      visited.add(address);
       continue;
     }
     visited.add(address);
@@ -370,13 +402,16 @@ async function traceEvm(
       const fetched = await fetchWithCache(address, config, txCache);
       nativeTxs = fetched.native;
       tokenTxs = fetched.token;
+      console.log(`[TRACE] Fetched for ${address}: native ${nativeTxs.length}, token ${tokenTxs.length}, cache size ${txCache.size}`);
     } catch (err) {
       if (err instanceof RateLimitError) {
         logEntry.skipReason = "rate limit hit";
         bfsLog?.push(logEntry);
         if (hops.length > 0) hops[hops.length - 1] = { ...hops[hops.length - 1], partial_trace: true };
-        break;
+        console.log(`[TRACE] Rate limit reached at hop ${hops.length + 1}, marking previous hop as partial_trace, continuing with queue (${queue.length} remaining)`);
+        continue; // Continue with other addresses in queue, don't break entire BFS
       }
+      console.log(`[TRACE] Unexpected error at hop ${hops.length + 1}, address ${address}:`, (err as Error)?.message || (err as Error)?.name);
       throw err;
     }
 
@@ -464,9 +499,12 @@ async function traceEvm(
     // CEX reached = successful termination; clear any partial_trace that may have been
     // set on an earlier hop to avoid false "incomplete" warnings in the UI.
     if (cexMatch) {
+      console.log(`[TRACE] CEX destination found at hop ${hops.length}: ${cexMatch.label} (${dest}), terminating successfully`);
       for (const h of hops) delete (h as Partial<Hop>).partial_trace;
       break;
     }
+
+    console.log(`[TRACE] Added hop ${hops.length}: ${address} → ${dest} (${bestTx.token} ${bestTx.valueHuman}), pushing dest to queue`);
 
     queue.push({ address: dest, depth: depth + 1 });
   }
