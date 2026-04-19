@@ -131,6 +131,89 @@ export class RateLimitError extends Error {
   }
 }
 
+// ─── Ankr fallback ────────────────────────────────────────────────────────────
+
+const ANKR_CHAIN_MAP: Record<string, string> = {
+  "1": "eth",
+  "56": "bsc",
+  "137": "polygon",
+  "42161": "arbitrum",
+  "8453": "base",
+};
+
+interface AnkrTx {
+  hash: string;
+  from: string;
+  to: string | null;
+  value: string;      // hex wei
+  blockNumber: string; // hex
+  timestamp: string;   // hex seconds
+  status?: string;     // hex "0x1" success
+}
+
+interface AnkrResponse {
+  result?: { transactions?: AnkrTx[] };
+  error?: { message: string };
+}
+
+async function fetchFromAnkr(
+  address: string,
+  chainId: string,
+  nativeToken: string
+): Promise<NormalizedTx[]> {
+  const key = env.ANKR_API_KEY ?? "";
+  if (!key) {
+    console.log(`[ANKR] no key configured, skipping fallback`);
+    return [];
+  }
+  const blockchain = ANKR_CHAIN_MAP[chainId];
+  if (!blockchain) return [];
+
+  try {
+    const res = await fetch(`https://rpc.ankr.com/multichain/${key}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "ankr_getTransactionsByAddress",
+        params: {
+          blockchain: [blockchain],
+          address: [address],
+          pageSize: 100,
+          descOrder: false,
+        },
+      }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) {
+      console.log(`[ANKR] HTTP ${res.status} on ${blockchain}`);
+      return [];
+    }
+    const json = (await res.json()) as AnkrResponse;
+    const txs = json.result?.transactions ?? [];
+    return txs
+      .filter(tx => tx.to && (tx.status === undefined || tx.status === "0x1"))
+      .map(tx => {
+        const valBig = BigInt(tx.value || "0x0");
+        return {
+          hash: tx.hash,
+          from: tx.from.toLowerCase(),
+          to: (tx.to ?? "").toLowerCase(),
+          valueRaw: valBig.toString(),
+          valueHuman: (Number(valBig) / 1e18).toFixed(6),
+          token: nativeToken,
+          blockNumber: parseInt(tx.blockNumber, 16),
+          timestamp: parseInt(tx.timestamp, 16),
+        };
+      })
+      .filter(tx => BigInt(tx.valueRaw) > 0n);
+  } catch (err) {
+    console.log(`[ANKR] fetch error on ${blockchain}:`, (err as Error)?.message);
+    return [];
+  }
+}
+
 // Per-chain pacing: track last request time so we stay under 5 req/sec.
 const _chainLastCall: Map<string, number> = new Map();
 const PACE_MS = 220; // ~4.5 req/sec, safely under the 5/sec free-tier limit
@@ -338,8 +421,29 @@ async function fetchWithCache(
     return { native: hit.native, token: hit.token };
   }
   // Sequential to stay under Etherscan's 5 req/s free-tier limit
-  const native = await fetchNativeTxs(address, config);
-  const token = await fetchTokenTxs(address, config);
+  let native: NormalizedTx[] = [];
+  let token: NormalizedTx[] = [];
+  let rateLimited = false;
+  try {
+    native = await fetchNativeTxs(address, config);
+    token = await fetchTokenTxs(address, config);
+  } catch (err) {
+    if (err instanceof RateLimitError) {
+      rateLimited = true;
+    } else {
+      throw err;
+    }
+  }
+
+  if ((rateLimited || (native.length === 0 && token.length === 0)) && env.ANKR_API_KEY) {
+    console.log(`[ANKR] fallback used for ${address} on chain ${config.chainId}`);
+    const ankrNative = await fetchFromAnkr(address, config.chainId, config.nativeToken);
+    native = ankrNative;
+    token = [];
+  } else if (rateLimited) {
+    throw new RateLimitError(config.chainId);
+  }
+
   cache.set(address, { native, token, fetchedAt: Date.now() });
   return { native, token };
 }
