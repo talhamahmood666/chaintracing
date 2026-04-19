@@ -991,6 +991,7 @@ export async function continueTrace(
     priorVisited.add(h.from.toLowerCase());
     priorVisited.add(h.to.toLowerCase());
   }
+  priorVisited.delete(lastDest.toLowerCase());
 
   let extraHops: Hop[];
   switch (chain) {
