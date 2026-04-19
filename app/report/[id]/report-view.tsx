@@ -189,7 +189,7 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
 
       {/* Chart */}
       <div className="mb-6">
-        <TransactionFlowGraph hops={report.hops} />
+        <TransactionFlowGraph hops={report.hops} isPaid={isPaid} />
       </div>
 
       {/* Upsell — post-scan tier cards */}

@@ -368,7 +368,9 @@ export async function POST(request: NextRequest) {
       amount: pd.amount as string,
       currency: pd.currency as string,
       qrCode: pd.qr_code as string,
-      expiresAt: pd.expire_utc as string,
+      // expire_utc from Plisio is a Unix timestamp in seconds — convert to ISO so
+      // new Date(expiresAt) works correctly in the pay page (avoids ×1000 confusion).
+      expiresAt: new Date((pd.expire_utc as number) * 1000).toISOString(),
       txnId: pd.txn_id as string,
     };
 

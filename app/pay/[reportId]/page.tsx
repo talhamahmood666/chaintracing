@@ -13,11 +13,16 @@ interface PaymentData {
   txnId: string;
 }
 
-function useCountdown(expiresAt: string | undefined) {
-  const [secs, setSecs] = useState<number>(0);
+function useCountdown(expiresAt: string | undefined): number | null {
+  // null = not yet initialised (avoid false "expired" on first render)
+  const [secs, setSecs] = useState<number | null>(null);
   useEffect(() => {
     if (!expiresAt) return;
-    const calc = () => Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000));
+    // Guard: if expiresAt looks like a bare Unix timestamp in seconds, convert it.
+    const ms = /^\d{9,11}$/.test(expiresAt.trim())
+      ? Number(expiresAt) * 1000
+      : new Date(expiresAt).getTime();
+    const calc = () => Math.max(0, Math.floor((ms - Date.now()) / 1000));
     setSecs(calc());
     const id = setInterval(() => setSecs(calc()), 1000);
     return () => clearInterval(id);
@@ -46,9 +51,11 @@ export default function PayPage() {
 
   const secs = useCountdown(paymentData?.expiresAt);
 
+  // Only mark expired once the countdown has initialised (secs !== null) and
+  // actually reached zero — prevents false-positive on first render.
   useEffect(() => {
     if (secs === 0 && paymentData) setExpired(true);
-  }, [secs, paymentData]);
+  }, [secs, paymentData]); // secs===null is never 0, so this is safe
 
   useEffect(() => {
     if (!reportId || !token) return;
@@ -70,8 +77,11 @@ export default function PayPage() {
         if (d.paymentData) {
           const pd: PaymentData = d.paymentData;
           // If already expired on load, show expired (CTA to restart — handled below)
-          if (pd.expiresAt && new Date(pd.expiresAt).getTime() < Date.now()) {
-            setExpired(true);
+          if (pd.expiresAt) {
+            const ms = /^\d{9,11}$/.test(pd.expiresAt.trim())
+              ? Number(pd.expiresAt) * 1000
+              : new Date(pd.expiresAt).getTime();
+            if (ms < Date.now()) setExpired(true);
           }
           setPaymentData(pd);
         }
@@ -127,8 +137,9 @@ export default function PayPage() {
     );
   }
 
-  const pct = paymentData.expiresAt
-    ? Math.min(100, (secs / Math.max(1, Math.floor((new Date(paymentData.expiresAt).getTime() - Date.now() + secs * 1000) / 1000))) * 100)
+  const secsNum = secs ?? 0;
+  const pct = paymentData.expiresAt && secs !== null
+    ? Math.min(100, (secsNum / Math.max(1, Math.floor((new Date(paymentData.expiresAt).getTime() - Date.now() + secsNum * 1000) / 1000))) * 100)
     : 100;
 
   return (
@@ -154,12 +165,12 @@ export default function PayPage() {
         <div className="mb-5">
           <div className="flex justify-between text-xs mb-1" style={{ color: 'var(--text-muted)' }}>
             <span>Time remaining</span>
-            <span className="font-mono font-bold" style={{ color: secs < 120 ? '#FF4757' : 'var(--text-primary)' }}>{fmt(secs)}</span>
+            <span className="font-mono font-bold" style={{ color: secsNum < 120 ? '#FF4757' : 'var(--text-primary)' }}>{secs !== null ? fmt(secsNum) : '—'}</span>
           </div>
           <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
             <div
               className="h-full rounded-full transition-all duration-1000"
-              style={{ width: `${pct}%`, background: secs < 120 ? '#FF4757' : '#00D9FF' }}
+              style={{ width: `${pct}%`, background: secsNum < 120 ? '#FF4757' : '#00D9FF' }}
             />
           </div>
         </div>
