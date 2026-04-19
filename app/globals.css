@@ -188,6 +188,8 @@ body {
 
 ::selection { background: rgba(0,217,255,0.25); color: #fff; }
 
+select, select option { color: #E8F4FD; background: #0D1B2A; }
+
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
