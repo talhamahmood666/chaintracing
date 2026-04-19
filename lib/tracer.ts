@@ -643,6 +643,22 @@ async function traceSolana(
   ];
 
   const apiKey = env.SOLSCAN_API_KEY ?? "";
+  console.log(`[SOLSCAN] key length: ${apiKey.length}, address: ${startAddress}, maxDepth: ${maxDepth}`);
+
+  const solscanFetch = async (url: string, tag: string): Promise<{ data: SolscanTx[] }> => {
+    try {
+      const r = await fetch(url, { headers: { token: apiKey }, next: { revalidate: 60 } });
+      if (!r.ok) {
+        const body = await r.text().catch(() => "");
+        console.log(`[SOLSCAN] ${tag} HTTP ${r.status}: ${body.slice(0, 200)}`);
+        return { data: [] };
+      }
+      return await r.json();
+    } catch (err) {
+      console.log(`[SOLSCAN] ${tag} fetch error: ${(err as Error)?.message}`);
+      return { data: [] };
+    }
+  };
 
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
@@ -653,14 +669,14 @@ async function traceSolana(
 
     // Fetch both SOL native and SPL token transfers
     const [solRes, splRes] = await Promise.all([
-      fetch(
+      solscanFetch(
         `https://pro-api.solscan.io/v2.0/account/transfer?address=${address}&page=1&page_size=50&sort_by=block_time&sort_order=asc`,
-        { headers: { token: apiKey }, next: { revalidate: 60 } }
-      ).then(r => r.ok ? r.json() : { data: [] }).catch(() => ({ data: [] })),
-      fetch(
+        "native"
+      ),
+      solscanFetch(
         `https://pro-api.solscan.io/v2.0/account/token/transfer?address=${address}&page=1&page_size=50&sort_by=block_time&sort_order=asc`,
-        { headers: { token: apiKey }, next: { revalidate: 60 } }
-      ).then(r => r.ok ? r.json() : { data: [] }).catch(() => ({ data: [] })),
+        "token"
+      ),
     ]);
 
     const solTxs: SolscanTx[] = Array.isArray(solRes?.data) ? solRes.data : [];
@@ -671,6 +687,8 @@ async function traceSolana(
     const outgoing = combined
       .filter(tx => tx.from_address === address)
       .sort((a, b) => a.block_time - b.block_time);
+
+    console.log(`[SOLSCAN] native txs: ${solTxs.length}, token txs: ${splTxs.length}, outgoing: ${outgoing.length}`);
 
     const logEntry: BfsLogEntry = {
       address, depth,
