@@ -52,10 +52,11 @@ export default function PricingTiers({
               ✓ Completed
             </span>
           </div>
-          <div className="mb-4 mt-2">
-            <h3 className="text-base font-black uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>Free Scan</h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-black font-mono" style={{ color: 'var(--text-muted)' }}>$0</span>
+          <div className="flex items-center justify-between mb-5 mt-2">
+            <h3 className="text-sm font-black uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Free Scan</h3>
+            <div className="text-right">
+              <span className="text-3xl font-black font-mono" style={{ color: 'var(--text-muted)' }}>FREE</span>
+              <p className="text-xs font-bold mt-0.5" style={{ color: '#00E676' }}>✓ Included</p>
             </div>
           </div>
           <ul className="space-y-2 text-sm">
@@ -76,11 +77,11 @@ export default function PricingTiers({
                 style={{ background: '#00D9FF', color: '#0A1628' }}>50% OFF</span>
             </div>
           )}
-          <div className="mb-4 mt-2">
-            <h3 className="text-lg font-black uppercase tracking-widest mb-1" style={{ color: '#00D9FF' }}>Quick Scan</h3>
-            <div className="flex items-baseline gap-1">
+          <div className="flex items-center justify-between mb-5 mt-2">
+            <h3 className="text-sm font-black uppercase tracking-widest" style={{ color: '#00D9FF' }}>Quick Scan</h3>
+            <div className="text-right">
               <span className="text-3xl font-black font-mono" style={{ color: '#00D9FF' }}>{quickPrice}</span>
-              {firstReportDiscount && <span className="text-sm line-through" style={{ color: 'var(--text-muted)' }}>$9.99</span>}
+              {firstReportDiscount && <p className="text-xs line-through mt-0.5" style={{ color: 'var(--text-muted)' }}>$9.99</p>}
             </div>
           </div>
           <ul className="space-y-2 mb-6 text-sm">
@@ -97,7 +98,7 @@ export default function PricingTiers({
             className="block w-full py-3 rounded-xl font-black text-sm text-center transition-all duration-200"
             style={{ background: 'linear-gradient(135deg, #00D9FF, #0099BB)', color: '#0A1628', cursor: loadingTier ? 'wait' : 'pointer', opacity: loadingTier === 'deep' ? 0.5 : 1 }}
           >
-            {loadingTier === 'quick' ? 'Redirecting…' : 'Unlock Quick Scan →'}
+            {loadingTier === 'quick' ? 'Redirecting…' : `Unlock Quick Scan — ${quickPrice}`}
           </button>
         </div>
 
@@ -109,11 +110,11 @@ export default function PricingTiers({
               {firstReportDiscount ? '50% OFF' : '⭐ Recommended'}
             </span>
           </div>
-          <div className="mb-4 mt-2">
-            <h3 className="text-lg font-black uppercase tracking-widest mb-1" style={{ color: '#FFA500' }}>Deep Trace</h3>
-            <div className="flex items-baseline gap-1">
+          <div className="flex items-center justify-between mb-5 mt-2">
+            <h3 className="text-sm font-black uppercase tracking-widest" style={{ color: '#FFA500' }}>Deep Trace</h3>
+            <div className="text-right">
               <span className="text-3xl font-black font-mono" style={{ color: '#FFA500' }}>{deepPrice}</span>
-              {firstReportDiscount && <span className="text-sm line-through" style={{ color: 'var(--text-muted)' }}>$29.99</span>}
+              {firstReportDiscount && <p className="text-xs line-through mt-0.5" style={{ color: 'var(--text-muted)' }}>$29.99</p>}
             </div>
           </div>
           <ul className="space-y-2 mb-6 text-sm">
@@ -130,7 +131,7 @@ export default function PricingTiers({
             className="block w-full py-3 rounded-xl font-black text-sm text-center transition-all duration-200"
             style={{ background: 'linear-gradient(135deg, #FFA500, #CC8800)', color: '#0A1628', cursor: loadingTier ? 'wait' : 'pointer', opacity: loadingTier === 'quick' ? 0.5 : 1 }}
           >
-            {loadingTier === 'deep' ? 'Redirecting…' : 'Unlock Deep Trace →'}
+            {loadingTier === 'deep' ? 'Redirecting…' : `Unlock Deep Trace — ${deepPrice}`}
           </button>
         </div>
       </div>
