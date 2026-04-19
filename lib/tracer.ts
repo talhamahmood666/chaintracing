@@ -435,7 +435,11 @@ async function fetchWithCache(
     }
   }
 
-  if ((rateLimited || (native.length === 0 && token.length === 0)) && env.ANKR_API_KEY) {
+  const lower = address.toLowerCase();
+  const hasOutgoing =
+    native.some(t => t.from === lower) || token.some(t => t.from === lower);
+
+  if ((rateLimited || (native.length === 0 && token.length === 0) || !hasOutgoing) && env.ANKR_API_KEY) {
     console.log(`[ANKR] fallback used for ${address} on chain ${config.chainId}`);
     const ankrNative = await fetchFromAnkr(address, config.chainId, config.nativeToken);
     native = ankrNative;
