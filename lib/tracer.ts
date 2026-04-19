@@ -337,11 +337,9 @@ async function fetchWithCache(
   if (hit && Date.now() - hit.fetchedAt < TX_CACHE_TTL_MS) {
     return { native: hit.native, token: hit.token };
   }
-  // Both fetches in parallel — halves wall time per hop
-  const [native, token] = await Promise.all([
-    fetchNativeTxs(address, config),
-    fetchTokenTxs(address, config),
-  ]);
+  // Sequential to stay under Etherscan's 5 req/s free-tier limit
+  const native = await fetchNativeTxs(address, config);
+  const token = await fetchTokenTxs(address, config);
   cache.set(address, { native, token, fetchedAt: Date.now() });
   return { native, token };
 }
