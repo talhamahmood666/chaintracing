@@ -25,11 +25,13 @@ export default function DisclaimerBanner() {
       borderTop: "1px solid rgba(245,158,11,0.35)",
       borderBottom: "1px solid rgba(245,158,11,0.35)",
     }}>
-      <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center gap-3">
-        <span className="text-base flex-shrink-0" aria-hidden>⚠️</span>
-        <p className="flex-1 text-xs text-center" style={{ color: "rgba(245,158,11,0.95)" }}>
-          ChainTracing provides forensic evidence — we do not recover funds, contact exchanges, or represent you legally. Use our reports to support law enforcement filings.
-        </p>
+      <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center justify-between gap-2">
+        <div className="flex-1 flex items-center justify-center gap-2">
+          <span className="text-base flex-shrink-0" aria-hidden>⚠️</span>
+          <p className="text-xs" style={{ color: "rgba(245,158,11,0.95)" }}>
+            ChainTracing provides forensic evidence — we do not recover funds, contact exchanges, or represent you legally. Use our reports to support law enforcement filings.
+          </p>
+        </div>
         <button
           onClick={dismiss}
           aria-label="Dismiss disclaimer"
