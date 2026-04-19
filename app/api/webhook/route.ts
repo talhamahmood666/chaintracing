@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { getAdminClient } from "@/lib/supabase";
 import { logger } from "@/lib/logger";
 import { env } from "@/lib/config";
+import { generateNarrative, buildNarrativeInput } from "@/lib/ai-narrative";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -139,6 +140,28 @@ export async function POST(request: Request) {
     }
 
     logger.info("Report marked as paid", { orderId, txnId });
+
+    // Generate AI narrative for deep-tier reports (fire-and-forget, graceful degradation)
+    const { data: paidReport } = await db
+      .from("reports")
+      .select("address, chain, hops, risk_score, risk_flags, tier, ai_narrative")
+      .eq("id", orderId)
+      .single();
+
+    if (paidReport && paidReport.tier === "deep" && !paidReport.ai_narrative) {
+      (async () => {
+        try {
+          const input = buildNarrativeInput(paidReport as Parameters<typeof buildNarrativeInput>[0]);
+          const narrative = await generateNarrative(input);
+          if (narrative) {
+            await db.from("reports").update({ ai_narrative: narrative }).eq("id", orderId);
+            logger.info("AI narrative stored", { orderId });
+          }
+        } catch (err) {
+          logger.warn("AI narrative generation failed (non-fatal)", err);
+        }
+      })();
+    }
   }
 
   return new Response("OK", { status: 200 });

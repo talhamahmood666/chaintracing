@@ -4,6 +4,7 @@ import TraceForm from "@/components/TraceForm";
 import AnimatedStatsCounter from "@/components/AnimatedStatsCounter";
 import DisclaimerBanner from "@/components/DisclaimerBanner";
 import PricingTiers from "@/components/PricingTiers";
+import SampleReport from "@/components/SampleReport";
 import {
   Search, ArrowRight, Shield, FileText,
   Globe, AlertTriangle, Users, FileCheck, Scale, Zap,
@@ -213,6 +214,9 @@ export default async function HomePage() {
           <PricingTiers />
         </div>
       </section>
+
+      {/* f2) SAMPLE REPORT */}
+      <SampleReport />
 
       {/* g) TRUST STRIP */}
       <section className="py-16 px-4 border-y" style={{ borderColor: 'rgba(0,217,255,0.1)', background: 'rgba(10,22,40,0.4)' }}>

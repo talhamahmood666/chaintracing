@@ -339,6 +339,7 @@ export interface PdfReportProps {
   cluster?: ClusterResult;
   timingFlags?: TimingFlag[];
   scamDbMatches?: ScamDbMatchEntry[];
+  aiNarrative?: string;
 }
 
 export function ChainTracingReport({
@@ -355,6 +356,7 @@ export function ChainTracingReport({
   cluster,
   timingFlags,
   scamDbMatches,
+  aiNarrative,
 }: PdfReportProps) {
   const cexHop = hops.find((h) => h.label);
   const chainLabel = chain.toUpperCase();
@@ -416,6 +418,17 @@ export function ChainTracingReport({
           </View>
         </View>
         <Text style={styles.riskSummary}>{riskSummary}</Text>
+
+        {/* AI Analyst Summary */}
+        {aiNarrative && (
+          <>
+            <Text style={styles.sectionTitle}>Analyst Summary</Text>
+            <View style={{ backgroundColor: "#eff6ff", borderRadius: 4, padding: 10, marginBottom: 10, borderLeftWidth: 3, borderLeftColor: "#2563eb" }}>
+              <Text style={{ fontSize: 8, fontFamily: "Helvetica-Bold", color: "#2563eb", marginBottom: 4 }}>AI-GENERATED · BLOCKCHAIN FORENSICS ANALYSIS</Text>
+              <Text style={{ fontSize: 10, color: "#1e3a5f", lineHeight: 1.6 }}>{aiNarrative}</Text>
+            </View>
+          </>
+        )}
 
         {/* Methodology warning — single-path BFS disclosure */}
         <View style={styles.methodologyWarning}>

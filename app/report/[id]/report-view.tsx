@@ -7,6 +7,7 @@ import TransactionFlowGraph from "@/components/TransactionFlowGraph";
 import ShareButtons from "@/components/ShareButtons";
 import RiskMeter from "@/components/RiskMeter";
 import type { Hop } from "@/lib/tracer";
+import PricingTiers from "@/components/PricingTiers";
 
 interface Props {
   report: any;
@@ -31,7 +32,7 @@ function HopTag({ label, bg, color }: { label: string; bg: string; color: string
 
 export default function ReportView({ report, viewToken, isPaid = false, deepScanAvailable = true, allHops, totalHopCount }: Props) {
   const [user, setUser] = useState<any>(null);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState<"quick" | "deep" | null>(null);
   const [firstReportDiscount, setFirstReportDiscount] = useState(false);
 
   useEffect(() => {
@@ -43,21 +44,21 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
     });
   }, []);
 
-  const handleCheckout = async () => {
-    setCheckoutLoading(true);
+  const handleCheckout = async (tier: "quick" | "deep" = "quick") => {
+    setCheckoutLoading(tier);
     // Use allHops (full detected hops) — not the truncated visible subset
     const hopsForCheckout = allHops ?? report.hops;
     const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reportId: report.id, address: report.address, chain: report.chain, hops: hopsForCheckout }),
+      body: JSON.stringify({ reportId: report.id, address: report.address, chain: report.chain, hops: hopsForCheckout, tier }),
     });
     const data = await res.json();
     if (data.adminBypass && data.reportId && data.viewToken) {
       window.location.href = `/report/${data.reportId}?token=${data.viewToken}&admin=1`;
     } else if (data.reportId && data.viewToken) {
       window.location.href = `/pay/${data.reportId}?token=${data.viewToken}`;
-    } else { alert("Checkout failed. Please try again."); setCheckoutLoading(false); }
+    } else { alert("Checkout failed. Please try again."); setCheckoutLoading(null); }
   };
 
   const handleDownloadPdf = async () => {
@@ -97,7 +98,9 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
         )}
       </div>
 
-      <ShareButtons reportId={report.id} address={report.address} chain={report.chain} hopCount={report.hops.length} riskScore={totalRisk} />
+      <div style={{ position: 'relative', zIndex: 0 }}>
+        <ShareButtons reportId={report.id} address={report.address} chain={report.chain} hopCount={report.hops.length} riskScore={totalRisk} />
+      </div>
 
       {/* L3: post-payment discount confirmation */}
       {isPaid && report.discount_applied && (
@@ -189,34 +192,67 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
         <TransactionFlowGraph hops={report.hops} />
       </div>
 
-      {/* Upsell */}
+      {/* Upsell — post-scan tier cards */}
       {!isPaid && deepScanAvailable && (
-        <div className="glass rounded-2xl p-6 mb-6" style={{ border: '1px solid rgba(0,217,255,0.25)', background: 'rgba(0,217,255,0.04)' }}>
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
-                  Showing {report.hops.length} of {totalHopCount ?? report.hops.length} detected hops
-                </h2>
-                {firstReportDiscount && (
-                  <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'rgba(0,230,118,0.15)', color: '#00E676', border: '1px solid rgba(0,230,118,0.3)' }}>
-                    50% OFF — first report
-                  </span>
-                )}
-              </div>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                Unlock full trace to reveal exchange deposits, mixer outputs, and destination.
-                {firstReportDiscount && ' Quick Scan $4.99 · Deep Trace $14.99 for account holders.'}
-              </p>
+        <div className="mb-6">
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
+                Showing {report.hops.length} of {totalHopCount ?? report.hops.length} detected hops
+              </h2>
+              {firstReportDiscount && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'rgba(0,230,118,0.15)', color: '#00E676', border: '1px solid rgba(0,230,118,0.3)' }}>
+                  🎁 50% OFF — first report
+                </span>
+              )}
             </div>
-            <button
-              onClick={handleCheckout}
-              disabled={checkoutLoading}
-              className="px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200"
-              style={{ background: 'linear-gradient(135deg, #00D9FF, #0099BB)', color: '#0A1628', cursor: checkoutLoading ? 'wait' : 'pointer' }}
-            >
-              {checkoutLoading ? 'Redirecting…' : 'Reveal Full Trace →'}
-            </button>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              Unlock full trace to reveal exchange deposits, mixer outputs, and destination.
+            </p>
+          </div>
+          <PricingTiers
+            postScan
+            onSelectTier={handleCheckout}
+            loadingTier={checkoutLoading}
+            firstReportDiscount={firstReportDiscount}
+          />
+        </div>
+      )}
+
+      {/* Analyst Summary (AI narrative) */}
+      {isPaid && report.ai_narrative && (
+        <div className="glass rounded-2xl p-6 mb-6" style={{ border: '1px solid rgba(0,217,255,0.2)', background: 'rgba(0,217,255,0.03)' }}>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#00D9FF' }}>Analyst Summary</span>
+            <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'rgba(0,217,255,0.12)', color: '#00D9FF', border: '1px solid rgba(0,217,255,0.25)' }}>AI-Generated</span>
+          </div>
+          <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: 'var(--text-secondary)' }}>
+            {report.ai_narrative}
+          </p>
+        </div>
+      )}
+
+      {/* Analyst Summary teaser (free tier) */}
+      {!isPaid && report.ai_narrative && (
+        <div className="glass rounded-2xl p-6 mb-6 relative overflow-hidden" style={{ border: '1px solid rgba(0,217,255,0.15)' }}>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#00D9FF' }}>Analyst Summary</span>
+            <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'rgba(0,217,255,0.12)', color: '#00D9FF', border: '1px solid rgba(0,217,255,0.25)' }}>AI-Generated</span>
+          </div>
+          <p className="text-sm leading-relaxed mb-2" style={{ color: 'var(--text-secondary)' }}>
+            {report.ai_narrative.split('. ')[0]}.
+          </p>
+          <div className="relative">
+            <p className="text-sm leading-relaxed blur-sm select-none" style={{ color: 'var(--text-secondary)' }}>
+              {report.ai_narrative.split('. ').slice(1).join('. ')}
+            </p>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <button onClick={() => handleCheckout("quick")} disabled={!!checkoutLoading}
+                className="px-4 py-2 rounded-xl text-xs font-bold"
+                style={{ background: 'linear-gradient(135deg, #00D9FF, #0099BB)', color: '#0A1628' }}>
+                {checkoutLoading ? 'Redirecting…' : 'Unlock full analysis →'}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -327,7 +363,7 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
       )}
 
       {/* Footer actions — PDF only available on paid reports (H5) */}
-      {isPaid ? (
+      {isPaid || !deepScanAvailable ? (
         <div className="flex justify-end gap-3">
           <button
             onClick={handleDownloadPdf}

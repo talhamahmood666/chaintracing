@@ -90,6 +90,7 @@ export async function GET(
     cluster,
     timingFlags,
     scamDbMatches: scamDbMatches.length > 0 ? scamDbMatches : undefined,
+    aiNarrative: report.ai_narrative ?? undefined,
   });
 
   return new Response(new Uint8Array(buf), {

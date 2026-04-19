@@ -19,6 +19,13 @@ export default function Header() {
             Trace
           </Link>
           <Link
+            href="/#pricing"
+            className="text-sm font-semibold transition-colors duration-200"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            Pricing
+          </Link>
+          <Link
             href="/about"
             className="text-sm font-semibold transition-colors duration-200"
             style={{ color: 'var(--text-secondary)' }}
