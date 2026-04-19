@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import DisclaimerBanner from "@/components/DisclaimerBanner";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`} style={{ background: '#0A1628', colorScheme: 'dark' }}>
       <body className="lab-grid min-h-full flex flex-col" style={{ color: 'var(--text-primary)' }}>
+        <DisclaimerBanner />
         <Header />
         <main className="flex-1 relative z-10">{children}</main>
         <Footer />

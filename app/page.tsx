@@ -2,7 +2,6 @@ import { getAdminClient } from "@/lib/supabase";
 import ThreeBackground from "@/components/ThreeBackground";
 import TraceForm from "@/components/TraceForm";
 import AnimatedStatsCounter from "@/components/AnimatedStatsCounter";
-import DisclaimerBanner from "@/components/DisclaimerBanner";
 import PricingTiers from "@/components/PricingTiers";
 import SampleReport from "@/components/SampleReport";
 import {
@@ -33,7 +32,6 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen animate-fade-up">
       <ThreeBackground />
-      <DisclaimerBanner />
 
       {/* a) HERO — split layout */}
       <section id="trace-form" className="relative z-10 min-h-screen flex items-center">
