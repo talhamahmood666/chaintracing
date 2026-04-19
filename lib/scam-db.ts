@@ -6,6 +6,7 @@ export interface ScamMatch {
   sourceUrl?: string;
   confidenceScore: number;
   verified: boolean;
+  notes?: string;
 }
 
 // Lazy client — does not import lib/config.ts so no validateEnv() side-effect.
@@ -40,7 +41,7 @@ export async function lookupScamAddress(
     if (!db) return [];
     const { data, error } = await db
       .from("scam_addresses")
-      .select("category, source, source_url, confidence_score, verified")
+      .select("category, source, source_url, confidence_score, verified, notes")
       .eq("address", address.toLowerCase())
       .in("chain", isEvmChain(chain) ? [normalizeChain(chain), "evm-multi"] : [normalizeChain(chain)])
       .or("verified.eq.true,confidence_score.gte.50")
@@ -52,6 +53,7 @@ export async function lookupScamAddress(
       sourceUrl: row.source_url as string | undefined,
       confidenceScore: row.confidence_score as number,
       verified: row.verified as boolean,
+      notes: row.notes as string | undefined,
     }));
   } catch {
     return [];
@@ -76,7 +78,7 @@ export async function lookupScamAddressBatch(
     const lowerAddrs = [...new Set(addresses.map((a) => a.toLowerCase()))];
     const { data, error } = await db
       .from("scam_addresses")
-      .select("address, category, source, source_url, confidence_score, verified")
+      .select("address, category, source, source_url, confidence_score, verified, notes")
       .in("address", lowerAddrs)
       .in("chain", isEvmChain(chain) ? [searchChain, "evm-multi"] : [searchChain])
       .or("verified.eq.true,confidence_score.gte.50");
@@ -89,6 +91,7 @@ export async function lookupScamAddressBatch(
         sourceUrl: row.source_url as string | undefined,
         confidenceScore: row.confidence_score as number,
         verified: row.verified as boolean,
+        notes: row.notes as string | undefined,
       };
       const existing = result.get(key);
       if (existing) {

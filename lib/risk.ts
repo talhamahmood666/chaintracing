@@ -157,6 +157,19 @@ export async function scoreAddress(
       severity: maxConf >= 80 ? "critical" : "high",
       description: `This address appears in ${inputScamMatches.length} scam database entr${inputScamMatches.length !== 1 ? "ies" : "y"}. Categories: ${categories.join(", ")}. Sources: ${sources.join(", ")}.`,
     });
+
+    // Exploit-specific flags: surface the incident name and amount from notes
+    const exploitMatches = inputScamMatches.filter((m) => m.category === "exploit" && m.notes);
+    for (const match of exploitMatches) {
+      // notes format: "[Incident] — $[amount] — [attribution]"
+      const incidentLabel = match.notes!.split(" — ")[0];
+      flags.push({
+        id: `exploit_${incidentLabel.toLowerCase().replace(/\s+/g, "_")}`,
+        label: `Known Exploit Address: ${incidentLabel}`,
+        severity: "critical",
+        description: `Address involved in ${match.notes}. This address is a documented exploit wallet flagged by blockchain intelligence firms and law enforcement.`,
+      });
+    }
   }
 
   const scamHops = hops.filter(
@@ -176,6 +189,22 @@ export async function scoreAddress(
       severity: "high",
       description: `${totalHopMatches} scam database match${totalHopMatches !== 1 ? "es" : ""} found across ${scamHops.length} hop address${scamHops.length !== 1 ? "es" : ""} in the trace.`,
     });
+
+    // Exploit-specific flags for hops
+    for (const hop of scamHops) {
+      for (const match of hop.scamMatches ?? []) {
+        if (match.category === "exploit" && match.notes) {
+          const incidentLabel = match.notes.split(" — ")[0];
+          const hopAddr = hop.to;
+          flags.push({
+            id: `exploit_hop_${hopAddr.slice(2, 10)}`,
+            label: `Hop Linked to Known Exploit: ${incidentLabel}`,
+            severity: "critical",
+            description: `A hop address (${hopAddr.slice(0, 8)}…) is involved in ${match.notes}. Funds passing through known exploit wallets is a critical indicator.`,
+          });
+        }
+      }
+    }
   }
 
   // 1. Mixer interaction

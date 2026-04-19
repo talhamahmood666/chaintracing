@@ -13,7 +13,8 @@
     "ingest:eu": "tsx --env-file=.env.local scripts/ingest/ingest-eu-sanctions.ts",
     "ingest:eth-lists": "tsx --env-file=.env.local scripts/ingest/ingest-ethereum-lists-urls.ts",
     "ingest:etherscan-labels": "tsx --env-file=.env.local scripts/ingest/ingest-etherscan-labels.ts",
-    "ingest:all": "tsx --env-file=.env.local scripts/ingest/run-all.ts"
+    "ingest:all": "tsx --env-file=.env.local scripts/ingest/run-all.ts",
+    "ingest:hacks": "tsx --env-file=.env.local scripts/ingest/ingest-known-hacks.ts"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.4.1",
