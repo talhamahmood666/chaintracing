@@ -948,14 +948,20 @@ async function traceTron(
 
 const BTC_ADDRESS_RE = /^(1|3|bc1)[a-zA-Z0-9]{25,62}$/;
 
-interface BlockchairOutput {
-  recipient: string;
+interface MempoolVin {
+  prevout?: { scriptpubkey_address?: string; value?: number };
+}
+
+interface MempoolVout {
+  scriptpubkey_address?: string;
   value: number;
 }
 
-interface BlockchairTx {
-  transaction: { hash: string; block_id: number; time: string };
-  outputs: BlockchairOutput[];
+interface MempoolTx {
+  txid: string;
+  status: { block_height?: number; block_time?: number; confirmed: boolean };
+  vin: MempoolVin[];
+  vout: MempoolVout[];
 }
 
 async function traceBitcoin(
@@ -979,26 +985,31 @@ async function traceBitcoin(
     if (visited.has(address) || depth >= maxDepth) continue;
     visited.add(address);
 
-    let json: { data?: Record<string, { transactions?: BlockchairTx[] }> };
+    let txs: MempoolTx[] = [];
     try {
       const res = await fetch(
-        `https://api.blockchair.com/bitcoin/dashboards/address/${address}?limit=100&transaction_details=true`,
+        `https://mempool.space/api/address/${address}/txs`,
         { next: { revalidate: 60 }, signal: AbortSignal.timeout(15_000) }
       );
-      if (!res.ok) { bfsLog?.push({ address, depth, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "blockchair http error" }); continue; }
-      json = await res.json();
-    } catch {
-      bfsLog?.push({ address, depth, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "blockchair fetch error" });
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        console.log(`[MEMPOOL] HTTP ${res.status}: ${body.slice(0, 200)}`);
+        bfsLog?.push({ address, depth, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "mempool http error" });
+        continue;
+      }
+      const json = await res.json();
+      txs = Array.isArray(json) ? (json as MempoolTx[]) : [];
+    } catch (err) {
+      console.log(`[MEMPOOL] fetch error: ${(err as Error)?.message}`);
+      bfsLog?.push({ address, depth, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "mempool fetch error" });
       continue;
     }
 
-    const addrData = json.data?.[address];
-    const txs: BlockchairTx[] = addrData?.transactions ?? [];
-
     const outgoing = txs.filter(tx =>
-      tx.outputs.length > 0 &&
-      !tx.outputs.every(o => o.recipient === address)
+      tx.vin.some(v => v.prevout?.scriptpubkey_address === address)
     );
+
+    console.log(`[MEMPOOL] txs: ${txs.length}, outgoing: ${outgoing.length}`);
 
     const logEntry: BfsLogEntry = {
       address, depth,
@@ -1013,39 +1024,43 @@ async function traceBitcoin(
       continue;
     }
 
+    // mempool.space returns newest first; sort ascending by block_time for chronological flow
+    outgoing.sort((a, b) => (a.status.block_time ?? 0) - (b.status.block_time ?? 0));
+
     const outTx = outgoing[0];
-    const dest = outTx.outputs.find(o => o.recipient !== address);
-    if (!dest) {
+    const destVout = outTx.vout.find(o => o.scriptpubkey_address && o.scriptpubkey_address !== address);
+    if (!destVout || !destVout.scriptpubkey_address) {
       logEntry.skipReason = "no external recipient";
       bfsLog?.push(logEntry);
       continue;
     }
 
-    const timestamp = Math.floor(new Date(outTx.transaction.time).getTime() / 1000);
+    const dest = destVout.scriptpubkey_address;
+    const timestamp = outTx.status.block_time ?? 0;
     const prevHop = hops[hops.length - 1];
     const gapFromPrevSeconds = prevHop ? timestamp - prevHop.timestamp : undefined;
 
-    logEntry.chosenHash = outTx.transaction.hash;
-    logEntry.chosenTo = dest.recipient;
+    logEntry.chosenHash = outTx.txid;
+    logEntry.chosenTo = dest;
     logEntry.chosenToken = "BTC";
-    logEntry.chosenValue = (dest.value / 1e8).toFixed(8);
+    logEntry.chosenValue = (destVout.value / 1e8).toFixed(8);
     bfsLog?.push(logEntry);
 
     hops.push({
       hop: hops.length + 1,
       from: address,
-      to: dest.recipient,
-      value: (dest.value / 1e8).toFixed(8),
-      valueRaw: String(dest.value),
+      to: dest,
+      value: (destVout.value / 1e8).toFixed(8),
+      valueRaw: String(destVout.value),
       token: "BTC",
-      txHash: outTx.transaction.hash,
-      blockNumber: outTx.transaction.block_id,
+      txHash: outTx.txid,
+      blockNumber: outTx.status.block_height ?? 0,
       timestamp,
-      explorerUrl: `https://mempool.space/tx/${outTx.transaction.hash}`,
+      explorerUrl: `https://mempool.space/tx/${outTx.txid}`,
       gapFromPrevSeconds,
     });
 
-    queue.push({ address: dest.recipient, depth: depth + 1 });
+    queue.push({ address: dest, depth: depth + 1 });
   }
 
   return hops;
