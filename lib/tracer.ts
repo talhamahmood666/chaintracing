@@ -30,6 +30,7 @@ export interface Hop {
   gapFromPrevSeconds?: number;
   scamMatches?: ScamMatch[];
   partial_trace?: boolean;    // M4: stopped due to API rate limit
+  beyondCex?: boolean;
   likely_truncated?: boolean; // M7: fetch window maxed out — more hops may exist
 }
 
@@ -467,6 +468,7 @@ async function traceEvm(
   if (!config) throw new Error(`Unsupported chain: ${chain}`);
 
   const hops: Hop[] = [];
+  let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
   const txCache = new Map<string, TxCache>(); // per-trace address cache
   const queue: Array<{ address: string; depth: number }> = [
@@ -604,17 +606,23 @@ async function traceEvm(
       likely_truncated: windowFull || undefined, // M7
     });
 
-    // CEX reached = successful termination; clear any partial_trace that may have been
-    // set on an earlier hop to avoid false "incomplete" warnings in the UI.
-    if (cexMatch) {
-      console.log(`[TRACE] CEX destination found at hop ${hops.length}: ${cexMatch.label} (${dest}), terminating successfully`);
+    const currentHop = hops[hops.length - 1];
+    let stopAfter = false;
+    if (cexMatch && beyondCexRemaining === null) {
+      console.log(`[TRACE] CEX destination found at hop ${hops.length}: ${cexMatch.label} (${dest}), tracing up to 5 more hops beyond`);
       for (const h of hops) delete (h as Partial<Hop>).partial_trace;
-      break;
+      currentHop.beyondCex = false;
+      beyondCexRemaining = 5;
+    } else if (beyondCexRemaining !== null) {
+      currentHop.beyondCex = true;
+      beyondCexRemaining -= 1;
+      if (beyondCexRemaining <= 0) stopAfter = true;
     }
 
     console.log(`[TRACE] Added hop ${hops.length}: ${address} → ${dest} (${bestTx.token} ${bestTx.valueHuman}), pushing dest to queue`);
 
     queue.push({ address: dest, depth: depth + 1 });
+    if (stopAfter) break;
   }
 
   return hops;
@@ -650,6 +658,7 @@ async function traceSolana(
   seedVisited?: Set<string>
 ): Promise<Hop[]> {
   const hops: Hop[] = [];
+  let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
   const queue: Array<{ address: string; depth: number }> = [
     { address: startAddress, depth: 0 },
@@ -790,8 +799,18 @@ async function traceSolana(
       gapFromPrevSeconds,
     });
 
-    if (cexMatch) break;
+    const currentHop = hops[hops.length - 1];
+    let stopAfter = false;
+    if (cexMatch && beyondCexRemaining === null) {
+      currentHop.beyondCex = false;
+      beyondCexRemaining = 5;
+    } else if (beyondCexRemaining !== null) {
+      currentHop.beyondCex = true;
+      beyondCexRemaining -= 1;
+      if (beyondCexRemaining <= 0) stopAfter = true;
+    }
     queue.push({ address: dest, depth: depth + 1 });
+    if (stopAfter) break;
   }
 
   return hops;
@@ -806,6 +825,7 @@ async function traceTron(
   seedVisited?: Set<string>
 ): Promise<Hop[]> {
   const hops: Hop[] = [];
+  let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
   const queue: Array<{ address: string; depth: number }> = [
     { address: startAddress, depth: 0 },
@@ -939,8 +959,18 @@ async function traceTron(
       gapFromPrevSeconds,
     });
 
-    if (cexMatch) break;
+    const currentHop = hops[hops.length - 1];
+    let stopAfter = false;
+    if (cexMatch && beyondCexRemaining === null) {
+      currentHop.beyondCex = false;
+      beyondCexRemaining = 5;
+    } else if (beyondCexRemaining !== null) {
+      currentHop.beyondCex = true;
+      beyondCexRemaining -= 1;
+      if (beyondCexRemaining <= 0) stopAfter = true;
+    }
     queue.push({ address: chosenTo, depth: depth + 1 });
+    if (stopAfter) break;
   }
 
   return hops;

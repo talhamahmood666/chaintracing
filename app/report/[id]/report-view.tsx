@@ -278,9 +278,10 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
                   )}
                 </div>
                 <div className="flex-1 pb-4">
-                  <div className="glass rounded-xl p-4">
+                  <div className="glass rounded-xl p-4" style={hop.beyondCex ? { opacity: 0.5 } : undefined}>
                     <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
                       <div className="flex flex-wrap gap-1">
+                        {hop.beyondCex && <HopTag bg="rgba(255,165,0,0.15)" color="#FFA500" label="BEYOND CEX — UNRELIABLE" />}
                         {hop.isSanctioned && <HopTag {...TAG_STYLES.isSanctioned} />}
                         {hop.isMixer && <HopTag {...TAG_STYLES.isMixer} />}
                         {hop.isBridge && <HopTag {...TAG_STYLES.isBridge} />}
