@@ -31,6 +31,11 @@ function isEvmChain(chain: string): boolean {
   return EVM_CHAINS.has(chain);
 }
 
+function normalizeScamAddress(address: string, chain: string): string {
+  const c = normalizeChain(chain);
+  return (c === "solana" || c === "tron" || c === "btc") ? address : address.toLowerCase();
+}
+
 /** Look up a single address in the scam database. Fails open (returns []). */
 export async function lookupScamAddress(
   address: string,
@@ -42,7 +47,7 @@ export async function lookupScamAddress(
     const { data, error } = await db
       .from("scam_addresses")
       .select("category, source, source_url, confidence_score, verified, notes")
-      .eq("address", address.toLowerCase())
+      .eq("address", normalizeScamAddress(address, chain))
       .in("chain", isEvmChain(chain) ? [normalizeChain(chain), "evm-multi"] : [normalizeChain(chain)])
       .or("verified.eq.true,confidence_score.gte.50")
       .limit(10);
@@ -75,16 +80,16 @@ export async function lookupScamAddressBatch(
     const db = getScamDbClient();
     if (!db) return result;
     const searchChain = normalizeChain(chain);
-    const lowerAddrs = [...new Set(addresses.map((a) => a.toLowerCase()))];
+    const normAddrs = [...new Set(addresses.map((a) => normalizeScamAddress(a, chain)))];
     const { data, error } = await db
       .from("scam_addresses")
       .select("address, category, source, source_url, confidence_score, verified, notes")
-      .in("address", lowerAddrs)
+      .in("address", normAddrs)
       .in("chain", isEvmChain(chain) ? [searchChain, "evm-multi"] : [searchChain])
       .or("verified.eq.true,confidence_score.gte.50");
     if (error || !data) return result;
     for (const row of data as Array<Record<string, unknown>>) {
-      const key = (row.address as string).toLowerCase();
+      const key = normalizeScamAddress(row.address as string, chain);
       const match: ScamMatch = {
         category: row.category as string,
         source: row.source as string,

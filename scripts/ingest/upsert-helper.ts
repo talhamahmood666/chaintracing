@@ -22,7 +22,8 @@ export function getSupabaseClient() {
 export function dedup(rows: ScamRow[]): ScamRow[] {
   const seen = new Set<string>();
   return rows.filter((r) => {
-    const key = `${r.address.toLowerCase()}:${r.chain}`;
+    const isBase58 = r.chain === "solana" || r.chain === "tron" || r.chain === "btc";
+    const key = `${isBase58 ? r.address : r.address.toLowerCase()}:${r.chain}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
