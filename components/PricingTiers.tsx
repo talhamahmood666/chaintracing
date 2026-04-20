@@ -9,27 +9,27 @@ interface PricingTiersProps {
 }
 
 const QUICK_FEATURES = [
-  "10 hops traced",
-  "Exchange identification",
-  "PDF evidence report",
-  "Risk scoring + flags",
-  "Shareable link",
+  "10-hop wallet trace",
+  "CEX off-ramp identification",
+  "Downloadable PDF report",
+  "Full risk scoring + flags",
+  "Shareable evidence link",
 ];
 
 const DEEP_FEATURES = [
-  "20 hops traced (2× more)",
-  "Bridge + mixer detection",
-  "Wallet clustering analysis",
-  "Timing pattern analysis",
-  "AI analyst narrative",
-  "OFAC screening",
+  "20-hop trace — follow funds 2× further",
+  "Bridge & mixer detection (Tornado Cash, etc.)",
+  "Wallet clustering attribution",
+  "Transaction timing analysis",
+  "AI-written investigator narrative",
+  "OFAC & sanctions screening",
 ];
 
 const FREE_FEATURES = [
-  "2 hops (anonymous) · 5 hops (logged in)",
-  "Live risk score + flags",
-  "Scam database check",
-  "No credit card needed",
+  "2 hops free · 5 hops when signed in",
+  "Live risk score with flag reasons",
+  "Check against 4,700+ scam wallets",
+  "No credit card required",
 ];
 
 export default function PricingTiers({
@@ -98,7 +98,7 @@ export default function PricingTiers({
             className="block w-full py-3 rounded-xl font-black text-sm text-center transition-all duration-200"
             style={{ background: 'linear-gradient(135deg, #00D9FF, #0099BB)', color: '#0A1628', cursor: loadingTier ? 'wait' : 'pointer', opacity: loadingTier === 'deep' ? 0.5 : 1 }}
           >
-            {loadingTier === 'quick' ? 'Redirecting…' : `Unlock Quick Scan — ${quickPrice}`}
+            {loadingTier === 'quick' ? 'Redirecting to payment…' : `Get Quick Scan Report — ${quickPrice}`}
           </button>
         </div>
 
@@ -107,7 +107,7 @@ export default function PricingTiers({
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
             <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
               style={{ background: 'linear-gradient(135deg, #FFA500, #CC8800)', color: '#0A1628' }}>
-              {firstReportDiscount ? '50% OFF' : '⭐ Recommended'}
+              {firstReportDiscount ? '50% OFF' : '⭐ Best for Evidence'}
             </span>
           </div>
           <div className="flex items-center justify-between mb-5 mt-2">
@@ -131,7 +131,7 @@ export default function PricingTiers({
             className="block w-full py-3 rounded-xl font-black text-sm text-center transition-all duration-200"
             style={{ background: 'linear-gradient(135deg, #FFA500, #CC8800)', color: '#0A1628', cursor: loadingTier ? 'wait' : 'pointer', opacity: loadingTier === 'quick' ? 0.5 : 1 }}
           >
-            {loadingTier === 'deep' ? 'Redirecting…' : `Unlock Deep Trace — ${deepPrice}`}
+            {loadingTier === 'deep' ? 'Redirecting to payment…' : `Get Deep Trace Report — ${deepPrice}`}
           </button>
         </div>
       </div>
@@ -189,7 +189,7 @@ export default function PricingTiers({
         <a href="#trace-form"
           className="block w-full py-2.5 rounded-xl font-bold text-sm text-center transition-all duration-200"
           style={{ background: 'linear-gradient(135deg, #00D9FF, #0099BB)', color: '#0A1628' }}>
-          Get Started
+          Unlock Report
         </a>
       </div>
 
@@ -197,7 +197,7 @@ export default function PricingTiers({
       <div className="glass rounded-2xl p-6 relative" style={{ border: '2px solid rgba(255,165,0,0.6)', boxShadow: '0 0 24px rgba(255,165,0,0.1)' }}>
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
-            style={{ background: 'linear-gradient(135deg, #FFA500, #CC8800)', color: '#0A1628' }}>⭐ Recommended</span>
+            style={{ background: 'linear-gradient(135deg, #FFA500, #CC8800)', color: '#0A1628' }}>⭐ Best for Evidence</span>
         </div>
         <div className="mb-5">
           <h3 className="text-xl font-black mb-1" style={{ color: '#FFA500' }}>Deep Trace</h3>
@@ -217,7 +217,7 @@ export default function PricingTiers({
         <a href="#trace-form"
           className="block w-full py-2.5 rounded-xl font-bold text-sm text-center transition-all duration-200"
           style={{ background: 'linear-gradient(135deg, #FFA500, #CC8800)', color: '#0A1628' }}>
-          Get Started
+          Unlock Report
         </a>
       </div>
     </div>

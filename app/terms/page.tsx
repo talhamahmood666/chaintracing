@@ -4,6 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Terms of Service — ChainTracing",
   description: "Terms governing use of ChainTracing blockchain forensics services.",
+  robots: { index: false, follow: true },
 };
 
 const LAST_UPDATED = "17 April 2026";

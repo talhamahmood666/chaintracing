@@ -4,6 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Privacy Policy — ChainTracing",
   description: "How ChainTracing collects, uses, and protects your data.",
+  robots: { index: false, follow: true },
 };
 
 const LAST_UPDATED = "17 April 2026";

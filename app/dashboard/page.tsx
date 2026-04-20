@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 import DashboardClient from "./DashboardClient";
@@ -6,6 +7,10 @@ import { isAdminUser } from "@/lib/auth-admin";
 import { env } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: true },
+};
 
 export default async function DashboardPage({
   searchParams,

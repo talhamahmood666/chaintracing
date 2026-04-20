@@ -1,11 +1,14 @@
+import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { FaXTwitter, FaLinkedin, FaGithub } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 
-export const metadata = {
-  title: "About — ChainTracing",
-  description: "Talha Mahmood, Founder of ChainTracing. Building forensic-grade crypto tracing tools for victims.",
+export const metadata: Metadata = {
+  title: 'About ChainTracing — Blockchain Forensics for Scam Victims & Investigators',
+  description: 'ChainTracing helps crypto scam victims and law enforcement trace stolen funds across EVM, Solana, Tron, and Bitcoin. Affordable, evidence-grade on-chain analysis.',
+  alternates: { canonical: '/about' },
 };
 
 const GLASS = {
@@ -20,6 +23,16 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen relative z-10 flex items-start justify-center px-4 py-24">
       <div className="w-full max-w-3xl flex flex-col items-center gap-10">
+
+        {/* Hero */}
+        <section className="w-full text-center pt-4 pb-2">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4" style={{ color: "var(--text-primary)" }}>
+            About ChainTracing — Blockchain Forensics for Scam Victims
+          </h1>
+          <p className="text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+            Affordable, evidence-grade on-chain tracing for people who can&apos;t spend $500+ on a forensic firm.
+          </p>
+        </section>
 
         {/* Photo */}
         <div style={{
@@ -42,9 +55,9 @@ export default function AboutPage() {
 
         {/* Name + title */}
         <div className="text-center">
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-2" style={{ color: "var(--text-primary)" }}>
+          <h2 id="founder" className="text-3xl sm:text-4xl font-black tracking-tight mb-2" style={{ color: "var(--text-primary)" }}>
             Talha Mahmood
-          </h1>
+          </h2>
           <p className="text-base font-semibold uppercase tracking-widest" style={{ color: "#00D9FF" }}>
             Founder, ChainTracing
           </p>
@@ -67,12 +80,78 @@ export default function AboutPage() {
             <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>$9.99 evidence report</span>{" "}
             any victim can hand to police or an exchange compliance team.
           </p>
-
-          <p className="text-sm leading-relaxed italic" style={{ color: "rgba(180,200,220,0.6)" }}>
-            ChainTracing is not a recovery service. We do not contact exchanges or law enforcement on your
-            behalf. We provide forensic-grade evidence so you can.
-          </p>
         </div>
+
+        {/* Why ChainTracing Exists */}
+        <section className="w-full rounded-2xl p-8" style={GLASS}>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-4" style={{ color: "var(--text-primary)" }}>
+            Why ChainTracing Exists
+          </h2>
+          <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+            Professional blockchain forensics firms charge $500 to $5,000 per investigation — out of reach for most scam victims. Meanwhile, public block explorers show raw transactions but don&apos;t identify exchanges, mixers, or sanctioned wallets. ChainTracing closes the gap: the same forensic techniques investigators use at a fraction of the price, delivered as a PDF you can hand to police, your lawyer, or the exchange&apos;s abuse team.
+          </p>
+        </section>
+
+        {/* How We Trace Stolen Crypto */}
+        <section className="w-full rounded-2xl p-8" style={GLASS}>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-4" style={{ color: "var(--text-primary)" }}>
+            How We Trace Stolen Crypto
+          </h2>
+          <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+            ChainTracing runs a breadth-first search across Ethereum, BSC, Polygon, Arbitrum, Base, Solana, Tron, and Bitcoin. Every hop is cross-checked against known CEX hot wallets (Binance, Coinbase, Kraken, OKX, Bybit), mixer contracts (Tornado Cash, Blender), cross-chain bridges, OFAC sanctions lists, and a database of 4,700+ reported scam wallets. When funds reach an exchange, we flag the deposit so you know which CEX to subpoena — and we flag the point at which on-chain tracing becomes unreliable, so you don&apos;t chase ghosts.
+          </p>
+        </section>
+
+        {/* Who ChainTracing Is For */}
+        <section className="w-full rounded-2xl p-8" style={GLASS}>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
+            Who ChainTracing Is For
+          </h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-xl p-5" style={{ border: "1px solid rgba(0,217,255,0.15)", background: "rgba(10,22,40,0.4)" }}>
+              <h3 className="font-bold mb-2" style={{ color: "#00D9FF" }}>Crypto Scam Victims</h3>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>Pig butchering, romance scams, phishing, rug pulls, fake exchanges. If you sent crypto to a wallet you shouldn&apos;t have, we show you where it went.</p>
+            </div>
+            <div className="rounded-xl p-5" style={{ border: "1px solid rgba(0,217,255,0.15)", background: "rgba(10,22,40,0.4)" }}>
+              <h3 className="font-bold mb-2" style={{ color: "#00D9FF" }}>Private Investigators &amp; Lawyers</h3>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>On-chain evidence for civil cases, divorce asset discovery, fraud investigations, and compliance work.</p>
+            </div>
+            <div className="rounded-xl p-5" style={{ border: "1px solid rgba(0,217,255,0.15)", background: "rgba(10,22,40,0.4)" }}>
+              <h3 className="font-bold mb-2" style={{ color: "#00D9FF" }}>Law Enforcement</h3>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>Court-ready PDFs with block explorer citations, exchange attribution, and OFAC screening — built for subpoena targeting.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* What ChainTracing Is Not */}
+        <section className="w-full rounded-2xl p-8" style={GLASS}>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-4" style={{ color: "var(--text-primary)" }}>
+            What ChainTracing Is Not
+          </h2>
+          <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+            ChainTracing is not a recovery service. We do not contact exchanges or law enforcement on your behalf, we do not negotiate with scammers, and we do not guarantee fund recovery. What we provide is forensic-grade on-chain evidence — the raw material that makes recovery possible when handed to the right authority. Anyone claiming to recover stolen crypto for an upfront fee is almost certainly running a follow-up scam.
+          </p>
+        </section>
+
+        {/* CTA */}
+        <section className="w-full rounded-2xl p-8 text-center" style={GLASS}>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-3" style={{ color: "var(--text-primary)" }}>
+            Ready to Trace a Wallet?
+          </h2>
+          <p className="text-base mb-6" style={{ color: "var(--text-secondary)" }}>
+            Free risk score. No account needed.
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link href="/" className="px-5 py-3 rounded-xl text-sm font-black"
+              style={{ background: "linear-gradient(135deg, #00D9FF, #0099BB)", color: "#0A1628" }}>
+              Start a Free Trace
+            </Link>
+            <Link href="/report-scammer" className="px-5 py-3 rounded-xl text-sm font-black"
+              style={{ background: "rgba(0,217,255,0.1)", border: "1px solid rgba(0,217,255,0.3)", color: "#00D9FF" }}>
+              Report a Scam Wallet
+            </Link>
+          </div>
+        </section>
 
         {/* Contact card */}
         <div className="w-full rounded-2xl p-8" style={GLASS}>

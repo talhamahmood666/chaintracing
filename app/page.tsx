@@ -1,4 +1,11 @@
+import type { Metadata } from 'next';
 import { getAdminClient } from "@/lib/supabase";
+
+export const metadata: Metadata = {
+  title: 'Trace Stolen Crypto — Free Wallet Scam Check',
+  description: 'Paste a wallet address to trace stolen crypto across Ethereum, Solana, Tron, and Bitcoin. Free scam database lookup. Follow funds to exchange off-ramps in minutes.',
+  alternates: { canonical: '/' },
+};
 import ThreeBackground from "@/components/ThreeBackground";
 import TraceForm from "@/components/TraceForm";
 import AnimatedStatsCounter from "@/components/AnimatedStatsCounter";
@@ -47,12 +54,12 @@ export default async function HomePage() {
             </div>
 
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-none mb-6 tracking-tight" style={{ color: 'var(--text-primary)' }}>
-              Chain<br />
-              <span style={{ color: '#00D9FF' }}>Tracing</span>
+              Trace Stolen Crypto<br />
+              <span style={{ color: '#00D9FF' }}>Across 8 Blockchains</span>
             </h1>
 
             <p className="text-lg md:text-xl max-w-lg mb-10" style={{ color: 'var(--text-secondary)' }}>
-              Professional forensic lab — follow stolen crypto hop-by-hop across 8 blockchains. Free risk score, paid evidence reports.
+              Follow scammer wallets hop-by-hop across Ethereum, Solana, Tron, Bitcoin, and EVM L2s. Free risk score and scam database check. Evidence-grade reports for victims, investigators, and law enforcement.
             </p>
 
             <AnimatedStatsCounter reportsCount={reportsCount} flaggedCount={flaggedCount} communityReportsCount={communityReportsCount} />
@@ -66,7 +73,7 @@ export default async function HomePage() {
                 cursor: 'pointer',
               }}
             >
-              Start Free Trace
+              Check a Wallet — Free
             </a>
           </div>
 
@@ -107,18 +114,18 @@ export default async function HomePage() {
       <section className="py-24 px-4" style={{ background: 'rgba(10,22,40,0.6)' }}>
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-black text-center mb-4" style={{ color: 'var(--text-primary)' }}>
-            How ChainTracing Works
+            How to Trace Stolen Cryptocurrency
           </h2>
           <p className="text-center max-w-2xl mx-auto mb-16" style={{ color: 'var(--text-secondary)' }}>
-            Forensic-grade blockchain analysis in four simple steps
+            Forensic-grade on-chain analysis in four steps
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
-              { icon: Search, title: "Enter Address", desc: "Paste scammer wallet or transaction hash" },
-              { icon: ArrowRight, title: "Cross-Chain Trace", desc: "BFS algorithm follows funds across 8 blockchains" },
-              { icon: Shield, title: "Detect Mixers & Exchanges", desc: "Identify Tornado Cash, bridges, and CEX hot wallets" },
-              { icon: FileText, title: "Get Evidence Report", desc: "PDF with block explorer links, timestamps, risk flags" },
+              { icon: Search, title: "Enter the Scammer's Wallet", desc: "Paste the wallet address or transaction hash where your crypto was sent." },
+              { icon: ArrowRight, title: "Multi-Chain BFS Trace", desc: "Our BFS engine follows the funds across EVM chains, Solana, Tron, and Bitcoin — automatically." },
+              { icon: Shield, title: "Detect Mixers, Bridges & Exchanges", desc: "Identify Tornado Cash, cross-chain bridges, and CEX hot wallets (Binance, Coinbase, Kraken, OKX, Bybit)." },
+              { icon: FileText, title: "Get a Court-Ready Evidence Report", desc: "PDF with every hop, block explorer links, timestamps, risk flags, and law enforcement action guidance." },
             ].map((step, idx) => (
               <div key={idx} className="glass rounded-2xl p-6 text-center animate-fade-up" style={{ animationDelay: `${idx * 0.1}s` }}>
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto"
@@ -137,20 +144,20 @@ export default async function HomePage() {
       <section className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-black text-center mb-4" style={{ color: 'var(--text-primary)' }}>
-            Forensic Lab Features
+            Blockchain Forensics Features
           </h2>
           <p className="text-center max-w-2xl mx-auto mb-16" style={{ color: 'var(--text-secondary)' }}>
-            Everything you need for professional crypto investigation
+            Everything a crypto investigation needs
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { icon: Globe, title: "Multi-Chain Support", desc: "Trace across 8 chains: ETH, BSC, Polygon, Arbitrum, Base, Solana, Tron, Bitcoin" },
-              { icon: AlertTriangle, title: "OFAC Sanctions Screening", desc: "Check against 779 OFAC SDN entries, EU sanctions, UK HMT lists" },
-              { icon: Cpu, title: "Mixer & Bridge Detection", desc: "Identify Tornado Cash, Blender, cross-chain bridges, money-laundering routes" },
-              { icon: Briefcase, title: "Exchange Identification", desc: "Map to known CEX hot wallets: Binance, Coinbase, Kraken, OKX, Bybit" },
-              { icon: FileCheck, title: "Professional PDF Reports", desc: "Court-ready evidence packages with block explorer links, timestamps" },
-              { icon: ShieldCheck, title: "Law Enforcement Ready", desc: "Compliance letters, wallet clustering, timing analysis, risk scoring" },
+              { icon: Globe, title: "Multi-Chain Tracing", desc: "Trace across 8 chains: Ethereum, BSC, Polygon, Arbitrum, Base, Solana, Tron, and Bitcoin." },
+              { icon: AlertTriangle, title: "OFAC & Sanctions Screening", desc: "Check against 779 OFAC SDN entries plus EU and UK HMT sanctions lists." },
+              { icon: Cpu, title: "Mixer & Bridge Detection", desc: "Flag Tornado Cash, Blender, and cross-chain bridges used to obscure funds." },
+              { icon: Briefcase, title: "Exchange Off-Ramp Identification", desc: "Map funds to known CEX hot wallets — Binance, Coinbase, Kraken, OKX, Bybit — for subpoena targeting." },
+              { icon: FileCheck, title: "Evidence-Grade PDF Reports", desc: "Court-ready packages with block explorer links, timestamps, and attribution confidence." },
+              { icon: ShieldCheck, title: "Built for Law Enforcement", desc: "Compliance letters, wallet clustering, timing analysis, and risk scoring." },
             ].map((feat, idx) => (
               <div key={idx} className="glass rounded-2xl p-6 animate-fade-up" style={{ animationDelay: `${idx * 0.1}s` }}>
                 <div className="flex items-start gap-4 mb-4">
@@ -173,17 +180,14 @@ export default async function HomePage() {
       <section className="py-24 px-4" style={{ background: 'rgba(10,22,40,0.6)' }}>
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-black text-center mb-4" style={{ color: 'var(--text-primary)' }}>
-            Who Uses ChainTracing
+            Built for Victims, Investigators, and Law Enforcement
           </h2>
-          <p className="text-center max-w-2xl mx-auto mb-16" style={{ color: 'var(--text-secondary)' }}>
-            Built for victims, investigators, and law enforcement
-          </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: Users, title: "Scam Victims", desc: "Got rugged? Trace where your funds went. Free risk score, paid evidence package." },
-              { icon: Scale, title: "Investigators", desc: "Professional forensic tools for private investigators, compliance teams, auditors." },
-              { icon: Shield, title: "Law Enforcement", desc: "Court-ready documentation, OFAC screening, mixer detection, timing analysis." },
+              { icon: Users, title: "Crypto Scam Victims", desc: "Pig butchering, romance scam, phishing, rug pull — trace where your stolen crypto went. Free risk score, affordable evidence report." },
+              { icon: Scale, title: "Investigators & Compliance", desc: "Professional on-chain forensics for private investigators, compliance teams, and auditors." },
+              { icon: Shield, title: "Law Enforcement", desc: "Court-ready evidence, OFAC screening, mixer detection, and CEX attribution for subpoenas." },
             ].map((audience, idx) => (
               <div key={idx} className="glass rounded-2xl p-6 text-center animate-fade-up" style={{ animationDelay: `${idx * 0.1}s` }}>
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto"
@@ -228,7 +232,7 @@ export default async function HomePage() {
           </div>
           <div className="flex flex-wrap items-center justify-center gap-8 text-sm">
             {[
-              { value: '4,728', label: 'known scam addresses' },
+              { value: '4,700+', label: 'known scam addresses' },
               { value: '345,566', label: 'phishing domains' },
               { value: '8', label: 'blockchains supported' },
             ].map((stat, idx) => (
@@ -238,6 +242,9 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
+          <p className="text-center text-xs mt-6" style={{ color: 'var(--text-muted)' }}>
+            Cross-chain hop tracking · Beyond-CEX reliability flagging
+          </p>
         </div>
       </section>
 
@@ -245,20 +252,19 @@ export default async function HomePage() {
       <section className="py-24 px-4">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-black text-center mb-4" style={{ color: 'var(--text-primary)' }}>
-            Frequently Asked Questions
+            Crypto Tracing FAQ
           </h2>
-          <p className="text-center max-w-2xl mx-auto mb-16" style={{ color: 'var(--text-secondary)' }}>
-            Clear answers about how our forensic tracing works
-          </p>
           
           <div className="space-y-4">
             {[
-              { q: "How does tracing work?", a: "We use BFS across chains, detect exchanges, bridges, mixers, and sanction lists." },
-              { q: "Can you recover my stolen funds?", a: "We provide evidence reports — recovery requires law enforcement action." },
-              { q: "How accurate is the risk score?", a: "Based on wallet age, mixer use, OFAC matches, exchange proximity." },
-              { q: "What happens after I pay?", a: "Instant access to full hop-by-hop report, PDF download, block explorer links." },
-              { q: "Do you work with law enforcement?", a: "Yes, we provide court-ready evidence packages and compliance letters." },
-              { q: "Is my data private?", a: "Reports are encrypted; only you can access via unique token. No public sharing." },
+              { q: "How do I trace stolen cryptocurrency?", a: "Paste the scammer's wallet address above. ChainTracing runs a BFS search across EVM chains, Solana, Tron, and Bitcoin, flagging mixers, bridges, and exchange deposits so you can see exactly where your funds went." },
+              { q: "Can stolen crypto be recovered?", a: "ChainTracing produces the on-chain evidence. Actual recovery requires law enforcement, a lawyer, or the receiving exchange's abuse team — our PDF is built for all three." },
+              { q: "How do I know if a wallet address is a scammer?", a: "Enter the address for a free risk score. We cross-check against 4,700+ known scam addresses, OFAC sanctions, phishing databases, and behavioural patterns." },
+              { q: "Which blockchains can you trace?", a: "Ethereum, BSC, Polygon, Arbitrum, Base, Solana, Tron, and Bitcoin — all in one trace." },
+              { q: "How far can you follow the funds?", a: "Up to 20 hops on Deep Trace. We also flag when funds have passed through a CEX — beyond that point on-chain tracing becomes unreliable and the exchange must be subpoenaed." },
+              { q: "What do I do if I sent crypto to a scammer?", a: "Act fast — funds move through mixers within hours. Run a free trace to capture the hop path, then file reports with the receiving exchange, local police, and IC3 (FBI)." },
+              { q: "Do you work with law enforcement?", a: "Yes — our PDF reports are built to evidentiary standards with block explorer citations, timestamps, and compliance letters." },
+              { q: "Is my data private?", a: "Reports are accessible only via your unique token. We never share your data or the addresses you trace." },
             ].map((faq, idx) => (
               <div key={idx} className="glass rounded-2xl p-6 animate-fade-up" style={{ animationDelay: `${idx * 0.1}s` }}>
                 <div className="flex items-center justify-between cursor-pointer">
@@ -276,11 +282,11 @@ export default async function HomePage() {
       <section className="py-24 px-4 text-center" style={{ background: 'rgba(10,22,40,0.6)' }}>
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-black mb-4" style={{ color: 'var(--text-primary)' }}>
-            Every minute matters.<br />
-            <span style={{ color: '#00D9FF' }}>Start your trace now.</span>
+            Stolen crypto moves fast.<br />
+            <span style={{ color: '#00D9FF' }}>Trace it now.</span>
           </h2>
           <p className="text-lg max-w-xl mx-auto mb-16" style={{ color: 'var(--text-secondary)' }}>
-            Funds move fast across chains. Get evidence before they reach mixers.
+            Funds reach mixers and exchanges within hours. Get on-chain evidence before the trail goes cold.
           </p>
           <a 
             href="#trace-form"
@@ -291,7 +297,7 @@ export default async function HomePage() {
               cursor: 'pointer',
             }}
           >
-            Trace This Address — Free
+            Start Free Trace
           </a>
         </div>
       </section>

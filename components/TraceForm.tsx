@@ -160,7 +160,7 @@ export default function TraceForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!address.trim()) { setError("Please enter a wallet address"); return; }
+    if (!address.trim()) { setError("Enter a wallet address or transaction hash to trace."); return; }
     setLoading(true);
     setError(null);
 
@@ -174,7 +174,7 @@ export default function TraceForm() {
     });
 
     const data = await res.json();
-    if (!res.ok) { setError(data.error || "Trace failed. Please try again."); setLoading(false); return; }
+    if (!res.ok) { setError(data.error || "Trace failed. Please check the address and try again."); setLoading(false); return; }
     if (data.reportId) {
       saveHistoryEntry(address.trim(), chain);
       setHistory(loadHistory());
@@ -191,12 +191,12 @@ export default function TraceForm() {
   return (
     <div className="glass rounded-2xl p-8 glow-cyan">
       <h2 className="text-sm font-bold uppercase tracking-widest mb-5" style={{ color: 'var(--text-muted)' }}>
-        Start a Trace
+        Check a Wallet for Scam Activity
       </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div ref={wrapperRef} className="relative">
           <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--text-muted)' }}>
-            Wallet Address or Transaction Hash
+            Scammer Wallet Address or Transaction Hash
           </label>
           <input
             type="text"
@@ -204,7 +204,7 @@ export default function TraceForm() {
             onChange={(e) => setAddress(e.target.value)}
             onFocus={e => { setFocused(true); e.target.style.borderColor = 'rgba(0,217,255,0.5)'; }}
             onBlur={e => { e.target.style.borderColor = 'rgba(0,217,255,0.2)'; }}
-            placeholder="0x... or transaction hash"
+            placeholder="Paste wallet address (0x..., T..., bc1..., or Solana) or tx hash"
             disabled={loading}
             autoComplete="off"
             className="w-full px-4 py-3 rounded-xl text-sm font-mono"
@@ -228,7 +228,7 @@ export default function TraceForm() {
               }}
             >
               <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)', borderBottom: '1px solid rgba(0,217,255,0.1)' }}>
-                Recent traces
+                Recent wallet traces
               </div>
               {dropdownEntries.map((e, i) => (
                 <button
@@ -260,7 +260,7 @@ export default function TraceForm() {
                 onMouseEnter={ev => (ev.currentTarget.style.background = 'rgba(255,71,87,0.08)')}
                 onMouseLeave={ev => (ev.currentTarget.style.background = 'transparent')}
               >
-                Clear history
+                Clear trace history
               </button>
             </div>
           )}
@@ -278,12 +278,12 @@ export default function TraceForm() {
             </p>
           )}
 
-          <p className="text-xs mt-1.5" style={{ color: 'var(--text-muted)' }}>2 hops free (anonymous) · 5 hops free (logged in) · <a href="#pricing" style={{ color: '#00D9FF' }}>See pricing ↓</a></p>
+          <p className="text-xs mt-1.5" style={{ color: 'var(--text-muted)' }}>Free: 2 hops anonymous · 5 hops signed in · Risk score + scam database check included</p>
         </div>
 
         <div>
           <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--text-muted)' }}>
-            Blockchain
+            Blockchain Network
           </label>
           <select
             value={chain}
@@ -329,18 +329,18 @@ export default function TraceForm() {
           {loading ? (
             <span className="flex items-center justify-center gap-2">
               <span className="w-4 h-4 rounded-full border-2 border-current border-t-transparent animate-spin inline-block" />
-              Tracing on-chain…
+              Tracing across the blockchain…
             </span>
-          ) : 'Trace This Address — Free'}
+          ) : 'Trace This Wallet — Free'}
         </button>
       </form>
 
       {/* Trust indicators */}
       <div className="mt-8 grid grid-cols-3 gap-4">
         {[
-          { label: 'Addresses Traced', value: liveScans != null ? new Intl.NumberFormat('en-US').format(liveScans) : '—' },
-          { label: 'Scams Flagged', value: liveFlagged != null ? new Intl.NumberFormat('en-US').format(liveFlagged) : '—' },
-          { label: 'Chains Supported', value: '8' },
+          { label: 'Wallets Traced', value: liveScans != null ? new Intl.NumberFormat('en-US').format(liveScans) : '—' },
+          { label: 'Scam Wallets Flagged', value: liveFlagged != null ? new Intl.NumberFormat('en-US').format(liveFlagged) : '—' },
+          { label: 'Blockchains Supported', value: '8' },
         ].map((s) => (
           <div key={s.label} className="glass rounded-xl p-4 text-center">
             <p className="text-xl font-black mb-1" style={{ color: '#00D9FF', fontFamily: 'var(--font-geist-mono)' }}>{s.value}</p>
