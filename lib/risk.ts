@@ -101,11 +101,13 @@ export async function scoreAddress(
   const evmExchanges = exchangeWallets.evm as Record<string, { exchange: string; label: string }>;
   const solExchanges = exchangeWallets.solana as Record<string, { exchange: string; label: string }>;
   const tronExchanges = exchangeWallets.tron as Record<string, { exchange: string; label: string }>;
+  const btcExchanges = exchangeWallets.btc as Record<string, { exchange: string; label: string }>;
 
   const cexEntry =
     evmExchanges[address.toLowerCase()] ??
     solExchanges[address] ??
     tronExchanges[address] ??
+    btcExchanges[address] ??
     null;
 
   if (cexEntry) {

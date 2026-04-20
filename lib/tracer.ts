@@ -1005,10 +1005,12 @@ async function traceBitcoin(
   if (!BTC_ADDRESS_RE.test(startAddress)) return [];
 
   const hops: Hop[] = [];
+  let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
   const queue: Array<{ address: string; depth: number }> = [
     { address: startAddress, depth: 0 },
   ];
+  const btcExchanges = exchangeWallets.btc as Record<string, { exchange: string; label: string }>;
 
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
@@ -1068,6 +1070,7 @@ async function traceBitcoin(
     }
 
     const dest = destVout.scriptpubkey_address;
+    const cexMatch = btcExchanges[dest] ?? null;
     const timestamp = outTx.status.block_time ?? 0;
     const prevHop = hops[hops.length - 1];
     const gapFromPrevSeconds = prevHop ? timestamp - prevHop.timestamp : undefined;
@@ -1089,8 +1092,17 @@ async function traceBitcoin(
       blockNumber: outTx.status.block_height ?? 0,
       timestamp,
       explorerUrl: `https://mempool.space/tx/${outTx.txid}`,
+      label: cexMatch?.label,
       gapFromPrevSeconds,
     });
+
+    if (cexMatch) {
+      if (beyondCexRemaining === null) beyondCexRemaining = 5;
+    } else if (beyondCexRemaining !== null) {
+      hops[hops.length - 1].beyondCex = true;
+      beyondCexRemaining -= 1;
+      if (beyondCexRemaining <= 0) break;
+    }
 
     queue.push({ address: dest, depth: depth + 1 });
   }
