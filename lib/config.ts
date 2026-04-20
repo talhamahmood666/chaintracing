@@ -8,6 +8,7 @@ const serverEnv = {
   SOLSCAN_API_KEY: process.env.SOLSCAN_API_KEY,
   TRONGRID_API_KEY: process.env.TRONGRID_API_KEY,
   ANKR_API_KEY: process.env.ANKR_API_KEY ?? "",
+  HELIUS_API_KEY: process.env.HELIUS_API_KEY ?? "",
 
   // Payment
   PLISIO_SECRET_KEY: process.env.PLISIO_SECRET_KEY,

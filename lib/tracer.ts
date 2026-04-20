@@ -618,16 +618,27 @@ async function traceEvm(
   return hops;
 }
 
-// ─── Solana tracer ────────────────────────────────────────────────────────────
+// ─── Solana tracer (Helius) ───────────────────────────────────────────────────
 
-interface SolscanTx {
-  from_address: string;
-  to_address: string;
-  amount: number;
-  trans_id: string;
-  block_time: number;
+interface HeliusNativeTransfer {
+  fromUserAccount: string;
+  toUserAccount: string;
+  amount: number; // lamports
+}
+
+interface HeliusTokenTransfer {
+  fromUserAccount: string;
+  toUserAccount: string;
+  tokenAmount: number; // human-readable
+  mint: string;
+}
+
+interface HeliusTx {
+  signature: string;
+  timestamp: number;
   slot: number;
-  activity_type: string;
+  nativeTransfers?: HeliusNativeTransfer[];
+  tokenTransfers?: HeliusTokenTransfer[];
 }
 
 async function traceSolana(
@@ -642,23 +653,41 @@ async function traceSolana(
     { address: startAddress, depth: 0 },
   ];
 
-  const apiKey = env.SOLSCAN_API_KEY ?? "";
-  console.log(`[SOLSCAN] key length: ${apiKey.length}, address: ${startAddress}, maxDepth: ${maxDepth}`);
+  const apiKey = env.HELIUS_API_KEY ?? "";
+  console.log(`[HELIUS] key length: ${apiKey.length}, address: ${startAddress}, maxDepth: ${maxDepth}`);
+  if (!apiKey) {
+    console.log(`[HELIUS] no key configured, returning empty hops`);
+    return hops;
+  }
 
-  const solscanFetch = async (url: string, tag: string): Promise<{ data: SolscanTx[] }> => {
+  const heliusFetch = async (address: string): Promise<HeliusTx[]> => {
+    const url = `https://api.helius.xyz/v0/addresses/${address}/transactions?api-key=${apiKey}&limit=100`;
     try {
-      const r = await fetch(url, { headers: { token: apiKey }, next: { revalidate: 60 } });
+      const r = await fetch(url, { next: { revalidate: 60 }, signal: AbortSignal.timeout(15000) });
       if (!r.ok) {
         const body = await r.text().catch(() => "");
-        console.log(`[SOLSCAN] ${tag} HTTP ${r.status}: ${body.slice(0, 200)}`);
-        return { data: [] };
+        console.log(`[HELIUS] HTTP ${r.status}: ${body.slice(0, 200)}`);
+        return [];
       }
-      return await r.json();
+      const json = await r.json();
+      return Array.isArray(json) ? (json as HeliusTx[]) : [];
     } catch (err) {
-      console.log(`[SOLSCAN] ${tag} fetch error: ${(err as Error)?.message}`);
-      return { data: [] };
+      console.log(`[HELIUS] fetch error: ${(err as Error)?.message}`);
+      return [];
     }
   };
+
+  interface NormalizedSolTx {
+    from: string;
+    to: string;
+    valueRaw: string;
+    valueHuman: string;
+    solEquivalent: number;
+    token: string;
+    hash: string;
+    slot: number;
+    timestamp: number;
+  }
 
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
@@ -667,33 +696,51 @@ async function traceSolana(
     if (visited.has(address) || depth >= maxDepth) continue;
     visited.add(address);
 
-    // Fetch both SOL native and SPL token transfers
-    const [solRes, splRes] = await Promise.all([
-      solscanFetch(
-        `https://pro-api.solscan.io/v2.0/account/transfer?address=${address}&page=1&page_size=50&sort_by=block_time&sort_order=asc`,
-        "native"
-      ),
-      solscanFetch(
-        `https://pro-api.solscan.io/v2.0/account/token/transfer?address=${address}&page=1&page_size=50&sort_by=block_time&sort_order=asc`,
-        "token"
-      ),
-    ]);
+    const txs = await heliusFetch(address);
 
-    const solTxs: SolscanTx[] = Array.isArray(solRes?.data) ? solRes.data : [];
-    const splTxs: SolscanTx[] = Array.isArray(splRes?.data) ? splRes.data : [];
+    const nativeNorm: NormalizedSolTx[] = [];
+    const tokenNorm: NormalizedSolTx[] = [];
 
-    // Include SOL native + SPL token transfers; both have from_address/to_address
-    const combined: SolscanTx[] = [...solTxs, ...splTxs];
-    const outgoing = combined
-      .filter(tx => tx.from_address === address)
-      .sort((a, b) => a.block_time - b.block_time);
+    for (const tx of txs) {
+      for (const n of tx.nativeTransfers ?? []) {
+        if (n.fromUserAccount !== address) continue;
+        const sol = n.amount / 1e9;
+        nativeNorm.push({
+          from: n.fromUserAccount,
+          to: n.toUserAccount,
+          valueRaw: String(n.amount),
+          valueHuman: sol.toFixed(6),
+          solEquivalent: sol,
+          token: "SOL",
+          hash: tx.signature,
+          slot: tx.slot,
+          timestamp: tx.timestamp,
+        });
+      }
+      for (const t of tx.tokenTransfers ?? []) {
+        if (t.fromUserAccount !== address) continue;
+        tokenNorm.push({
+          from: t.fromUserAccount,
+          to: t.toUserAccount,
+          valueRaw: String(t.tokenAmount),
+          valueHuman: t.tokenAmount.toFixed(6),
+          solEquivalent: 0, // unknown USD/SOL conversion; ranked below native
+          token: t.mint.slice(0, 8),
+          hash: tx.signature,
+          slot: tx.slot,
+          timestamp: tx.timestamp,
+        });
+      }
+    }
 
-    console.log(`[SOLSCAN] native txs: ${solTxs.length}, token txs: ${splTxs.length}, outgoing: ${outgoing.length}`);
+    const outgoing = [...nativeNorm, ...tokenNorm].sort((a, b) => a.timestamp - b.timestamp);
+
+    console.log(`[HELIUS] native txs: ${nativeNorm.length}, token txs: ${tokenNorm.length}, outgoing: ${outgoing.length}`);
 
     const logEntry: BfsLogEntry = {
       address, depth,
-      nativeTxCount: solTxs.filter(t => t.from_address === address).length,
-      tokenTxCount: splTxs.filter(t => t.from_address === address).length,
+      nativeTxCount: nativeNorm.length,
+      tokenTxCount: tokenNorm.length,
       outgoingCount: outgoing.length,
     };
 
@@ -703,35 +750,40 @@ async function traceSolana(
       continue;
     }
 
-    const tx = outgoing[0];
-    const dest = tx.to_address;
+    // Pick largest by SOL-equivalent; native wins over token when token has no SOL ranking
+    let best = outgoing[0];
+    for (const t of outgoing) {
+      if (t.solEquivalent > best.solEquivalent) best = t;
+    }
+    if (best.solEquivalent === 0 && tokenNorm.length > 0) {
+      // Fall back to largest token by raw value
+      best = tokenNorm.reduce((m, t) =>
+        Number(t.valueRaw) > Number(m.valueRaw) ? t : m, tokenNorm[0]);
+    }
+
+    const dest = best.to;
     const solExchanges = exchangeWallets.solana as Record<string, { exchange: string; label: string }>;
     const cexMatch = solExchanges[dest] ?? null;
     const prevHop = hops[hops.length - 1];
-    const gapFromPrevSeconds = prevHop ? tx.block_time - prevHop.timestamp : undefined;
+    const gapFromPrevSeconds = prevHop ? best.timestamp - prevHop.timestamp : undefined;
 
-    // Detect if it's an SPL token transfer
-    const isSpl = (tx.activity_type ?? "").includes("SPL") || (tx.activity_type ?? "").includes("TOKEN");
-    const decimals = isSpl ? 6 : 9;
-    const symbol = isSpl ? "SPL" : "SOL";
-
-    logEntry.chosenHash = tx.trans_id;
+    logEntry.chosenHash = best.hash;
     logEntry.chosenTo = dest;
-    logEntry.chosenToken = symbol;
-    logEntry.chosenValue = (tx.amount / Math.pow(10, decimals)).toFixed(6);
+    logEntry.chosenToken = best.token;
+    logEntry.chosenValue = best.valueHuman;
     bfsLog?.push(logEntry);
 
     hops.push({
       hop: hops.length + 1,
-      from: tx.from_address,
+      from: best.from,
       to: dest,
-      value: (tx.amount / Math.pow(10, decimals)).toFixed(6),
-      valueRaw: String(tx.amount),
-      token: symbol,
-      txHash: tx.trans_id,
-      blockNumber: tx.slot,
-      timestamp: tx.block_time,
-      explorerUrl: `https://solscan.io/tx/${tx.trans_id}`,
+      value: best.valueHuman,
+      valueRaw: best.valueRaw,
+      token: best.token,
+      txHash: best.hash,
+      blockNumber: best.slot,
+      timestamp: best.timestamp,
+      explorerUrl: `https://solscan.io/tx/${best.hash}`,
       label: cexMatch?.label,
       gapFromPrevSeconds,
     });
