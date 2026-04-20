@@ -60,7 +60,7 @@ export default function ShareButtons({ reportId, address, chain, hopCount, riskS
     + " transition-all duration-200 hover:scale-[1.02]";
 
   return (
-    <div className="glass rounded-xl p-5 mb-6 glow-cyan" style={{ border: '1px solid rgba(0,217,255,0.2)' }}>
+    <div className="relative z-0 glass rounded-xl p-5 mb-6 glow-cyan" style={{ border: '1px solid rgba(0,217,255,0.2)' }}>
       <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
         <div>
           <p className="text-sm font-black uppercase tracking-widest" style={{ color: '#00D9FF' }}>Share This Trace</p>
