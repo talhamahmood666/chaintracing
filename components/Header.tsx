@@ -15,7 +15,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="glass border-b border-white/[0.06] sticky top-0 z-50">
+    <header className="glass border-b border-white/[0.06] sticky top-0 z-[100]">
       <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
         {/* Left: logo + nav */}
         <div className="flex items-center gap-6">

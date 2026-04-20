@@ -1,9 +1,109 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { IntentSelector, type Intent } from "@/components/IntentSelector";
 import { createClient } from "@/lib/supabase-browser";
+
+const HISTORY_KEY = "chaintracing_address_history";
+const HISTORY_MAX = 10;
+
+interface HistoryEntry {
+  address: string;
+  chain: string;
+  timestamp: number;
+}
+
+const CHAIN_LABELS: Record<string, string> = {
+  eth: "Ethereum", bsc: "BNB", polygon: "Polygon", arbitrum: "Arbitrum",
+  base: "Base", solana: "Solana", tron: "Tron", btc: "Bitcoin",
+};
+
+function truncate(addr: string): string {
+  if (addr.length <= 12) return addr;
+  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
+
+function relTime(ts: number): string {
+  const s = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  if (s < 60) return `${s}s ago`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  return `${d}d ago`;
+}
+
+const EVM_RE = /^0x[a-fA-F0-9]{40}$/;
+const SOL_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+const TRON_RE = /^T[1-9A-HJ-NP-Za-km-z]{33}$/;
+const BTC_RE = /^(1[a-km-zA-HJ-NP-Z1-9]{25,34}|3[a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[a-z0-9]{39,59})$/;
+
+const EVM_CHAINS = new Set(["eth", "bsc", "polygon", "arbitrum", "base"]);
+
+interface ValidationResult {
+  valid: boolean;
+  suggestedChain?: string;
+  message?: string;
+}
+
+export function validateAddressForChain(address: string, chain: string): ValidationResult {
+  const a = address.trim();
+  if (!a) return { valid: true };
+
+  const matches = {
+    evm: EVM_RE.test(a),
+    solana: SOL_RE.test(a) && !TRON_RE.test(a), // tron is a subset of base58
+    tron: TRON_RE.test(a),
+    btc: BTC_RE.test(a),
+  };
+
+  let ok = false;
+  if (EVM_CHAINS.has(chain)) ok = matches.evm;
+  else if (chain === "solana") ok = matches.solana;
+  else if (chain === "tron") ok = matches.tron;
+  else if (chain === "btc") ok = matches.btc;
+
+  if (ok) return { valid: true };
+
+  let suggested: string | undefined;
+  if (matches.evm) suggested = "eth";
+  else if (matches.tron) suggested = "tron";
+  else if (matches.btc) suggested = "btc";
+  else if (matches.solana) suggested = "solana";
+
+  const chainLabel = CHAIN_LABELS[chain] ?? chain;
+  let msg = `This doesn't look like a valid ${chainLabel} address.`;
+  if (suggested && suggested !== chain) {
+    msg += ` Did you mean ${CHAIN_LABELS[suggested]}?`;
+  }
+  return { valid: false, suggestedChain: suggested, message: msg };
+}
+
+function loadHistory(): HistoryEntry[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveHistoryEntry(address: string, chain: string) {
+  try {
+    const existing = loadHistory();
+    const filtered = existing.filter(
+      e => !(e.address.toLowerCase() === address.toLowerCase() && e.chain === chain)
+    );
+    const next = [{ address, chain, timestamp: Date.now() }, ...filtered].slice(0, HISTORY_MAX);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+  } catch {
+    // localStorage unavailable — silently skip
+  }
+}
 
 export default function TraceForm() {
   const router = useRouter();
@@ -15,12 +115,48 @@ export default function TraceForm() {
   const [liveScans, setLiveScans] = useState<number | null>(null);
   const [liveFlagged, setLiveFlagged] = useState<number | null>(null);
 
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [focused, setFocused] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
+    setHistory(loadHistory());
     fetch("/api/stats").then(r => r.json()).then(d => {
       if (d.scans) setLiveScans(d.scans);
       if (d.flagged) setLiveFlagged(d.flagged);
     }).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  const validation = useMemo(() => validateAddressForChain(address, chain), [address, chain]);
+
+  const dropdownEntries = useMemo(() => {
+    const q = address.trim().toLowerCase();
+    if (!q) return history.slice(0, 5);
+    return history.filter(e => e.address.toLowerCase().startsWith(q)).slice(0, 5);
+  }, [address, history]);
+
+  const showDropdown = focused && dropdownEntries.length > 0;
+
+  const clearHistory = () => {
+    try { localStorage.removeItem(HISTORY_KEY); } catch {}
+    setHistory([]);
+  };
+
+  const pickEntry = (entry: HistoryEntry) => {
+    setAddress(entry.address);
+    setChain(entry.chain);
+    setFocused(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +176,8 @@ export default function TraceForm() {
     const data = await res.json();
     if (!res.ok) { setError(data.error || "Trace failed. Please try again."); setLoading(false); return; }
     if (data.reportId) {
+      saveHistoryEntry(address.trim(), chain);
+      setHistory(loadHistory());
       const reportUrl = data.isAdmin
         ? `/report/${data.reportId}?token=${data.viewToken}&admin=1`
         : `/report/${data.reportId}?token=${data.viewToken}`;
@@ -56,7 +194,7 @@ export default function TraceForm() {
         Start a Trace
       </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
+        <div ref={wrapperRef} className="relative">
           <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--text-muted)' }}>
             Wallet Address or Transaction Hash
           </label>
@@ -64,8 +202,11 @@ export default function TraceForm() {
             type="text"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+            onFocus={e => { setFocused(true); e.target.style.borderColor = 'rgba(0,217,255,0.5)'; }}
+            onBlur={e => { e.target.style.borderColor = 'rgba(0,217,255,0.2)'; }}
             placeholder="0x... or transaction hash"
             disabled={loading}
+            autoComplete="off"
             className="w-full px-4 py-3 rounded-xl text-sm font-mono"
             style={{
               background: 'rgba(255,255,255,0.04)',
@@ -73,9 +214,70 @@ export default function TraceForm() {
               color: 'var(--text-primary)',
               outline: 'none',
             }}
-            onFocus={e => (e.target.style.borderColor = 'rgba(0,217,255,0.5)')}
-            onBlur={e => (e.target.style.borderColor = 'rgba(0,217,255,0.2)')}
           />
+
+          {showDropdown && (
+            <div
+              className="absolute left-0 right-0 mt-1 rounded-xl overflow-hidden z-20"
+              style={{
+                background: 'rgba(10,22,40,0.95)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(0,217,255,0.25)',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+              }}
+            >
+              <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)', borderBottom: '1px solid rgba(0,217,255,0.1)' }}>
+                Recent traces
+              </div>
+              {dropdownEntries.map((e, i) => (
+                <button
+                  key={`${e.address}-${e.chain}-${i}`}
+                  type="button"
+                  onMouseDown={ev => ev.preventDefault()}
+                  onClick={() => pickEntry(e)}
+                  className="w-full px-3 py-2 flex items-center justify-between gap-3 text-left transition-colors"
+                  style={{ background: 'transparent', color: 'var(--text-primary)' }}
+                  onMouseEnter={ev => (ev.currentTarget.style.background = 'rgba(0,217,255,0.08)')}
+                  onMouseLeave={ev => (ev.currentTarget.style.background = 'transparent')}
+                >
+                  <span className="text-xs font-mono">{truncate(e.address)}</span>
+                  <span
+                    className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase"
+                    style={{ background: 'rgba(0,217,255,0.12)', color: '#00D9FF' }}
+                  >
+                    {CHAIN_LABELS[e.chain] ?? e.chain}
+                  </span>
+                  <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{relTime(e.timestamp)}</span>
+                </button>
+              ))}
+              <button
+                type="button"
+                onMouseDown={ev => ev.preventDefault()}
+                onClick={clearHistory}
+                className="w-full px-3 py-2 text-[11px] font-semibold transition-colors"
+                style={{ color: 'var(--text-muted)', borderTop: '1px solid rgba(0,217,255,0.1)', background: 'transparent' }}
+                onMouseEnter={ev => (ev.currentTarget.style.background = 'rgba(255,71,87,0.08)')}
+                onMouseLeave={ev => (ev.currentTarget.style.background = 'transparent')}
+              >
+                Clear history
+              </button>
+            </div>
+          )}
+
+          {!validation.valid && validation.message && (
+            <p
+              className="text-xs mt-1.5 px-3 py-2 rounded-lg"
+              style={{
+                background: 'rgba(245,158,11,0.08)',
+                border: '1px solid rgba(245,158,11,0.3)',
+                color: '#f59e0b',
+              }}
+            >
+              ⚠ {validation.message}
+            </p>
+          )}
+
           <p className="text-xs mt-1.5" style={{ color: 'var(--text-muted)' }}>2 hops free (anonymous) · 5 hops free (logged in) · <a href="#pricing" style={{ color: '#00D9FF' }}>See pricing ↓</a></p>
         </div>
 

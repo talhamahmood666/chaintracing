@@ -44,6 +44,8 @@ body {
 }
 
 .glass {
+  position: relative;
+  z-index: 1;
   background: var(--surface);
   border: 1px solid var(--border-glass);
   backdrop-filter: blur(16px);
