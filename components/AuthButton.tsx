@@ -70,8 +70,8 @@ export default function AuthButton() {
 
       {menuOpen && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-          <div className="absolute right-0 mt-2 w-48 glass-strong rounded-xl z-20 overflow-hidden">
+          <div className="fixed inset-0 z-[101]" onClick={() => setMenuOpen(false)} />
+          <div className="absolute right-0 mt-2 w-48 rounded-xl z-[102] overflow-hidden" style={{ background: '#0A1628', border: '1px solid var(--border-glass)' }}>
             {user.email && (
               <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border-glass)' }}>
                 <p className="text-sm font-medium truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
