@@ -22,6 +22,30 @@ const GLASS = {
 export default function AboutPage() {
   return (
     <div className="min-h-screen relative z-10 flex items-start justify-center px-4 py-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'AboutPage',
+            url: 'https://chaintracing-app.vercel.app/about',
+            mainEntity: {
+              '@type': 'Organization',
+              name: 'ChainTracing',
+              founder: {
+                '@type': 'Person',
+                name: 'Talha Mahmood',
+                jobTitle: 'Founder',
+                sameAs: [
+                  'https://x.com/talhamahmood666',
+                  'https://github.com/talhamahmood666',
+                ],
+              },
+              description: 'Affordable blockchain forensics for crypto scam victims and investigators.',
+            },
+          }),
+        }}
+      />
       <div className="w-full max-w-3xl flex flex-col items-center gap-10">
 
         {/* Hero */}

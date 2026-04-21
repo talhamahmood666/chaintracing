@@ -38,6 +38,54 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen animate-fade-up">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@graph': [
+              {
+                '@type': 'Organization',
+                '@id': 'https://chaintracing-app.vercel.app/#org',
+                name: 'ChainTracing',
+                url: 'https://chaintracing-app.vercel.app',
+                logo: 'https://chaintracing-app.vercel.app/opengraph-image',
+                description: 'Blockchain forensics and crypto scam tracing across Ethereum, Solana, Tron, and Bitcoin.',
+                founder: { '@type': 'Person', name: 'Talha Mahmood' },
+              },
+              {
+                '@type': 'WebSite',
+                '@id': 'https://chaintracing-app.vercel.app/#website',
+                url: 'https://chaintracing-app.vercel.app',
+                name: 'ChainTracing',
+                publisher: { '@id': 'https://chaintracing-app.vercel.app/#org' },
+              },
+              {
+                '@type': 'SoftwareApplication',
+                name: 'ChainTracing',
+                applicationCategory: 'SecurityApplication',
+                operatingSystem: 'Web',
+                description: 'Trace stolen cryptocurrency across 8 blockchains. Free risk score, evidence-grade reports.',
+                offers: [
+                  { '@type': 'Offer', name: 'Free Scan', price: '0', priceCurrency: 'USD' },
+                  { '@type': 'Offer', name: 'Quick Scan', price: '9.99', priceCurrency: 'USD' },
+                  { '@type': 'Offer', name: 'Deep Trace', price: '29.99', priceCurrency: 'USD' },
+                ],
+              },
+              {
+                '@type': 'FAQPage',
+                mainEntity: [
+                  { '@type': 'Question', name: 'How do I trace stolen cryptocurrency?', acceptedAnswer: { '@type': 'Answer', text: "Paste the scammer's wallet address. ChainTracing runs a BFS search across EVM chains, Solana, Tron, and Bitcoin, flagging mixers, bridges, and exchange deposits so you can see exactly where your funds went." } },
+                  { '@type': 'Question', name: 'Can stolen crypto be recovered?', acceptedAnswer: { '@type': 'Answer', text: "ChainTracing produces the on-chain evidence. Actual recovery requires law enforcement, a lawyer, or the receiving exchange's abuse team." } },
+                  { '@type': 'Question', name: 'How do I know if a wallet address is a scammer?', acceptedAnswer: { '@type': 'Answer', text: 'Enter the address for a free risk score. We cross-check against 4,700+ known scam addresses, OFAC sanctions, phishing databases, and behavioural patterns.' } },
+                  { '@type': 'Question', name: 'Which blockchains can you trace?', acceptedAnswer: { '@type': 'Answer', text: 'Ethereum, BSC, Polygon, Arbitrum, Base, Solana, Tron, and Bitcoin — all in one trace.' } },
+                  { '@type': 'Question', name: 'What do I do if I sent crypto to a scammer?', acceptedAnswer: { '@type': 'Answer', text: 'Act fast — funds move through mixers within hours. Run a free trace to capture the hop path, then file reports with the receiving exchange, local police, and IC3 (FBI).' } },
+                ],
+              },
+            ],
+          }),
+        }}
+      />
       <ThreeBackground />
 
       {/* a) HERO — split layout */}

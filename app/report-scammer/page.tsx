@@ -108,6 +108,19 @@ export default function ReportScammerPage() {
 
   return (
     <div className="min-h-screen py-16 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Report a Crypto Scam Wallet',
+            url: 'https://chaintracing-app.vercel.app/report-scammer',
+            description: "Submit a scammer's wallet address to the public ChainTracing scam database.",
+            isPartOf: { '@id': 'https://chaintracing-app.vercel.app/#website' },
+          }),
+        }}
+      />
       <div className="max-w-xl mx-auto">
         <div className="mb-8">
           <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#00D9FF' }}>Community Intelligence</p>
