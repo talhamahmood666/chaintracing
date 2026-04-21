@@ -168,7 +168,7 @@ export default function PricingTiers({
       {/* QUICK SCAN */}
       <div className="glass rounded-2xl p-6 relative" style={{ border: '2px solid #00D9FF', boxShadow: '0 0 30px rgba(0,217,255,0.15)' }}>
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
+          <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest whitespace-nowrap"
             style={{ background: '#00D9FF', color: '#0A1628' }}>Most Popular</span>
         </div>
         <div className="mb-5">
@@ -196,8 +196,8 @@ export default function PricingTiers({
       {/* DEEP TRACE */}
       <div className="glass rounded-2xl p-6 relative" style={{ border: '2px solid rgba(255,165,0,0.6)', boxShadow: '0 0 24px rgba(255,165,0,0.1)' }}>
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
-            style={{ background: 'linear-gradient(135deg, #FFA500, #CC8800)', color: '#0A1628' }}>⭐ Best for Evidence</span>
+          <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest whitespace-nowrap"
+            style={{ background: 'linear-gradient(135deg, #FFA500, #CC8800)', color: '#0A1628' }}>⭐ Recommended</span>
         </div>
         <div className="mb-5">
           <h3 className="text-xl font-black mb-1" style={{ color: '#FFA500' }}>Deep Trace</h3>
