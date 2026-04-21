@@ -31,7 +31,7 @@ export function renderOG(title: string, subtitle: string) {
           </div>
         </div>
         <div style={{ color: '#64748b', fontSize: 22, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 600 }}>
-          EVM · Solana · Tron · Bitcoin
+          ETH · BSC · POLYGON · ARBITRUM · BASE · SOLANA · TRON · BTC
         </div>
       </div>
     ),
