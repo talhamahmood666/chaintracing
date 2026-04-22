@@ -1,6 +1,7 @@
 'use client';
 
 import AuthButton from "./AuthButton";
+import Logo from "./Logo";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -20,8 +21,7 @@ export default function Header() {
         {/* Left: logo + nav */}
         <div className="flex items-center gap-6">
           <Link href="/" className="font-black tracking-tight text-lg shrink-0">
-            <span style={{ color: '#00D9FF' }} className="text-glow-cyan">Chain</span>
-            <span className="text-white">Tracing</span>
+            <Logo variant="header" className="h-8 text-white" />
           </Link>
 
           {/* Desktop nav */}
