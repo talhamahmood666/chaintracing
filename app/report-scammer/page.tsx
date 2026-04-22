@@ -115,9 +115,9 @@ export default function ReportScammerPage() {
             '@context': 'https://schema.org',
             '@type': 'WebPage',
             name: 'Report a Crypto Scam Wallet',
-            url: 'https://chaintracing-app.vercel.app/report-scammer',
+            url: 'https://chaintracing.org/report-scammer',
             description: "Submit a scammer's wallet address to the public ChainTracing scam database.",
-            isPartOf: { '@id': 'https://chaintracing-app.vercel.app/#website' },
+            isPartOf: { '@id': 'https://chaintracing.org/#website' },
           }),
         }}
       />

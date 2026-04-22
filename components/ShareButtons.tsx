@@ -13,7 +13,7 @@ interface ShareButtonsProps {
 export default function ShareButtons({ reportId, address, chain, hopCount, riskScore = 0 }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
 
-  const reportUrl = typeof window !== 'undefined' ? window.location.href : `https://chaintracing-app.vercel.app/report/${reportId}`;
+  const reportUrl = typeof window !== 'undefined' ? window.location.href : `https://chaintracing.org/report/${reportId}`;
   const tweetText = `I traced a crypto scam using ChainTracing. Risk score: ${riskScore}/100. ${hopCount} hops traced on ${chain.toUpperCase()}.`;
 
   const logShare = (platform: string) =>

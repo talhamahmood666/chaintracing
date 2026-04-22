@@ -8,7 +8,7 @@ import ReportView from "./report-view";
 import type { Hop } from "@/lib/tracer";
 import type { RiskFlag } from "@/lib/risk";
 
-const BASE_URL = "https://chaintracing-app.vercel.app";
+const BASE_URL = "https://chaintracing.org";
 
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const { id } = await params;

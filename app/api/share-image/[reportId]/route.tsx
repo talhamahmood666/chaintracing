@@ -92,7 +92,7 @@ export async function GET(
             </span>
           </div>
           <span style={{ fontSize: 14, color: "rgba(232,244,253,0.35)", letterSpacing: 1 }}>
-            chaintracing-app.vercel.app
+            chaintracing.org
           </span>
         </div>
 

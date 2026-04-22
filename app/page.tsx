@@ -46,19 +46,19 @@ export default async function HomePage() {
             '@graph': [
               {
                 '@type': 'Organization',
-                '@id': 'https://chaintracing-app.vercel.app/#org',
+                '@id': 'https://chaintracing.org/#org',
                 name: 'ChainTracing',
-                url: 'https://chaintracing-app.vercel.app',
-                logo: 'https://chaintracing-app.vercel.app/opengraph-image',
+                url: 'https://chaintracing.org',
+                logo: 'https://chaintracing.org/opengraph-image',
                 description: 'Blockchain forensics and crypto scam tracing across Ethereum, Solana, Tron, and Bitcoin.',
                 founder: { '@type': 'Person', name: 'Talha Mahmood' },
               },
               {
                 '@type': 'WebSite',
-                '@id': 'https://chaintracing-app.vercel.app/#website',
-                url: 'https://chaintracing-app.vercel.app',
+                '@id': 'https://chaintracing.org/#website',
+                url: 'https://chaintracing.org',
                 name: 'ChainTracing',
-                publisher: { '@id': 'https://chaintracing-app.vercel.app/#org' },
+                publisher: { '@id': 'https://chaintracing.org/#org' },
               },
               {
                 '@type': 'SoftwareApplication',

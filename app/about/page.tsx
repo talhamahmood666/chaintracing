@@ -28,7 +28,7 @@ export default function AboutPage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'AboutPage',
-            url: 'https://chaintracing-app.vercel.app/about',
+            url: 'https://chaintracing.org/about',
             mainEntity: {
               '@type': 'Organization',
               name: 'ChainTracing',

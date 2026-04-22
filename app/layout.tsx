@@ -10,7 +10,7 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://chaintracing-app.vercel.app'),
+  metadataBase: new URL('https://chaintracing.org'),
   title: {
     default: 'ChainTracing — Trace Stolen Crypto Across EVM, Solana, Tron & Bitcoin',
     template: '%s | ChainTracing',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     siteName: 'ChainTracing',
     title: 'ChainTracing — Trace Stolen Crypto Across 4 Chains',
     description: 'Trace stolen cryptocurrency across Ethereum, Solana, Tron, and Bitcoin. Follow funds to exchange off-ramps.',
-    url: 'https://chaintracing-app.vercel.app',
+    url: 'https://chaintracing.org',
   },
   twitter: {
     card: 'summary_large_image',
