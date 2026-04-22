@@ -1,11 +1,62 @@
 import React from 'react';
 
 type LogoProps = {
-  variant?: 'header' | 'hero';
+  variant?: 'header' | 'hero' | 'mark';
   className?: string;
 };
 
 export default function Logo({ variant = 'header', className = '' }: LogoProps) {
+  if (variant === 'mark') {
+    return (
+      <svg
+        className={className}
+        viewBox="0 0 300 200"
+        role="img"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="ChainTracing animated mark"
+      >
+        <title>ChainTracing</title>
+        <desc>Animated trace path ending at a flagged endpoint inside a lens.</desc>
+        <defs>
+          <clipPath id="ct-markLensClip"><circle cx="220" cy="100" r="32" /></clipPath>
+        </defs>
+        <style>{`
+          .ctm-dim { fill: none; stroke: #00D9FF; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; stroke-opacity: 0.25; }
+          .ctm-bright { fill: none; stroke: #00D9FF; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 400; stroke-dashoffset: 400; animation: ctm-draw 3s ease-in-out infinite; }
+          .ctm-node { fill: #00D9FF; opacity: 0; animation: ctm-nodePop 3s ease-in-out infinite; }
+          .ctm-node-dim { fill: #00D9FF; opacity: 0.3; }
+          .ctm-lens { fill: none; stroke: #00D9FF; stroke-width: 2.5; }
+          .ctm-sweep { stroke: #00D9FF; stroke-width: 1.5; stroke-linecap: round; opacity: 0; animation: ctm-sweep 3s ease-in-out infinite; }
+          .ctm-endpoint-ring { fill: none; stroke: #00D9FF; stroke-width: 1.5; opacity: 0; animation: ctm-endpointPulse 3s ease-in-out infinite; }
+          @keyframes ctm-draw { 0% { stroke-dashoffset: 400; } 60%, 100% { stroke-dashoffset: 0; } }
+          @keyframes ctm-nodePop { 0%, 100% { opacity: 0; } 70%, 95% { opacity: 1; } }
+          @keyframes ctm-sweep { 0%, 60% { opacity: 0; transform: translateY(-30px); } 75% { opacity: 0.8; } 90%, 100% { opacity: 0; transform: translateY(30px); } }
+          @keyframes ctm-endpointPulse { 0%, 70% { opacity: 0; r: 6; } 80% { opacity: 1; r: 10; } 90% { opacity: 0.5; r: 18; } 100% { opacity: 0; r: 26; } }
+          @media (prefers-reduced-motion: reduce) {
+            .ctm-bright { stroke-dashoffset: 0; animation: none; }
+            .ctm-node { opacity: 1; animation: none; }
+            .ctm-sweep { display: none; }
+            .ctm-endpoint-ring { opacity: 0.6; animation: none; }
+          }
+        `}</style>
+        <path className="ctm-dim" d="M 60 140 L 95 80 L 130 140 L 165 80 L 200 140 L 220 100" />
+        <path className="ctm-bright" d="M 60 140 L 95 80 L 130 140 L 165 80 L 200 140 L 220 100" />
+        <circle className="ctm-node-dim" cx="60" cy="140" r="4" />
+        <circle className="ctm-node" cx="95" cy="80" r="4" style={{ animationDelay: '0.4s' }} />
+        <circle className="ctm-node" cx="130" cy="140" r="4" style={{ animationDelay: '0.8s' }} />
+        <circle className="ctm-node" cx="165" cy="80" r="4" style={{ animationDelay: '1.2s' }} />
+        <circle className="ctm-node" cx="200" cy="140" r="4" style={{ animationDelay: '1.6s' }} />
+        <circle className="ctm-lens" cx="220" cy="100" r="32" />
+        <line x1="243" y1="123" x2="260" y2="140" stroke="#00D9FF" strokeWidth="3" strokeLinecap="round" />
+        <g clipPath="url(#ct-markLensClip)">
+          <line className="ctm-sweep" x1="188" y1="100" x2="252" y2="100" />
+          <circle cx="215" cy="100" r="5" fill="#00D9FF" />
+          <circle className="ctm-endpoint-ring" cx="215" cy="100" r="6" />
+        </g>
+      </svg>
+    );
+  }
+
   if (variant === 'hero') {
     return (
       <svg
