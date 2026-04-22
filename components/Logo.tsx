@@ -64,7 +64,7 @@ export default function Logo({ variant = 'header', className = '' }: LogoProps) 
   return (
     <svg
       className={className}
-      viewBox="0 0 220 60"
+      viewBox="0 0 250 60"
       role="img"
       xmlns="http://www.w3.org/2000/svg"
       aria-label="ChainTracing"
