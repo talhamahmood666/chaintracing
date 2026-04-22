@@ -8,7 +8,6 @@ export const metadata: Metadata = {
 };
 import ThreeBackground from "@/components/ThreeBackground";
 import TraceForm from "@/components/TraceForm";
-import Logo from "@/components/Logo";
 import AnimatedStatsCounter from "@/components/AnimatedStatsCounter";
 import PricingTiers from "@/components/PricingTiers";
 import SampleReport from "@/components/SampleReport";
@@ -96,9 +95,6 @@ export default async function HomePage() {
 
           {/* LEFT 60% — wordmark + tagline + stats + CTA */}
           <div className="md:w-[60%] flex flex-col items-center md:items-start text-center md:text-left">
-            <div className="w-full max-w-xs mb-4">
-              <Logo variant="mark" className="w-full h-auto" />
-            </div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-xs font-bold uppercase tracking-widest"
               style={{ background: 'rgba(0,217,255,0.08)', border: '1px solid rgba(0,217,255,0.2)', color: '#00D9FF' }}>
               <span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" style={{ background: '#00D9FF' }} />
