@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import TraceLoadingOverlay from "./TraceLoadingOverlay";
 import { useRouter } from "next/navigation";
 import { IntentSelector, type Intent } from "@/components/IntentSelector";
 import { createClient } from "@/lib/supabase-browser";
@@ -189,6 +190,8 @@ export default function TraceForm() {
   };
 
   return (
+    <>
+    {loading && <TraceLoadingOverlay />}
     <div className="glass rounded-2xl p-8 glow-cyan">
       <h2 className="text-sm font-bold uppercase tracking-widest mb-5" style={{ color: 'var(--text-muted)' }}>
         Check a Wallet for Scam Activity
@@ -349,5 +352,6 @@ export default function TraceForm() {
         ))}
       </div>
     </div>
+    </>
   );
 }
