@@ -101,7 +101,7 @@ export default function AboutPage() {
             Built ChainTracing after watching too many crypto victims hit dead ends trying to trace stolen funds.
             Most can&apos;t afford $500+ forensic firms, and free block explorers don&apos;t connect the dots.
             ChainTracing turns the same on-chain data professional investigators use into a{" "}
-            <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>$9.99 evidence report</span>{" "}
+            <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>$14.99 evidence report</span>{" "}
             any victim can hand to police or an exchange compliance team.
           </p>
         </div>

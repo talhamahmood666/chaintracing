@@ -34,7 +34,6 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
   const [user, setUser] = useState<any>(null);
   const [checkoutLoading, setCheckoutLoading] = useState<"quick" | "deep" | null>(null);
   const [firstReportDiscount, setFirstReportDiscount] = useState(false);
-  const [couponOpen, setCouponOpen] = useState(false);
   const [couponInput, setCouponInput] = useState("");
   const [couponStatus, setCouponStatus] = useState<{ valid: boolean; discount_type?: string; discount_value?: number; reason?: string } | null>(null);
 
@@ -231,33 +230,23 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
             firstReportDiscount={firstReportDiscount}
           />
           {/* Coupon code input */}
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => setCouponOpen(o => !o)}
-              className="text-xs font-medium underline-offset-2"
-              style={{ color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
-            >
-              Have a coupon?
-            </button>
-            {couponOpen && (
-              <div className="mt-3 flex flex-col items-center gap-1">
-                <input
-                  type="text"
-                  value={couponInput}
-                  onChange={e => { setCouponInput(e.target.value.toUpperCase()); setCouponStatus(null); }}
-                  onBlur={handleCouponBlur}
-                  placeholder="Enter code"
-                  className="rounded-lg px-3 py-2 text-sm font-mono text-center"
-                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: 'var(--text-primary)', width: 180, outline: 'none' }}
-                />
-                {couponStatus && (
-                  <span className="text-xs font-semibold" style={{ color: couponStatus.valid ? '#00E676' : '#FF4757' }}>
-                    {couponStatus.valid
-                      ? `✓ ${couponStatus.discount_type === 'percent' ? `${couponStatus.discount_value}% off` : `$${couponStatus.discount_value} off`} applied`
-                      : `✗ ${couponStatus.reason}`}
-                  </span>
-                )}
-              </div>
+          <div className="mt-5">
+            <p className="text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>Have a discount code?</p>
+            <input
+              type="text"
+              value={couponInput}
+              onChange={e => { setCouponInput(e.target.value.toUpperCase()); setCouponStatus(null); }}
+              onBlur={handleCouponBlur}
+              placeholder="Enter coupon code (optional)"
+              className="w-full rounded-xl px-4 py-2.5 text-sm font-mono"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: 'var(--text-primary)', outline: 'none' }}
+            />
+            {couponStatus && (
+              <p className="mt-1.5 text-xs font-semibold" style={{ color: couponStatus.valid ? '#00E676' : '#FF4757' }}>
+                {couponStatus.valid
+                  ? `✓ ${couponStatus.discount_type === 'percent' ? `${couponStatus.discount_value}% off` : `$${couponStatus.discount_value} off`} applied`
+                  : `✗ ${couponStatus.reason}`}
+              </p>
             )}
           </div>
         </div>

@@ -68,7 +68,7 @@ export default async function HomePage() {
                 description: 'Trace stolen cryptocurrency across 8 blockchains. Free risk score, evidence-grade reports.',
                 offers: [
                   { '@type': 'Offer', name: 'Free Scan', price: '0', priceCurrency: 'USD' },
-                  { '@type': 'Offer', name: 'Quick Scan', price: '9.99', priceCurrency: 'USD' },
+                  { '@type': 'Offer', name: 'Quick Scan', price: '14.99', priceCurrency: 'USD' },
                   { '@type': 'Offer', name: 'Deep Trace', price: '29.99', priceCurrency: 'USD' },
                 ],
               },
@@ -152,7 +152,7 @@ export default async function HomePage() {
             Run a free trace first — pay only if you want the full evidence report.
           </p>
           <p className="text-center text-sm font-semibold mb-12" style={{ color: '#00E676' }}>
-            🎁 First report 50% off for account holders — Quick $4.99 · Deep $14.99
+            🎁 First report 50% off for account holders — Quick $7.50 · Deep $14.99
           </p>
           <PricingTiers />
         </div>
@@ -260,7 +260,7 @@ export default async function HomePage() {
             Pay only after you see the trace results. USDT (TRC-20) payment.
           </p>
           <p className="text-center text-sm font-semibold mb-12" style={{ color: '#00E676' }}>
-            🎁 First report 50% off — Quick $4.99 · Deep $14.99 (account holders)
+            🎁 First report 50% off — Quick $7.50 · Deep $14.99 (account holders)
           </p>
           <PricingTiers />
         </div>

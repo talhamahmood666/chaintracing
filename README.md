@@ -1,6 +1,6 @@
 # ChainTracing
 
-Stolen-fund tracing tool for crypto scam victims. Enter a scammer's wallet address, get a free risk score, and unlock a full hop-by-hop evidence report starting at $9.99 paid in USDT.
+Stolen-fund tracing tool for crypto scam victims. Enter a scammer's wallet address, get a free risk score, and unlock a full hop-by-hop evidence report starting at $14.99 paid in USDT.
 
 ## Features
 

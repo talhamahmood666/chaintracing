@@ -38,7 +38,7 @@ export default function PricingTiers({
   loadingTier,
   firstReportDiscount = false,
 }: PricingTiersProps) {
-  const quickPrice = firstReportDiscount ? "$4.99" : "$9.99";
+  const quickPrice = firstReportDiscount ? "$7.50" : "$14.99";
   const deepPrice = firstReportDiscount ? "$14.99" : "$29.99";
 
   if (postScan) {
@@ -81,7 +81,7 @@ export default function PricingTiers({
             <h3 className="text-sm font-black uppercase tracking-widest" style={{ color: '#00D9FF' }}>Quick Scan</h3>
             <div className="text-right">
               <span className="text-3xl font-black font-mono" style={{ color: '#00D9FF' }}>{quickPrice}</span>
-              {firstReportDiscount && <p className="text-xs line-through mt-0.5" style={{ color: 'var(--text-muted)' }}>$9.99</p>}
+              {firstReportDiscount && <p className="text-xs line-through mt-0.5" style={{ color: 'var(--text-muted)' }}>$14.99</p>}
             </div>
           </div>
           <ul className="space-y-2 mb-6 text-sm">
@@ -174,7 +174,7 @@ export default function PricingTiers({
         <div className="mb-5">
           <h3 className="text-xl font-black mb-1" style={{ color: '#00D9FF' }}>Quick Scan</h3>
           <div className="flex items-baseline gap-1">
-            <span className="text-3xl font-black font-mono" style={{ color: '#00D9FF' }}>$9.99</span>
+            <span className="text-3xl font-black font-mono" style={{ color: '#00D9FF' }}>$14.99</span>
             <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>/report</span>
           </div>
         </div>

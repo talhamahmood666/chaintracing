@@ -12,7 +12,7 @@ const serverEnv = {
 
   // Payment
   PLISIO_SECRET_KEY: process.env.PLISIO_SECRET_KEY,
-  TIER_QUICK_PRICE_USD: process.env.TIER_QUICK_PRICE_USD ?? "9.99",
+  TIER_QUICK_PRICE_USD: process.env.TIER_QUICK_PRICE_USD ?? "14.99",
   TIER_DEEP_PRICE_USD: process.env.TIER_DEEP_PRICE_USD ?? "29.99",
 
   // Database
