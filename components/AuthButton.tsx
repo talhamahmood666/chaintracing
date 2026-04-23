@@ -14,6 +14,7 @@ export default function AuthButton() {
   const [user, setUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,9 +22,17 @@ export default function AuthButton() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
+      if (session?.user) {
+        fetch("/api/stats/is-admin").then(r => r.json()).then(d => setIsAdmin(!!d.admin)).catch(() => {});
+      }
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        fetch("/api/stats/is-admin").then(r => r.json()).then(d => setIsAdmin(!!d.admin)).catch(() => {});
+      } else {
+        setIsAdmin(false);
+      }
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -61,11 +70,17 @@ export default function AuthButton() {
     <div className="relative">
       <button
         onClick={() => setMenuOpen(!menuOpen)}
-        className="flex items-center justify-center w-9 h-9 rounded-full font-bold text-sm transition-all duration-200 min-w-[44px] min-h-[44px]"
+        className="relative flex items-center justify-center w-9 h-9 rounded-full font-bold text-sm transition-all duration-200 min-w-[44px] min-h-[44px]"
         style={{ background: 'rgba(0,217,255,0.15)', border: '1px solid rgba(0,217,255,0.3)', color: '#00D9FF' }}
         title={user.email ?? "Account"}
       >
         {initials}
+        {isAdmin && (
+          <span className="absolute -bottom-1 -right-1 px-1 rounded text-white font-black leading-none"
+            style={{ background: '#FF4757', fontSize: 8 }}>
+            ADMIN
+          </span>
+        )}
       </button>
 
       {menuOpen && (
@@ -76,6 +91,14 @@ export default function AuthButton() {
               <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border-glass)' }}>
                 <p className="text-sm font-medium truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
               </div>
+            )}
+            {isAdmin && (
+              <a href="/admin"
+                className="block px-4 py-2.5 text-sm font-bold transition-colors duration-200 min-h-[44px] flex items-center"
+                style={{ color: '#FF4757', borderBottom: '1px solid var(--border-glass)' }}
+                onClick={() => setMenuOpen(false)}>
+                Admin Panel
+              </a>
             )}
             <a href="/dashboard"
               className="block px-4 py-2.5 text-sm font-medium transition-colors duration-200 min-h-[44px] flex items-center"
