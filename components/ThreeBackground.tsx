@@ -57,6 +57,7 @@ function Lines() {
     // Rebuild line geometry each frame from parent particle positions
     const points = scene.getObjectByName('particles') as THREE.Points;
     if (!points || !linesRef.current) return;
+    if (!points.geometry?.attributes?.position) return;
     const pos = (points.geometry.attributes.position as THREE.BufferAttribute).array as Float32Array;
     const linePositions: number[] = [];
 
