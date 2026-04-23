@@ -1,7 +1,8 @@
 "use client";
 
 import { createClient } from "@/lib/supabase-browser";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 
 type User = {
@@ -15,6 +16,8 @@ export default function AuthButton() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -69,7 +72,14 @@ export default function AuthButton() {
   return (
     <div className="relative">
       <button
-        onClick={() => setMenuOpen(!menuOpen)}
+        ref={buttonRef}
+        onClick={() => {
+          if (!menuOpen && buttonRef.current) {
+            const r = buttonRef.current.getBoundingClientRect();
+            setDropdownPos({ top: r.bottom + window.scrollY + 8, right: window.innerWidth - r.right });
+          }
+          setMenuOpen(!menuOpen);
+        }}
         className="relative flex items-center justify-center w-9 h-9 rounded-full font-bold text-sm transition-all duration-200 min-w-[44px] min-h-[44px]"
         style={{ background: 'rgba(0,217,255,0.15)', border: '1px solid rgba(0,217,255,0.3)', color: '#00D9FF' }}
         title={user.email ?? "Account"}
@@ -83,10 +93,10 @@ export default function AuthButton() {
         )}
       </button>
 
-      {menuOpen && (
+      {menuOpen && typeof document !== 'undefined' && createPortal(
         <>
-          <div className="fixed inset-0 z-[101]" onClick={() => setMenuOpen(false)} />
-          <div className="absolute right-0 mt-2 w-48 rounded-xl z-[102] overflow-hidden" style={{ background: '#0A1628', border: '1px solid var(--border-glass)' }} onClick={e => e.stopPropagation()}>
+          <div className="fixed inset-0" style={{ zIndex: 9998 }} onClick={() => setMenuOpen(false)} />
+          <div className="fixed w-48 rounded-xl overflow-hidden" style={{ top: dropdownPos.top, right: dropdownPos.right, zIndex: 9999, background: '#0A1628', border: '1px solid var(--border-glass)' }} onClick={e => e.stopPropagation()}>
             {user.email && (
               <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border-glass)' }}>
                 <p className="text-sm font-medium truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
@@ -119,7 +129,8 @@ export default function AuthButton() {
               Sign Out
             </button>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </div>
   );
