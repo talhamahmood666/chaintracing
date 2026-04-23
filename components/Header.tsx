@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: "/#pricing", label: "Pricing" },
   { href: "/report-scammer", label: "Report Scammer" },
   { href: "/about", label: "About" },
+  { href: "/roadmap", label: "Roadmap" },
 ];
 
 export default function Header() {
