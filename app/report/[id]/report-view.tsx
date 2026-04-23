@@ -34,6 +34,9 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
   const [user, setUser] = useState<any>(null);
   const [checkoutLoading, setCheckoutLoading] = useState<"quick" | "deep" | null>(null);
   const [firstReportDiscount, setFirstReportDiscount] = useState(false);
+  const [couponOpen, setCouponOpen] = useState(false);
+  const [couponInput, setCouponInput] = useState("");
+  const [couponStatus, setCouponStatus] = useState<{ valid: boolean; discount_type?: string; discount_value?: number; reason?: string } | null>(null);
 
   useEffect(() => {
     createClient().auth.getUser().then(({ data }) => {
@@ -44,14 +47,25 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
     });
   }, []);
 
+  const handleCouponBlur = async () => {
+    const code = couponInput.trim();
+    if (!code) { setCouponStatus(null); return; }
+    const params = new URLSearchParams({ code: code.toUpperCase() });
+    if (report.email) params.set("email", report.email);
+    const res = await fetch(`/api/validate-coupon?${params}`);
+    setCouponStatus(await res.json());
+  };
+
   const handleCheckout = async (tier: "quick" | "deep" = "quick") => {
     setCheckoutLoading(tier);
     // Use allHops (full detected hops) — not the truncated visible subset
     const hopsForCheckout = allHops ?? report.hops;
+    const body: Record<string, unknown> = { reportId: report.id, address: report.address, chain: report.chain, hops: hopsForCheckout, tier };
+    if (couponInput.trim()) body.coupon_code = couponInput.trim();
     const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reportId: report.id, address: report.address, chain: report.chain, hops: hopsForCheckout, tier }),
+      body: JSON.stringify(body),
     });
     const data = await res.json();
     if (data.adminBypass && data.reportId && data.viewToken) {
@@ -216,6 +230,36 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
             loadingTier={checkoutLoading}
             firstReportDiscount={firstReportDiscount}
           />
+          {/* Coupon code input */}
+          <div className="mt-4 text-center">
+            <button
+              onClick={() => setCouponOpen(o => !o)}
+              className="text-xs font-medium underline-offset-2"
+              style={{ color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              Have a coupon?
+            </button>
+            {couponOpen && (
+              <div className="mt-3 flex flex-col items-center gap-1">
+                <input
+                  type="text"
+                  value={couponInput}
+                  onChange={e => { setCouponInput(e.target.value.toUpperCase()); setCouponStatus(null); }}
+                  onBlur={handleCouponBlur}
+                  placeholder="Enter code"
+                  className="rounded-lg px-3 py-2 text-sm font-mono text-center"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: 'var(--text-primary)', width: 180, outline: 'none' }}
+                />
+                {couponStatus && (
+                  <span className="text-xs font-semibold" style={{ color: couponStatus.valid ? '#00E676' : '#FF4757' }}>
+                    {couponStatus.valid
+                      ? `✓ ${couponStatus.discount_type === 'percent' ? `${couponStatus.discount_value}% off` : `$${couponStatus.discount_value} off`} applied`
+                      : `✗ ${couponStatus.reason}`}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
 

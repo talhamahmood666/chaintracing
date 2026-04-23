@@ -83,6 +83,7 @@ export async function POST(request: NextRequest) {
     riskLevel?: unknown;
     riskFlags?: unknown;
     riskSummary?: unknown;
+    coupon_code?: string;
   };
   try {
     body = await request.json();
@@ -90,7 +91,8 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { address, chain, email, tier = "quick", intent } = body;
+  const { address, chain, email, tier = "quick", intent, coupon_code: rawCouponCode } = body;
+  const couponCode = rawCouponCode?.trim().toUpperCase() || null;
 
   if (!address || typeof address !== "string") {
     return Response.json({ error: "address is required" }, { status: 400 });
@@ -199,8 +201,48 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Check first-report discount eligibility
-    const discountEligible = user ? await isFirstReportUser(user.id) : false;
+    // Validate coupon BEFORE any DB writes — return 400 if invalid
+    let coupon: { id: string; discount_type: string; discount_value: number; uses: number } | null = null;
+    if (couponCode) {
+      const db = getAdminClient();
+      const { data: couponRow } = await db
+        .from("coupons")
+        .select("id, discount_type, discount_value, max_uses, uses, expires_at, active")
+        .eq("code", couponCode)
+        .single();
+
+      if (!couponRow) return Response.json({ error: "Invalid coupon code" }, { status: 400 });
+      if (!couponRow.active) return Response.json({ error: "Coupon is no longer active" }, { status: 400 });
+      if (couponRow.expires_at && new Date(couponRow.expires_at) < new Date()) {
+        return Response.json({ error: "Coupon has expired" }, { status: 400 });
+      }
+      if (couponRow.max_uses !== null && couponRow.uses >= couponRow.max_uses) {
+        return Response.json({ error: "Coupon has reached its usage limit" }, { status: 400 });
+      }
+      // Check per-user/email uniqueness
+      if (user?.id) {
+        const { data: existing } = await db
+          .from("coupon_redemptions")
+          .select("id")
+          .eq("coupon_id", couponRow.id)
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (existing) return Response.json({ error: "You have already used this coupon" }, { status: 400 });
+      } else if (email) {
+        const { data: existing } = await db
+          .from("coupon_redemptions")
+          .select("id")
+          .eq("coupon_id", couponRow.id)
+          .is("user_id", null)
+          .ilike("email", email)
+          .maybeSingle();
+        if (existing) return Response.json({ error: "This coupon has already been used for this email" }, { status: 400 });
+      }
+      coupon = { id: couponRow.id, discount_type: couponRow.discount_type, discount_value: couponRow.discount_value, uses: couponRow.uses };
+    }
+
+    // Check first-report discount eligibility (only used when no coupon)
+    const discountEligible = !coupon && user ? await isFirstReportUser(user.id) : false;
 
     // Re-score server-side from the client-supplied hops to prevent tampering
     const risk = await scoreAddress(address.trim(), chain as Chain, clientHops, intent);
@@ -235,6 +277,7 @@ export async function POST(request: NextRequest) {
           view_token: viewToken,
           user_id: user?.id ?? null,
           discount_applied: attempt === 0 ? appliedDiscount : false,
+          coupon_code: couponCode ?? null,
         })
         .select("id")
         .single();
@@ -322,10 +365,22 @@ export async function POST(request: NextRequest) {
       })();
     }
 
-    const price = getTierPrice(tier, appliedDiscount);
-    const orderName = tier === "deep"
-      ? `ChainTracing Deep Trace${appliedDiscount ? " (50% off)" : ""}`
-      : `ChainTracing Quick Scan${appliedDiscount ? " (50% off)" : ""}`;
+    let price: string;
+    let orderName: string;
+    if (coupon) {
+      const basePrice = parseFloat(getTierPrice(tier, false));
+      const discounted = coupon.discount_type === "percent"
+        ? basePrice * (1 - coupon.discount_value / 100)
+        : Math.max(0, basePrice - coupon.discount_value);
+      price = discounted.toFixed(2);
+      const label = tier === "deep" ? "Deep Trace" : "Quick Scan";
+      orderName = `ChainTracing ${label} (coupon: ${couponCode})`;
+    } else {
+      price = getTierPrice(tier, appliedDiscount);
+      orderName = tier === "deep"
+        ? `ChainTracing Deep Trace${appliedDiscount ? " (50% off)" : ""}`
+        : `ChainTracing Quick Scan${appliedDiscount ? " (50% off)" : ""}`;
+    }
 
     // Create Plisio invoice
     const params = new URLSearchParams({
@@ -378,6 +433,21 @@ export async function POST(request: NextRequest) {
       .from("reports")
       .update({ plisio_txn_id: pd.txn_id, payment_data: paymentData })
       .eq("id", report.id);
+
+    // Record coupon redemption — fire-and-forget, do not fail checkout on error
+    if (coupon) {
+      try {
+        await db.from("coupon_redemptions").insert({
+          coupon_id: coupon.id,
+          user_id: user?.id ?? null,
+          email: email ?? null,
+          report_id: report.id,
+        });
+        await db.from("coupons").update({ uses: coupon.uses + 1 }).eq("id", coupon.id);
+      } catch (e) {
+        logger.warn("Coupon redemption record failed (non-fatal)", e, { couponCode, reportId: report.id });
+      }
+    }
 
     const responseBody: Record<string, unknown> = {
       reportId: report.id,
