@@ -56,7 +56,7 @@ No tracking cookies. No third-party ad cookies. No local storage beyond your ses
   {
     id: "rights",
     title: "5. Your Rights",
-    body: `You may request any of the following at any time by emailing support@chaintracing.app:
+    body: `You may request any of the following at any time by emailing support@chaintracing.org:
 
 - **Access** — a copy of all personal data we hold on you
 - **Deletion** — erasure of your account and associated personal data (GDPR Article 17)
@@ -96,7 +96,7 @@ No system is perfectly secure. In the event of a breach affecting your personal 
   {
     id: "contact",
     title: "10. Contact & GDPR Enquiries",
-    body: `**Email:** support@chaintracing.app\n\nFor GDPR-specific requests, please include "GDPR Request" in your subject line. We will respond within 30 days.`,
+    body: `**Email:** support@chaintracing.org\n\nFor GDPR-specific requests, please include "GDPR Request" in your subject line. We will respond within 30 days.`,
   },
 ];
 

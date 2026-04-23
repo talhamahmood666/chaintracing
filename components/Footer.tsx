@@ -14,7 +14,7 @@ export default function Footer() {
           <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
           <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
           <DisclaimerModal />
-          <a href="mailto:support@chaintracing.app" className="hover:text-white transition-colors">Contact</a>
+          <a href="mailto:support@chaintracing.org" className="hover:text-white transition-colors">Contact</a>
         </nav>
       </div>
     </footer>

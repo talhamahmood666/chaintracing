@@ -231,9 +231,9 @@ export default async function RoadmapPage() {
           style={{ background: "rgba(0,217,255,0.05)", border: "1px solid rgba(0,217,255,0.15)" }}>
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
             Have a feature idea? Add it above or email{" "}
-            <a href="mailto:hello@chaintracing.org" className="font-semibold"
+            <a href="mailto:support@chaintracing.org" className="font-semibold"
               style={{ color: "#00D9FF" }}>
-              hello@chaintracing.org
+              support@chaintracing.org
             </a>
           </p>
         </div>

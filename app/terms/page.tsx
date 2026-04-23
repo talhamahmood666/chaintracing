@@ -27,7 +27,7 @@ OFAC sanctions data is sourced from official public lists but we make no warrant
   {
     id: "payments",
     title: "3. Payments & Refunds",
-    body: `All payments are one-time, non-refundable except in the case of a verifiable technical error that prevented report delivery. If your report was not generated or contained a critical data error, contact support@chaintracing.app within **7 days** of payment with your order ID.
+    body: `All payments are one-time, non-refundable except in the case of a verifiable technical error that prevented report delivery. If your report was not generated or contained a critical data error, contact support@chaintracing.org within **7 days** of payment with your order ID.
 
 We do not offer refunds for unsatisfactory results, addresses with no on-chain activity, or change-of-mind. Payments are processed via Plisio; we do not store card or wallet credentials.`,
   },
@@ -74,7 +74,7 @@ Our total liability for any direct claim shall not exceed the amount you paid fo
   {
     id: "contact",
     title: "10. Contact",
-    body: `For support, refund requests, or legal enquiries:\n\n**Email:** support@chaintracing.app`,
+    body: `For support, refund requests, or legal enquiries:\n\n**Email:** support@chaintracing.org`,
   },
 ];
 

@@ -183,7 +183,7 @@ export default function AboutPage() {
             Contact
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-px" style={{ borderColor: "rgba(0,217,255,0.08)" }}>
-            <ContactRow icon={<MdEmail size={20} />} platform="Email" label="talha.mahmood666@gmail.com" href="mailto:talha.mahmood666@gmail.com" first />
+            <ContactRow icon={<MdEmail size={20} />} platform="Email" label="support@chaintracing.org" href="mailto:support@chaintracing.org" first />
             <ContactRow icon={<FaXTwitter size={20} />} platform="X" label="@talhamahmood666" href="https://x.com/talhamahmood666" />
             <ContactRow icon={<FaLinkedin size={20} />} platform="LinkedIn" label="talha-m" href="https://www.linkedin.com/in/talha-m-70732497/" />
             <ContactRow icon={<FaGithub size={20} />} platform="GitHub" label="talhamahmood666" href="https://github.com/talhamahmood666" />
