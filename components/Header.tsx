@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "/report-scammer", label: "Report Scammer" },
   { href: "/about", label: "About" },
   { href: "/roadmap", label: "Roadmap" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Header() {

@@ -10,6 +10,7 @@ import {
   Database,
   Inbox,
   MessageSquare,
+  Mail,
   ChevronLeft,
   ChevronRight,
   Menu,
@@ -23,6 +24,7 @@ const NAV = [
   { href: "/admin/scam-db",            label: "Scam DB",           icon: Database        },
   { href: "/admin/submissions",        label: "Submissions",       icon: Inbox           },
   { href: "/admin/community-reports",  label: "Community Reports", icon: MessageSquare   },
+  { href: "/admin/contact",            label: "Contact",           icon: Mail            },
 ];
 
 const STORAGE_KEY = "admin-sidebar-collapsed";
