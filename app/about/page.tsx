@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import WhyWeBuilt from "@/components/WhyWeBuilt";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
@@ -105,6 +106,9 @@ export default function AboutPage() {
             any victim can hand to police or an exchange compliance team.
           </p>
         </div>
+
+        {/* Origin story */}
+        <WhyWeBuilt />
 
         {/* Why ChainTracing Exists */}
         <section className="w-full rounded-2xl p-8" style={GLASS}>

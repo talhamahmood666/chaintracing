@@ -10,6 +10,7 @@ import ThreeBackground from "@/components/ThreeBackground";
 import TraceForm from "@/components/TraceForm";
 import AnimatedStatsCounter from "@/components/AnimatedStatsCounter";
 import PricingTiers from "@/components/PricingTiers";
+import WhyWeBuilt from "@/components/WhyWeBuilt";
 import SampleReport from "@/components/SampleReport";
 import {
   Search, ArrowRight, Shield, FileText,
@@ -248,6 +249,13 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* f0) ORIGIN STORY */}
+      <section className="py-24 px-4" style={{ background: 'rgba(10,22,40,0.6)' }}>
+        <div className="max-w-3xl mx-auto">
+          <WhyWeBuilt />
         </div>
       </section>
 
