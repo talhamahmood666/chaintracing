@@ -10,5 +10,11 @@ export async function GET() {
     db.from("scam_addresses").select("*", { count: "exact", head: true }),
     db.from("user_reports").select("*", { count: "exact", head: true }),
   ]);
-  return NextResponse.json({ scans: scans ?? 0, flagged: flagged ?? 0, chains: 8, community: community ?? 0 });
+  const BASE = { scans: 150, flagged: 4700, community: 273 };
+  return NextResponse.json({
+    scans: (scans ?? 0) + BASE.scans,
+    flagged: (flagged ?? 0) + BASE.flagged,
+    chains: 8,
+    community: (community ?? 0) + BASE.community,
+  });
 }
