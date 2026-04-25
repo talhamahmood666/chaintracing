@@ -471,8 +471,8 @@ async function traceEvm(
   let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
   const txCache = new Map<string, TxCache>(); // per-trace address cache
-  const queue: Array<{ address: string; depth: number }> = [
-    { address: startAddress.toLowerCase(), depth: 0 },
+  const queue: Array<{ address: string; depth: number; fundingTs: number }> = [
+    { address: startAddress.toLowerCase(), depth: 0, fundingTs: 0 },
   ];
 
   console.log(`[TRACE] Starting BFS: startAddress=${startAddress}, chain=${chain}, maxDepth=${maxDepth}`);
@@ -481,8 +481,8 @@ async function traceEvm(
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
     if (!item) break;
-    const { address, depth } = item;
-    console.log(`[TRACE] Processing: hop=${hops.length + 1}, depth=${depth}, address=${address}, queueRemaining=${queue.length}, visited=${visited.size}, maxDepth=${maxDepth}`);
+    const { address, depth, fundingTs } = item;
+    console.log(`[TRACE] Processing: hop=${hops.length + 1}, depth=${depth}, address=${address}, queueRemaining=${queue.length}, visited=${visited.size}, maxDepth=${maxDepth}, fundingTs=${fundingTs}`);
 
     if (visited.has(address)) {
       console.log(`[TRACE] Skipping ${address}: already visited`);
@@ -537,17 +537,20 @@ async function traceEvm(
       if (!seen.has(key)) { seen.add(key); allTxs.push(tx); }
     }
 
-    // Only outgoing transfers FROM current address
-    const outgoing = allTxs
+    // Only outgoing transfers FROM current address, sorted chronologically
+    const allOutgoing = allTxs
       .filter(tx => tx.from === address)
-      .sort((a, b) => a.timestamp - b.timestamp); // chronological
+      .sort((a, b) => a.timestamp - b.timestamp);
+
+    // Filter to txs at or after this address was funded (temporal integrity)
+    const outgoing = fundingTs > 0 ? allOutgoing.filter(t => t.timestamp >= fundingTs) : allOutgoing;
 
     logEntry.nativeTxCount = nativeTxs.filter(t => t.from === address).length;
     logEntry.tokenTxCount = tokenTxs.filter(t => t.from === address).length;
     logEntry.outgoingCount = outgoing.length;
 
     if (!outgoing.length) {
-      logEntry.skipReason = "no outgoing txs found";
+      logEntry.skipReason = allOutgoing.length > 0 ? "no-valid-outgoing-after-funding" : "no outgoing txs found";
       bfsLog?.push(logEntry);
       // BUG FIX: continue, not break — other queue entries may still yield hops
       continue;
@@ -620,8 +623,9 @@ async function traceEvm(
     }
 
     console.log(`[TRACE] Added hop ${hops.length}: ${address} → ${dest} (${bestTx.token} ${bestTx.valueHuman}), pushing dest to queue`);
+    console.log("[evm-bfs] hop-pick", { depth, fundingTs, outgoingCount: allOutgoing.length, validAfterFilter: outgoing.length, picked: { txHash: bestTx.hash, ts: bestTx.timestamp } });
 
-    queue.push({ address: dest, depth: depth + 1 });
+    queue.push({ address: dest, depth: depth + 1, fundingTs: bestTx.timestamp });
     if (stopAfter) break;
   }
 
@@ -660,8 +664,8 @@ async function traceSolana(
   const hops: Hop[] = [];
   let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
-  const queue: Array<{ address: string; depth: number }> = [
-    { address: startAddress, depth: 0 },
+  const queue: Array<{ address: string; depth: number; fundingTs: number }> = [
+    { address: startAddress, depth: 0, fundingTs: 0 },
   ];
 
   const apiKey = env.HELIUS_API_KEY ?? "";
@@ -703,7 +707,7 @@ async function traceSolana(
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
     if (!item) break;
-    const { address, depth } = item;
+    const { address, depth, fundingTs } = item;
     if (visited.has(address) || depth >= maxDepth) continue;
     visited.add(address);
 
@@ -744,9 +748,10 @@ async function traceSolana(
       }
     }
 
-    const outgoing = [...nativeNorm, ...tokenNorm].sort((a, b) => a.timestamp - b.timestamp);
+    const allOutgoingSol = [...nativeNorm, ...tokenNorm].sort((a, b) => a.timestamp - b.timestamp);
+    const outgoing = fundingTs > 0 ? allOutgoingSol.filter(t => t.timestamp >= fundingTs) : allOutgoingSol;
 
-    console.log(`[HELIUS] native txs: ${nativeNorm.length}, token txs: ${tokenNorm.length}, outgoing: ${outgoing.length}`);
+    console.log(`[HELIUS] native txs: ${nativeNorm.length}, token txs: ${tokenNorm.length}, outgoing: ${allOutgoingSol.length}, validAfterFilter: ${outgoing.length}`);
 
     const logEntry: BfsLogEntry = {
       address, depth,
@@ -756,7 +761,7 @@ async function traceSolana(
     };
 
     if (!outgoing.length) {
-      logEntry.skipReason = "no outgoing txs";
+      logEntry.skipReason = allOutgoingSol.length > 0 ? "no-valid-outgoing-after-funding" : "no outgoing txs";
       bfsLog?.push(logEntry);
       continue;
     }
@@ -809,7 +814,8 @@ async function traceSolana(
       beyondCexRemaining -= 1;
       if (beyondCexRemaining <= 0) stopAfter = true;
     }
-    queue.push({ address: dest, depth: depth + 1 });
+    console.log("[solana-bfs] hop-pick", { depth, fundingTs, outgoingCount: allOutgoingSol.length, validAfterFilter: outgoing.length, picked: { txHash: best.hash, ts: best.timestamp } });
+    queue.push({ address: dest, depth: depth + 1, fundingTs: best.timestamp });
     if (stopAfter) break;
   }
 
@@ -1018,15 +1024,15 @@ async function traceBitcoin(
   const hops: Hop[] = [];
   let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
-  const queue: Array<{ address: string; depth: number }> = [
-    { address: startAddress, depth: 0 },
+  const queue: Array<{ address: string; depth: number; fundingTs: number }> = [
+    { address: startAddress, depth: 0, fundingTs: 0 },
   ];
   const btcExchanges = exchangeWallets.btc as Record<string, { exchange: string; label: string }>;
 
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
     if (!item) break;
-    const { address, depth } = item;
+    const { address, depth, fundingTs } = item;
     if (visited.has(address) || depth >= maxDepth) continue;
     visited.add(address);
 
@@ -1063,16 +1069,19 @@ async function traceBitcoin(
       outgoingCount: outgoing.length,
     };
 
-    if (!outgoing.length) {
-      logEntry.skipReason = "no outgoing txs";
+    // mempool.space returns newest first; sort ascending by block_time for chronological flow
+    outgoing.sort((a, b) => (a.status.block_time ?? 0) - (b.status.block_time ?? 0));
+
+    // Filter to txs at or after this address was funded (temporal integrity)
+    const validOutgoing = fundingTs > 0 ? outgoing.filter(tx => (tx.status.block_time ?? 0) >= fundingTs) : outgoing;
+
+    if (!validOutgoing.length) {
+      logEntry.skipReason = outgoing.length > 0 ? "no-valid-outgoing-after-funding" : "no outgoing txs";
       bfsLog?.push(logEntry);
       continue;
     }
 
-    // mempool.space returns newest first; sort ascending by block_time for chronological flow
-    outgoing.sort((a, b) => (a.status.block_time ?? 0) - (b.status.block_time ?? 0));
-
-    const outTx = outgoing[0];
+    const outTx = validOutgoing[0];
     const destVout = outTx.vout.find(o => o.scriptpubkey_address && o.scriptpubkey_address !== address);
     if (!destVout || !destVout.scriptpubkey_address) {
       logEntry.skipReason = "no external recipient";
@@ -1115,7 +1124,8 @@ async function traceBitcoin(
       if (beyondCexRemaining <= 0) break;
     }
 
-    queue.push({ address: dest, depth: depth + 1 });
+    console.log("[btc-bfs] hop-pick", { depth, fundingTs, outgoingCount: outgoing.length, validAfterFilter: validOutgoing.length, picked: { txHash: outTx.txid, ts: timestamp } });
+    queue.push({ address: dest, depth: depth + 1, fundingTs: timestamp });
   }
 
   return hops;
