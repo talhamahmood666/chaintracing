@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
 import TransactionFlowGraph from "@/components/TransactionFlowGraph";
@@ -31,6 +32,8 @@ function HopTag({ label, bg, color }: { label: string; bg: string; color: string
 }
 
 export default function ReportView({ report, viewToken, isPaid = false, deepScanAvailable = true, allHops, totalHopCount }: Props) {
+  const searchParams = useSearchParams();
+  const utxoMode = searchParams.get("utxo") === "1";
   const [user, setUser] = useState<any>(null);
   const [checkoutLoading, setCheckoutLoading] = useState<"quick" | "deep" | null>(null);
   const [firstReportDiscount, setFirstReportDiscount] = useState(false);
@@ -124,7 +127,7 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
       )}
 
       {/* M7 / partial trace: only warn when BFS was cut short, not when it reached a CEX */}
-      {isPaid && !terminalExchange && report.hops.some((h: Hop) => h.partial_trace) && (
+      {isPaid && !terminalExchange && !utxoMode && report.hops.some((h: Hop) => h.partial_trace) && (
         <div className="rounded-xl px-4 py-2.5 mb-3 text-xs font-semibold text-center"
           style={{ background: "rgba(255,165,0,0.08)", border: "1px solid rgba(255,165,0,0.25)", color: "#FFA500" }}>
           ⚠️ Trace may be incomplete — the API window was exhausted before reaching a known destination. Some hops may be missing.
@@ -156,6 +159,12 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
               <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
                 {report.chain.toUpperCase()} · {report.hops.length} hop{report.hops.length !== 1 ? 's' : ''}
               </span>
+              {utxoMode && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider"
+                  style={{ background: 'rgba(0,217,255,0.12)', color: '#00D9FF', border: '1px solid rgba(0,217,255,0.3)' }}>
+                  UTXO Trace
+                </span>
+              )}
             </div>
             <h1 className="font-mono text-sm break-all mb-3" style={{ color: 'var(--text-primary)' }}>{report.address}</h1>
             <p className="text-xs" style={{ color: 'var(--text-muted)' }}>

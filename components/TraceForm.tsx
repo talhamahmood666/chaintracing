@@ -120,6 +120,11 @@ export default function TraceForm() {
   const [focused, setFocused] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [startTxid, setStartTxid] = useState("");
+  const [startVout, setStartVout] = useState("0");
+  const [txidError, setTxidError] = useState<string | null>(null);
+
   useEffect(() => {
     setHistory(loadHistory());
     fetch("/api/stats").then(r => r.json()).then(d => {
@@ -159,19 +164,47 @@ export default function TraceForm() {
     setFocused(false);
   };
 
+  const TXID_RE = /^[0-9a-f]{64}$/;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!address.trim()) { setError("Enter a wallet address or transaction hash to trace."); return; }
+
+    // Validate UTXO fields for BTC advanced mode
+    if (chain === "btc" && advancedOpen && startTxid.trim()) {
+      if (!TXID_RE.test(startTxid.trim())) {
+        setTxidError("Transaction ID must be 64 hex characters");
+        return;
+      }
+      const voutNum = parseInt(startVout, 10);
+      if (isNaN(voutNum) || voutNum < 0) {
+        setTxidError("Output index required when txid is provided");
+        return;
+      }
+    }
+    if (chain === "btc" && advancedOpen && !startTxid.trim() && startVout !== "0") {
+      setTxidError("Transaction ID required when output index is set");
+      return;
+    }
+
     setLoading(true);
     setError(null);
+    setTxidError(null);
 
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
+    const utxoMode = chain === "btc" && advancedOpen && TXID_RE.test(startTxid.trim());
+    const body: Record<string, unknown> = { address: address.trim(), chain, intent, userId: user?.id };
+    if (utxoMode) {
+      body.startTxid = startTxid.trim();
+      body.startVout = parseInt(startVout, 10) || 0;
+    }
+
     const res = await fetch("/api/trace", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ address: address.trim(), chain, intent, userId: user?.id }),
+      body: JSON.stringify(body),
     });
 
     const data = await res.json();
@@ -179,10 +212,10 @@ export default function TraceForm() {
     if (data.reportId) {
       saveHistoryEntry(address.trim(), chain);
       setHistory(loadHistory());
-      const reportUrl = data.isAdmin
+      const base = data.isAdmin
         ? `/report/${data.reportId}?token=${data.viewToken}&admin=1`
         : `/report/${data.reportId}?token=${data.viewToken}`;
-      router.push(reportUrl);
+      router.push(data.utxoMode ? `${base}&utxo=1` : base);
     } else {
       setError("Something went wrong. Please try again.");
       setLoading(false);
@@ -310,6 +343,80 @@ export default function TraceForm() {
             <option value="btc" style={{ background: '#0D1B2A' }}>Bitcoin</option>
           </select>
         </div>
+
+        {chain === "btc" && (
+          <div>
+            <button
+              type="button"
+              onClick={() => { setAdvancedOpen(o => !o); setTxidError(null); }}
+              className="flex items-center gap-1.5 text-xs font-semibold transition-colors"
+              style={{ color: advancedOpen ? "#00D9FF" : "var(--text-muted)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+            >
+              <span style={{ fontSize: 10 }}>{advancedOpen ? "▼" : "▶"}</span>
+              Advanced: UTXO forensic trace (optional)
+            </button>
+            {advancedOpen && (
+              <div className="mt-3 rounded-xl p-4 space-y-3"
+                style={{ background: "rgba(0,217,255,0.04)", border: "1px solid rgba(0,217,255,0.15)" }}>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                  If you sent crypto to this address and have your transaction ID, ChainTracing can perform a precise UTXO-level forensic trace following your specific funds. Without a txid, you&apos;ll get a wallet profile analysis instead.
+                </p>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--text-muted)" }}>
+                    Your transaction ID (optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={startTxid}
+                    onChange={e => { setStartTxid(e.target.value); setTxidError(null); }}
+                    placeholder="If you sent funds, paste the txid here"
+                    disabled={loading}
+                    autoComplete="off"
+                    spellCheck={false}
+                    className="w-full px-3 py-2 rounded-lg text-xs font-mono"
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(0,217,255,0.2)",
+                      color: "var(--text-primary)",
+                      outline: "none",
+                    }}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--text-muted)" }}>
+                      Output index
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={startVout}
+                      onChange={e => { setStartVout(e.target.value); setTxidError(null); }}
+                      placeholder="0"
+                      disabled={loading}
+                      className="px-3 py-2 rounded-lg text-xs font-mono w-20"
+                      style={{
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid rgba(0,217,255,0.2)",
+                        color: "var(--text-primary)",
+                        outline: "none",
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs mt-4" style={{ color: "var(--text-muted)" }}>
+                    The vout index of your payment (usually 0 or 1)
+                  </p>
+                </div>
+                {txidError && (
+                  <p className="text-xs px-3 py-2 rounded-lg"
+                    style={{ background: "rgba(255,71,87,0.08)", border: "1px solid rgba(255,71,87,0.3)", color: "#FF4757" }}>
+                    {txidError}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         <IntentSelector value={intent} onChange={setIntent} />
 

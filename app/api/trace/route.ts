@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { traceAddress, type Chain } from "@/lib/tracer";
+import { traceAddress, traceAddressWithUtxo, type Chain } from "@/lib/tracer";
 import { scoreAddress } from "@/lib/risk";
 import { rateLimit, rateLimits } from "@/lib/rate-limit";
 import {
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   const limitRes = await rateLimit(request, rateLimits.traceLimit);
   if (limitRes) return limitRes;
 
-  let body: { address?: string; chain?: string; intent?: string };
+  let body: { address?: string; chain?: string; intent?: string; startTxid?: string; startVout?: number };
   try {
     body = await request.json();
   } catch {
@@ -59,20 +59,38 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Validate UTXO params (BTC-only)
+  const TXID_RE = /^[0-9a-f]{64}$/;
+  let startTxid: string | undefined;
+  let startVout: number | undefined;
+  if (typedChain === "btc" && (body.startTxid !== undefined || body.startVout !== undefined)) {
+    if (!body.startTxid || !TXID_RE.test(body.startTxid)) {
+      return Response.json({ error: "startTxid must be a 64-character lowercase hex string" }, { status: 400 });
+    }
+    if (body.startVout === undefined || !Number.isInteger(body.startVout) || body.startVout < 0) {
+      return Response.json({ error: "startVout must be a non-negative integer" }, { status: 400 });
+    }
+    startTxid = body.startTxid;
+    startVout = body.startVout;
+  }
+  const utxoMode = typedChain === "btc" && !!startTxid && startVout !== undefined;
+
   try {
     // Attempt to attach user_id from session — auth is optional for free traces
     const { user } = await getUser(request);
     const adminUser = user ? await isAdminById(user.id) : false;
     const resolvedHopLimit = adminUser ? 50 : 10;
     const fresh = adminUser && request.nextUrl?.searchParams?.get("fresh") === "1";
-    console.log("[trace] userId=%s userEmail=%s isAdmin=%s resolvedHopLimit=%d fresh=%s tier=free", user?.id ?? "anon", user?.email ?? "anon", adminUser, resolvedHopLimit, fresh);
+    console.log("[trace] userId=%s userEmail=%s isAdmin=%s resolvedHopLimit=%d fresh=%s mode=%s", user?.id ?? "anon", user?.email ?? "anon", adminUser, resolvedHopLimit, fresh, utxoMode ? `utxo startTxid=${startTxid} startVout=${startVout}` : "address");
 
     if (fresh) {
       await clearTraceCache(address.trim(), typedChain);
       console.log("[cache] cleared for fresh admin trace", { address: address.trim(), chain: typedChain });
     }
 
-    const hops = await traceAddress(address.trim(), typedChain, resolvedHopLimit);
+    const hops = utxoMode
+      ? await traceAddressWithUtxo({ address: address.trim(), chain: typedChain, startTxid, startVout, maxHops: resolvedHopLimit })
+      : await traceAddress(address.trim(), typedChain, resolvedHopLimit);
     const risk = await scoreAddress(address.trim(), typedChain, hops, body.intent);
 
     // Create a report record in the database for the free trace
@@ -141,6 +159,7 @@ export async function POST(request: NextRequest) {
       reportId: report.id,
       viewToken: viewToken,
       isAdmin: adminUser,
+      utxoMode,
     });
   } catch (err) {
     logger.error("Trace failed", err, { address: address?.slice(0, 10) + "...", chain });

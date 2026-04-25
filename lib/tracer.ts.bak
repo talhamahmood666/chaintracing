@@ -471,8 +471,8 @@ async function traceEvm(
   let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
   const txCache = new Map<string, TxCache>(); // per-trace address cache
-  const queue: Array<{ address: string; depth: number; fundingTs: number }> = [
-    { address: startAddress.toLowerCase(), depth: 0, fundingTs: 0 },
+  const queue: Array<{ address: string; depth: number }> = [
+    { address: startAddress.toLowerCase(), depth: 0 },
   ];
 
   console.log(`[TRACE] Starting BFS: startAddress=${startAddress}, chain=${chain}, maxDepth=${maxDepth}`);
@@ -481,8 +481,8 @@ async function traceEvm(
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
     if (!item) break;
-    const { address, depth, fundingTs } = item;
-    console.log(`[TRACE] Processing: hop=${hops.length + 1}, depth=${depth}, address=${address}, queueRemaining=${queue.length}, visited=${visited.size}, maxDepth=${maxDepth}, fundingTs=${fundingTs}`);
+    const { address, depth } = item;
+    console.log(`[TRACE] Processing: hop=${hops.length + 1}, depth=${depth}, address=${address}, queueRemaining=${queue.length}, visited=${visited.size}, maxDepth=${maxDepth}`);
 
     if (visited.has(address)) {
       console.log(`[TRACE] Skipping ${address}: already visited`);
@@ -537,20 +537,17 @@ async function traceEvm(
       if (!seen.has(key)) { seen.add(key); allTxs.push(tx); }
     }
 
-    // Only outgoing transfers FROM current address, sorted chronologically
-    const allOutgoing = allTxs
+    // Only outgoing transfers FROM current address
+    const outgoing = allTxs
       .filter(tx => tx.from === address)
-      .sort((a, b) => a.timestamp - b.timestamp);
-
-    // Filter to txs at or after this address was funded (temporal integrity)
-    const outgoing = fundingTs > 0 ? allOutgoing.filter(t => t.timestamp >= fundingTs) : allOutgoing;
+      .sort((a, b) => a.timestamp - b.timestamp); // chronological
 
     logEntry.nativeTxCount = nativeTxs.filter(t => t.from === address).length;
     logEntry.tokenTxCount = tokenTxs.filter(t => t.from === address).length;
     logEntry.outgoingCount = outgoing.length;
 
     if (!outgoing.length) {
-      logEntry.skipReason = allOutgoing.length > 0 ? "no-valid-outgoing-after-funding" : "no outgoing txs found";
+      logEntry.skipReason = "no outgoing txs found";
       bfsLog?.push(logEntry);
       // BUG FIX: continue, not break — other queue entries may still yield hops
       continue;
@@ -623,9 +620,8 @@ async function traceEvm(
     }
 
     console.log(`[TRACE] Added hop ${hops.length}: ${address} → ${dest} (${bestTx.token} ${bestTx.valueHuman}), pushing dest to queue`);
-    console.log("[evm-bfs] hop-pick", { depth, fundingTs, outgoingCount: allOutgoing.length, validAfterFilter: outgoing.length, picked: { txHash: bestTx.hash, ts: bestTx.timestamp } });
 
-    queue.push({ address: dest, depth: depth + 1, fundingTs: bestTx.timestamp });
+    queue.push({ address: dest, depth: depth + 1 });
     if (stopAfter) break;
   }
 
@@ -664,8 +660,8 @@ async function traceSolana(
   const hops: Hop[] = [];
   let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
-  const queue: Array<{ address: string; depth: number; fundingTs: number }> = [
-    { address: startAddress, depth: 0, fundingTs: 0 },
+  const queue: Array<{ address: string; depth: number }> = [
+    { address: startAddress, depth: 0 },
   ];
 
   const apiKey = env.HELIUS_API_KEY ?? "";
@@ -707,7 +703,7 @@ async function traceSolana(
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
     if (!item) break;
-    const { address, depth, fundingTs } = item;
+    const { address, depth } = item;
     if (visited.has(address) || depth >= maxDepth) continue;
     visited.add(address);
 
@@ -748,10 +744,9 @@ async function traceSolana(
       }
     }
 
-    const allOutgoingSol = [...nativeNorm, ...tokenNorm].sort((a, b) => a.timestamp - b.timestamp);
-    const outgoing = fundingTs > 0 ? allOutgoingSol.filter(t => t.timestamp >= fundingTs) : allOutgoingSol;
+    const outgoing = [...nativeNorm, ...tokenNorm].sort((a, b) => a.timestamp - b.timestamp);
 
-    console.log(`[HELIUS] native txs: ${nativeNorm.length}, token txs: ${tokenNorm.length}, outgoing: ${allOutgoingSol.length}, validAfterFilter: ${outgoing.length}`);
+    console.log(`[HELIUS] native txs: ${nativeNorm.length}, token txs: ${tokenNorm.length}, outgoing: ${outgoing.length}`);
 
     const logEntry: BfsLogEntry = {
       address, depth,
@@ -761,7 +756,7 @@ async function traceSolana(
     };
 
     if (!outgoing.length) {
-      logEntry.skipReason = allOutgoingSol.length > 0 ? "no-valid-outgoing-after-funding" : "no outgoing txs";
+      logEntry.skipReason = "no outgoing txs";
       bfsLog?.push(logEntry);
       continue;
     }
@@ -814,8 +809,7 @@ async function traceSolana(
       beyondCexRemaining -= 1;
       if (beyondCexRemaining <= 0) stopAfter = true;
     }
-    console.log("[solana-bfs] hop-pick", { depth, fundingTs, outgoingCount: allOutgoingSol.length, validAfterFilter: outgoing.length, picked: { txHash: best.hash, ts: best.timestamp } });
-    queue.push({ address: dest, depth: depth + 1, fundingTs: best.timestamp });
+    queue.push({ address: dest, depth: depth + 1 });
     if (stopAfter) break;
   }
 
@@ -1024,15 +1018,15 @@ async function traceBitcoin(
   const hops: Hop[] = [];
   let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
-  const queue: Array<{ address: string; depth: number; fundingTs: number }> = [
-    { address: startAddress, depth: 0, fundingTs: 0 },
+  const queue: Array<{ address: string; depth: number }> = [
+    { address: startAddress, depth: 0 },
   ];
   const btcExchanges = exchangeWallets.btc as Record<string, { exchange: string; label: string }>;
 
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
     if (!item) break;
-    const { address, depth, fundingTs } = item;
+    const { address, depth } = item;
     if (visited.has(address) || depth >= maxDepth) continue;
     visited.add(address);
 
@@ -1056,103 +1050,33 @@ async function traceBitcoin(
       continue;
     }
 
-    // FIX#5: Pagination — if no outgoing found and mempool returned a full page, fetch older txs
-    let allTxs = txs;
-    if (txs.length === 50) {
-      let page = 1;
-      let lastTxid = txs[txs.length - 1]?.txid;
-      while (page < 3 && lastTxid) {
-        try {
-          const pageRes = await fetch(
-            `https://mempool.space/api/address/${address}/txs/chain/${lastTxid}`,
-            { next: { revalidate: 60 }, signal: AbortSignal.timeout(15_000) }
-          );
-          if (!pageRes.ok) { console.log(`[MEMPOOL] pagination HTTP ${pageRes.status} at page ${page + 1}`); break; }
-          const pageJson = await pageRes.json();
-          const pageTxs: MempoolTx[] = Array.isArray(pageJson) ? (pageJson as MempoolTx[]) : [];
-          if (pageTxs.length === 0) break;
-          allTxs = allTxs.concat(pageTxs);
-          lastTxid = pageTxs[pageTxs.length - 1]?.txid;
-          page++;
-          if (pageTxs.length < 50) break;
-        } catch (err) {
-          console.log(`[MEMPOOL] pagination fetch error page ${page + 1}: ${(err as Error)?.message}`);
-          break;
-        }
-      }
-    }
-
-    const outgoing = allTxs.filter(tx =>
+    const outgoing = txs.filter(tx =>
       tx.vin.some(v => v.prevout?.scriptpubkey_address === address)
     );
 
-    console.log(`[MEMPOOL] txs: ${allTxs.length}, outgoing: ${outgoing.length}`);
+    console.log(`[MEMPOOL] txs: ${txs.length}, outgoing: ${outgoing.length}`);
 
     const logEntry: BfsLogEntry = {
       address, depth,
-      nativeTxCount: allTxs.length,
+      nativeTxCount: txs.length,
       tokenTxCount: 0,
       outgoingCount: outgoing.length,
     };
 
-    // FIX#4: Deposit-only detection — incoming txs but zero outgoing
-    if (outgoing.length === 0 && allTxs.length > 0) {
-      const hasIncoming = allTxs.some(tx => tx.vout.some(o => o.scriptpubkey_address === address));
-      if (hasIncoming && hops.length > 0) {
-        hops[hops.length - 1].label = hops[hops.length - 1].label ?? "Deposit address (no outflow)";
-      }
-      logEntry.skipReason = "deposit-only: no outgoing txs";
+    if (!outgoing.length) {
+      logEntry.skipReason = "no outgoing txs";
       bfsLog?.push(logEntry);
-      console.log(`[btc-bfs] skip deposit-only`, { depth, address, txCount: allTxs.length });
-      break;
-    }
-
-    // FIX#2: Sort — treat missing block_time as Infinity (unconfirmed goes to end)
-    // FIX#3: Depth-0 genesis — sort descending to pick most recent outgoing tx
-    const confirmedOutgoing = outgoing.filter(tx => tx.status.block_time !== undefined);
-    const unconfirmedOutgoing = outgoing.filter(tx => tx.status.block_time === undefined);
-    if (depth === 0 && fundingTs === 0) {
-      // Genesis address: pick most recent confirmed outgoing tx
-      confirmedOutgoing.sort((a, b) => (b.status.block_time ?? 0) - (a.status.block_time ?? 0));
-    } else {
-      // Normal: oldest confirmed first (chronological flow)
-      confirmedOutgoing.sort((a, b) => (a.status.block_time ?? 0) - (b.status.block_time ?? 0));
-    }
-    // Prefer confirmed; fall back to unconfirmed only if no confirmed exist
-    const sortedOutgoing = confirmedOutgoing.length > 0 ? confirmedOutgoing : unconfirmedOutgoing;
-
-    // Filter to txs at or after this address was funded (temporal integrity)
-    const validOutgoing = fundingTs > 0
-      ? sortedOutgoing.filter(tx => (tx.status.block_time ?? 0) >= fundingTs)
-      : sortedOutgoing;
-
-    if (!validOutgoing.length) {
-      const reason = outgoing.length > 0 ? "no-valid-outgoing-after-funding" : "no outgoing txs";
-      logEntry.skipReason = reason;
-      // Temporal filter exit = clean terminal (pooled/processor address), NOT a partial trace.
-      // Only label as high-volume hot wallet when tx count suggests it.
-      if (reason === "no-valid-outgoing-after-funding" && allTxs.length >= 50 && hops.length > 0) {
-        const lastHop = hops[hops.length - 1];
-        if (!lastHop.label) lastHop.label = "Likely processor or hot wallet (high tx volume, funds pooled)";
-      }
-      bfsLog?.push(logEntry);
-      console.log(`[btc-bfs] skip ${reason}`, { depth, address, outgoingCount: outgoing.length, fundingTs, txTotal: allTxs.length });
       continue;
     }
 
-    const outTx = validOutgoing[0];
+    // mempool.space returns newest first; sort ascending by block_time for chronological flow
+    outgoing.sort((a, b) => (a.status.block_time ?? 0) - (b.status.block_time ?? 0));
 
-    // FIX#6: Pick largest-value non-self vout instead of first non-self (avoids change outputs)
-    const externalVouts = outTx.vout.filter(o => o.scriptpubkey_address && o.scriptpubkey_address !== address);
-    const destVout = externalVouts.reduce<typeof externalVouts[0] | undefined>(
-      (best, o) => (!best || o.value > best.value ? o : best),
-      undefined
-    );
+    const outTx = outgoing[0];
+    const destVout = outTx.vout.find(o => o.scriptpubkey_address && o.scriptpubkey_address !== address);
     if (!destVout || !destVout.scriptpubkey_address) {
       logEntry.skipReason = "no external recipient";
-      if (hops.length > 0) hops[hops.length - 1].partial_trace = true; // FIX#7
       bfsLog?.push(logEntry);
-      console.log(`[btc-bfs] skip no-external-recipient`, { depth, address, txid: outTx.txid });
       continue;
     }
 
@@ -1191,207 +1115,7 @@ async function traceBitcoin(
       if (beyondCexRemaining <= 0) break;
     }
 
-    console.log("[btc-bfs] hop-pick", { depth, fundingTs, outgoingCount: outgoing.length, validAfterFilter: validOutgoing.length, picked: { txHash: outTx.txid, ts: timestamp, dest } });
-    queue.push({ address: dest, depth: depth + 1, fundingTs: timestamp });
-  }
-
-  return hops;
-}
-
-// ─── Bitcoin UTXO-chain tracer (Mode 1) ──────────────────────────────────────
-
-interface MempoolOutspend {
-  spent: boolean;
-  txid?: string;
-  vin?: number;
-  status?: { block_height?: number; block_time?: number; confirmed: boolean };
-}
-
-async function fetchMempoolTx(txid: string): Promise<MempoolTx | null> {
-  try {
-    const res = await fetch(`https://mempool.space/api/tx/${txid}`, {
-      next: { revalidate: 60 },
-      signal: AbortSignal.timeout(15_000),
-    });
-    if (!res.ok) {
-      console.log(`[btc-utxo] tx fetch HTTP ${res.status} for ${txid}`);
-      return null;
-    }
-    return (await res.json()) as MempoolTx;
-  } catch (err) {
-    console.log(`[btc-utxo] tx fetch error ${txid}: ${(err as Error)?.message}`);
-    return null;
-  }
-}
-
-async function fetchOutspends(txid: string): Promise<MempoolOutspend[] | null> {
-  try {
-    const res = await fetch(`https://mempool.space/api/tx/${txid}/outspends`, {
-      next: { revalidate: 60 },
-      signal: AbortSignal.timeout(15_000),
-    });
-    if (!res.ok) {
-      console.log(`[btc-utxo] outspends HTTP ${res.status} for ${txid}`);
-      return null;
-    }
-    return (await res.json()) as MempoolOutspend[];
-  } catch (err) {
-    console.log(`[btc-utxo] outspends fetch error ${txid}: ${(err as Error)?.message}`);
-    return null;
-  }
-}
-
-export async function traceBitcoinUtxo(
-  startTxid: string,
-  startVout: number,
-  maxHops = 10,
-  bfsLog?: BfsLogEntry[]
-): Promise<Hop[]> {
-  const hops: Hop[] = [];
-  const btcExchanges = exchangeWallets.btc as Record<string, { exchange: string; label: string }>;
-  let beyondCexRemaining: number | null = null;
-
-  let currentTxid = startTxid;
-  let currentVout = startVout;
-  let prevToAddress: string | undefined;
-
-  console.log(`[btc-utxo] start`, { startTxid, startVout, maxHops });
-
-  while (hops.length < maxHops) {
-    // Fetch outspends for current tx
-    const outspends = await fetchOutspends(currentTxid);
-    if (!outspends) {
-      console.log(`[btc-utxo] outspends fetch failed`, { txid: currentTxid, vout: currentVout });
-      if (hops.length > 0) hops[hops.length - 1].partial_trace = true;
-      bfsLog?.push({ address: currentTxid, depth: hops.length, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "outspends-fetch-error" });
-      break;
-    }
-
-    const outspend = outspends[currentVout];
-    if (!outspend) {
-      console.log(`[btc-utxo] vout index out of range`, { txid: currentTxid, vout: currentVout, outspendCount: outspends.length });
-      if (hops.length > 0) hops[hops.length - 1].partial_trace = true;
-      bfsLog?.push({ address: currentTxid, depth: hops.length, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "vout-out-of-range" });
-      break;
-    }
-
-    if (!outspend.spent) {
-      console.log(`[btc-utxo] output unspent — terminal (funds at rest)`, { txid: currentTxid, vout: currentVout });
-      bfsLog?.push({ address: currentTxid, depth: hops.length, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "unspent-terminal" });
-      break;
-    }
-
-    if (!outspend.txid) {
-      console.log(`[btc-utxo] output spent but spending txid missing`, { txid: currentTxid, vout: currentVout });
-      if (hops.length > 0) hops[hops.length - 1].partial_trace = true;
-      bfsLog?.push({ address: currentTxid, depth: hops.length, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "spending-txid-missing" });
-      break;
-    }
-
-    console.log(`[btc-utxo] outspend found`, { txid: currentTxid, vout: currentVout, spendingTxid: outspend.txid });
-
-    // Fetch the spending tx
-    const spendingTx = await fetchMempoolTx(outspend.txid);
-    if (!spendingTx) {
-      if (hops.length > 0) hops[hops.length - 1].partial_trace = true;
-      bfsLog?.push({ address: outspend.txid, depth: hops.length, nativeTxCount: 0, tokenTxCount: 0, outgoingCount: 0, skipReason: "spending-tx-fetch-error" });
-      break;
-    }
-
-    // Collect all input-side addresses (for change detection and `from` field)
-    const inputAddresses = new Set<string>(
-      spendingTx.vin
-        .map(v => v.prevout?.scriptpubkey_address)
-        .filter((a): a is string => !!a)
-    );
-
-    // `from`: prefer previous hop's `to`, else first input address
-    const fromAddress = (prevToAddress && inputAddresses.has(prevToAddress))
-      ? prevToAddress
-      : [...inputAddresses][0] ?? "unknown";
-
-    // Pick largest non-change output
-    const nonChangeVouts = spendingTx.vout.filter(
-      o => o.scriptpubkey_address && !inputAddresses.has(o.scriptpubkey_address)
-    );
-
-    let destVout: MempoolVout | undefined;
-    let destVoutIndex: number;
-    let selfShuffle = false;
-
-    if (nonChangeVouts.length > 0) {
-      destVout = nonChangeVouts.reduce((best, o) => o.value > best.value ? o : best);
-      destVoutIndex = spendingTx.vout.indexOf(destVout);
-    } else {
-      // All outputs go back to input addresses (mixer-like self-shuffle)
-      selfShuffle = true;
-      console.log(`[btc-utxo] self-shuffle suspected — all outputs to input addresses`, { spendingTxid: outspend.txid });
-      destVout = spendingTx.vout.reduce((best, o) => o.value > best.value ? o : best, spendingTx.vout[0]);
-      destVoutIndex = spendingTx.vout.indexOf(destVout);
-    }
-
-    if (!destVout || !destVout.scriptpubkey_address) {
-      console.log(`[btc-utxo] no viable output in spending tx`, { spendingTxid: outspend.txid });
-      bfsLog?.push({ address: outspend.txid, depth: hops.length, nativeTxCount: spendingTx.vout.length, tokenTxCount: 0, outgoingCount: 0, skipReason: "no-viable-output" });
-      break;
-    }
-
-    const dest = destVout.scriptpubkey_address;
-    const cexMatch = btcExchanges[dest] ?? null;
-    const timestamp = spendingTx.status.block_time ?? 0;
-    const prevHop = hops[hops.length - 1];
-    const gapFromPrevSeconds = prevHop ? timestamp - prevHop.timestamp : undefined;
-
-    const hop: Hop = {
-      hop: hops.length + 1,
-      from: fromAddress,
-      to: dest,
-      value: (destVout.value / 1e8).toFixed(8),
-      valueRaw: String(destVout.value),
-      token: "BTC",
-      txHash: outspend.txid,
-      blockNumber: spendingTx.status.block_height ?? 0,
-      timestamp,
-      explorerUrl: `https://mempool.space/tx/${outspend.txid}`,
-      label: cexMatch?.label ?? (selfShuffle ? "Self-shuffle / possible mixer" : undefined),
-      gapFromPrevSeconds,
-    };
-    hops.push(hop);
-
-    bfsLog?.push({
-      address: fromAddress,
-      depth: hops.length - 1,
-      nativeTxCount: spendingTx.vout.length,
-      tokenTxCount: 0,
-      outgoingCount: nonChangeVouts.length,
-      chosenHash: outspend.txid,
-      chosenTo: dest,
-      chosenToken: "BTC",
-      chosenValue: hop.value,
-      skipReason: selfShuffle ? "self-shuffle" : undefined,
-    });
-
-    console.log(`[btc-utxo] hop-pick`, { hop: hop.hop, from: fromAddress, to: dest, value: hop.value, txid: outspend.txid, selfShuffle });
-
-    if (cexMatch) {
-      if (beyondCexRemaining === null) beyondCexRemaining = 5;
-    } else if (beyondCexRemaining !== null) {
-      hops[hops.length - 1].beyondCex = true;
-      beyondCexRemaining -= 1;
-      if (beyondCexRemaining <= 0) {
-        console.log(`[btc-utxo] beyondCex limit reached`);
-        break;
-      }
-    }
-
-    prevToAddress = dest;
-    currentTxid = outspend.txid;
-    currentVout = destVoutIndex;
-  }
-
-  if (hops.length >= maxHops) {
-    console.log(`[btc-utxo] max-hops reached`, { maxHops });
-    if (hops.length > 0) hops[hops.length - 1].partial_trace = true;
+    queue.push({ address: dest, depth: depth + 1 });
   }
 
   return hops;
@@ -1481,35 +1205,6 @@ export async function traceAddress(
   return annotated;
 }
 
-
-export async function traceAddressWithUtxo(
-  input: { address: string; chain: Chain; startTxid?: string; startVout?: number; maxHops?: number },
-  bfsLog?: BfsLogEntry[]
-): Promise<Hop[]> {
-  const { address, chain, startTxid, startVout, maxHops = 10 } = input;
-  const utxoMode = chain === "btc" && !!startTxid && typeof startVout === "number";
-  const cacheKey = utxoMode ? `${address}|${startTxid}:${startVout}` : address;
-
-  if (!bfsLog) {
-    const cached = await getTraceCache(cacheKey, chain);
-    console.log("[cache] supabase-check", { cacheKey, chain, hit: !!cached, hopCount: cached?.hops?.length ?? 0 });
-    if (cached) return cached.hops;
-    console.log("[cache] miss-running-trace", { cacheKey, chain, maxHops, utxoMode });
-  }
-
-  let hops: Hop[];
-  if (utxoMode) {
-    hops = await traceBitcoinUtxo(startTxid!, startVout!, maxHops, bfsLog);
-  } else {
-    hops = await traceAddress(address, chain, maxHops, bfsLog);
-    // traceAddress handles its own caching, so return early to avoid double-cache
-    return hops;
-  }
-
-  const annotated = await annotateHopsWithScam(hops, chain);
-  if (!bfsLog) await setTraceCache(cacheKey, chain, annotated, bfsLog);
-  return annotated;
-}
 
 async function annotateHopsWithScam(hops: Hop[], chain: Chain): Promise<Hop[]> {
   if (hops.length === 0) return hops;
