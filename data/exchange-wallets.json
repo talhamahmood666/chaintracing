@@ -481,7 +481,23 @@
     "TWd4WrZ9wn84f5x1hZhL4DHvk738ns5jwb": {
       "exchange": "Binance",
       "label": "Binance Tron USDT Wallet"
-    }
+    },
+    "TJDENsfBJs4RFETt1X1W8wMDc8M5XnJhCe": { "exchange": "Binance", "label": "Binance Hot 1" },
+    "TV6MuMXfmLbBqPZvBHdwFsDnQeVfnmiuSi": { "exchange": "Binance", "label": "Binance Hot 2" },
+    "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9": { "exchange": "Binance", "label": "Binance Cold 1" },
+    "TDqSquXBgUCLYvYC4XZgrprLK589dkhSCf": { "exchange": "Binance", "label": "Binance Hot 7" },
+    "TAzsQ9Gx8eqFNFSKbeXrbi45CuVPHzA8wr": { "exchange": "Binance", "label": "Binance Hot 5" },
+    "TCLgK89AnXbC9rewvhNb9UgXCc2qJJpBXh": { "exchange": "Binance", "label": "Binance Hot 10" },
+    "TK4ykR48cQQoyFcZ5N4xZCbsBaHcg6n3gJ": { "exchange": "Binance", "label": "Binance Hot 8" },
+    "TJqwA7SoZnERE4zW5uDEiPkbz4B66h9TFj": { "exchange": "Binance", "label": "Binance Hot 11" },
+    "TQrY8tryqsYVCYS3MFbtffiPp2ccyn4STm": { "exchange": "Binance", "label": "Binance 2" },
+    "TLaGjwhvA8XQYSxFAcAXy7Dvuue9eGYitv": { "exchange": "OKX", "label": "OKX Hot Wallet 8" },
+    "TU4vEruvZwLLkSfV9bNw12EJTPvNr7Pvaa": { "exchange": "Bybit", "label": "Bybit Hot Wallet" },
+    "TTH75Z9rfRgzCLNDDYBaR2WjUvuSDRtSMg": { "exchange": "Bybit", "label": "Bybit Cold Wallet" },
+    "TG2CMGxnTPgQ6V58kiKd7wbyN8ewtAmY76": { "exchange": "Kraken", "label": "Kraken Hot Wallet" },
+    "TXFBqBbqJommqZf7BV8NNYzePh97UmJodJ": { "exchange": "Bitfinex", "label": "Bitfinex Hot Wallet" },
+    "TBA6CypYJizwA9XdC7Ubgc5F1bxrQ7SqPt": { "exchange": "Gate.io", "label": "Gate.io Hot Wallet" },
+    "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb": { "exchange": "HTX", "label": "HTX Burn Wallet" }
   },
   "mixers": [
     "0xd90e2f925DA726b50C4Ed8D0Fb90Ad053324F31b",
