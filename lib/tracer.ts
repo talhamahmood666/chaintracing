@@ -827,8 +827,8 @@ async function traceTron(
   const hops: Hop[] = [];
   let beyondCexRemaining: number | null = null;
   const visited = seedVisited ?? new Set<string>();
-  const queue: Array<{ address: string; depth: number }> = [
-    { address: startAddress, depth: 0 },
+  const queue: Array<{ address: string; depth: number; fundingTs: number }> = [
+    { address: startAddress, depth: 0, fundingTs: 0 },
   ];
   const apiKey = env.TRONGRID_API_KEY ?? "";
 
@@ -838,10 +838,10 @@ async function traceTron(
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
     if (!item) break;
-    const { address, depth } = item;
+    const { address, depth, fundingTs } = item;
     if (visited.has(address) || depth >= maxDepth) continue;
     visited.add(address);
-    console.log("[tron-bfs] iter", { depth, queueSize: queue.length, hopsCollected: hops.length });
+    console.log("[tron-bfs] iter", { depth, queueSize: queue.length, hopsCollected: hops.length, fundingTs });
 
     // Fetch TRX native + TRC-20 transfers in parallel
     const [trxRes, trc20Res] = await Promise.all([
@@ -892,18 +892,22 @@ async function traceTron(
         blockNumber: 0,
       }));
 
+    // Only consider outgoing txs that occurred at or after this address was funded
+    const validNative = fundingTs > 0 ? nativeNorm.filter(t => t.timestamp >= fundingTs) : nativeNorm;
+    const validTrc20 = fundingTs > 0 ? trc20Norm.filter(t => t.timestamp >= fundingTs) : trc20Norm;
+
     const logEntry: BfsLogEntry = {
       address, depth,
       nativeTxCount: nativeNorm.length,
       tokenTxCount: trc20Norm.length,
-      outgoingCount: nativeNorm.length + trc20Norm.length,
+      outgoingCount: validNative.length + validTrc20.length,
     };
 
     // Pick best: largest native if any, else largest TRC-20
     let chosenFrom = address, chosenTo = "", chosenValue = "", chosenRaw = "0", chosenSymbol = "TRX", chosenTs = 0, chosenHash = "", chosenBlock = 0;
     let bestRaw = 0n;
 
-    for (const t of nativeNorm) {
+    for (const t of validNative) {
       try {
         const v = BigInt(t.value);
         if (v > bestRaw) {
@@ -913,7 +917,7 @@ async function traceTron(
         }
       } catch { /**/ }
     }
-    for (const t of trc20Norm) {
+    for (const t of validTrc20) {
       try {
         const v = BigInt(t.value);
         const normalized = Number(v) / Math.pow(10, t.decimals);
@@ -932,10 +936,11 @@ async function traceTron(
     }
 
     if (!chosenTo) {
-      logEntry.skipReason = "no outgoing txs";
+      logEntry.skipReason = (nativeNorm.length + trc20Norm.length > 0) ? "no-valid-outgoing-after-funding" : "no outgoing txs";
       bfsLog?.push(logEntry);
       continue;
     }
+    console.log("[tron-bfs] hop-pick", { depth, fundingTs, outgoingCount: nativeNorm.length + trc20Norm.length, validAfterFilter: validNative.length + validTrc20.length, picked: { txHash: chosenHash, ts: chosenTs, value: chosenValue } });
 
     const tronExchanges = exchangeWallets.tron as Record<string, { exchange: string; label: string }>;
     const cexMatch = tronExchanges[chosenTo] ?? null;
@@ -973,7 +978,7 @@ async function traceTron(
       beyondCexRemaining -= 1;
       if (beyondCexRemaining <= 0) stopAfter = true;
     }
-    queue.push({ address: chosenTo, depth: depth + 1 });
+    queue.push({ address: chosenTo, depth: depth + 1, fundingTs: chosenTs });
     if (stopAfter) { terminationReason = "cex-beyond-limit"; break; }
   }
 
