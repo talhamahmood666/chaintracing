@@ -62,8 +62,10 @@ export async function POST(request: NextRequest) {
     // Attempt to attach user_id from session — auth is optional for free traces
     const { user } = await getUser(request);
     const adminUser = user ? await isAdminById(user.id) : false;
+    const resolvedHopLimit = adminUser ? 50 : 10;
+    console.log("[trace] userId=%s userEmail=%s isAdmin=%s resolvedHopLimit=%d tier=free", user?.id ?? "anon", user?.email ?? "anon", adminUser, resolvedHopLimit);
 
-    const hops = await traceAddress(address.trim(), typedChain, adminUser ? 50 : 10);
+    const hops = await traceAddress(address.trim(), typedChain, resolvedHopLimit);
     const risk = await scoreAddress(address.trim(), typedChain, hops, body.intent);
 
     // Create a report record in the database for the free trace
