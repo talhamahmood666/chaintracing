@@ -1623,6 +1623,42 @@
     "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S": {
       "exchange": "KuCoin",
       "label": "KuCoin Solana Wallet"
+    },
+    "5tzFkiKscXHK5ZXCGbXZxdw7gTjjD1mBwuoFbhUvuAi9": {
+      "exchange": "Binance",
+      "label": "Binance Hot Wallet 2"
+    },
+    "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM": {
+      "exchange": "Binance",
+      "label": "Binance Hot Wallet 3"
+    },
+    "FxteHmLwG9nk1eL4pjNve3Eub2goGkkz6g6TbvdmW46a": {
+      "exchange": "Kraken",
+      "label": "Kraken Hot Wallet 2"
+    },
+    "AobVSwdW9BbpMdJvTqeCN4hPAmh4rHm7vwLnQ5ATSyrS": {
+      "exchange": "OKX",
+      "label": "OKX Hot Wallet 2"
+    },
+    "9un5wqE3q4oCjyrDkwsdD48KteCJitQX5978Vh7KKxHo": {
+      "exchange": "Bybit",
+      "label": "Bybit Hot Wallet 2"
+    },
+    "6QJzieMYfp7yr3EdrePaQoG3Ghxs2wM98xSLRu8Xh56U": {
+      "exchange": "KuCoin",
+      "label": "KuCoin Hot Wallet 2"
+    },
+    "BmFdpraQhkiDQE6SnfG5omcA1VwzqfXrwtNYBwWTymy6": {
+      "exchange": "KuCoin",
+      "label": "KuCoin Hot Wallet 3"
+    },
+    "3gd3dqgtJ4jWfBfLYTX67DALFetjc5iS72sCgRhCkW2u": {
+      "exchange": "Crypto.com",
+      "label": "Crypto.com Hot Wallet"
+    },
+    "HVh6wHNBAsG3pq1Bj5oCzRjoWKVogEDHwUHkRz3ekFgt": {
+      "exchange": "Gate.io",
+      "label": "Gate.io Hot Wallet"
     }
   },
   "tron": {
@@ -1804,6 +1840,22 @@
     "3LcbzZ2WXPS32sZGbXwjUFQHtLUM5MzrrT": {
       "exchange": "Gemini",
       "label": "Gemini BTC Wallet"
+    },
+    "1NDyJtNTjmwk5xPNhjgAMu4HDHigtobu1s": {
+      "exchange": "Binance",
+      "label": "Binance BTC Hot Wallet 2"
+    },
+    "35hK24tcLEWcgNA4JxpvbkNkoAcDGqQPsP": {
+      "exchange": "Kraken",
+      "label": "Kraken BTC Hot Wallet"
+    },
+    "38XnPvu9PmonFU9WouPXUjYbW91wa5MerL": {
+      "exchange": "Coinbase",
+      "label": "Coinbase BTC Wallet 3"
+    },
+    "bc1q5shngj24323nsrmxv99st02na6srekfctt30ch": {
+      "exchange": "Bitfinex",
+      "label": "Bitfinex BTC Wallet"
     }
   }
 }
