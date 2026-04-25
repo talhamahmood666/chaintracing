@@ -141,25 +141,137 @@ export default function BenTaylorReport() {
           <p className="text-sm leading-relaxed mb-5" style={{ color: "#cbd5e1" }}>
             Each transaction follows an identical structure: a single input from this address fans out to 3–8 recipient addresses in one atomic transaction. This is the hallmark of <strong style={{ color: "#f8fafc" }}>automated batch payout software</strong> — the same architecture used by legitimate exchanges for bulk withdrawals, repurposed here for criminal distribution.
           </p>
-          {/* ASCII diagram */}
-          <div className="rounded-lg p-4 overflow-x-auto"
-            style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(0,217,255,0.15)", fontFamily: "monospace" }}>
-            <pre className="text-xs leading-relaxed" style={{ color: "#94a3b8" }}>{`  Scam proceeds
-        │
-        ▼
-┌───────────────────────────┐
-│  bc1qwfes4nt…nkmf5        │  ← This address (payout processor)
-│  75,588 BTC lifetime      │
-│  5,182 txs  ·  ACTIVE     │
-└─────────────┬─────────────┘
-              │  1 tx every ~4 min
-    ┌─────────┼──────────┐
-    ▼         ▼          ▼
- Dest A    Dest B    Dest C …  (3–8 outputs per tx)
- 0.001 BTC 0.003 BTC 0.0008 BTC
-    ▼         ▼          ▼
-  Exchange  Unknown   Unknown
-  deposit    wallet    wallet`}</pre>
+          {/* Animated SVG flow diagram */}
+          <div className="rounded-lg overflow-hidden"
+            style={{ background: "rgba(0,0,0,0.45)", border: "1px solid rgba(6,182,212,0.2)" }}>
+            <style>{`
+              @keyframes flowDash {
+                from { stroke-dashoffset: 48; }
+                to   { stroke-dashoffset: 0; }
+              }
+              @keyframes pulseNode {
+                0%, 100% { transform: scale(1);   opacity: 1; }
+                50%       { transform: scale(1.02); opacity: 0.92; }
+              }
+              @keyframes fadeInDest {
+                from { opacity: 0; transform: translateY(6px); }
+                to   { opacity: 1; transform: translateY(0); }
+              }
+              .flow-line {
+                stroke-dasharray: 6 6;
+                animation: flowDash 3s linear infinite;
+              }
+              .source-node {
+                transform-origin: 400px 210px;
+                animation: pulseNode 2s ease-in-out infinite;
+              }
+              .dest-g-0 { animation: fadeInDest 0.6s ease 0.2s both; }
+              .dest-g-1 { animation: fadeInDest 0.6s ease 0.35s both; }
+              .dest-g-2 { animation: fadeInDest 0.6s ease 0.5s both; }
+              .dest-g-3 { animation: fadeInDest 0.6s ease 0.65s both; }
+              .dest-g-4 { animation: fadeInDest 0.6s ease 0.8s both; }
+              .dest-g-5 { animation: fadeInDest 0.6s ease 0.95s both; }
+            `}</style>
+            <svg viewBox="0 0 800 500" width="100%" xmlns="http://www.w3.org/2000/svg" aria-label="Fund flow diagram">
+              <defs>
+                {/* Source glow */}
+                <filter id="glowCyan" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="6" result="blur" />
+                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                {/* Destination glows */}
+                <filter id="glowGreen" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                <filter id="glowGray" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                <filter id="glowRed" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.3" />
+                </linearGradient>
+              </defs>
+
+              {/* ── "Scam proceeds" label + arrow ── */}
+              <text x="400" y="30" textAnchor="middle" fontSize="12" fill="#64748b" fontFamily="Inter,system-ui,sans-serif" letterSpacing="1">SCAM PROCEEDS</text>
+              <line x1="400" y1="38" x2="400" y2="58" stroke="#334155" strokeWidth="1.5" />
+              <polygon points="400,64 395,55 405,55" fill="#334155" />
+
+              {/* ── Source node ── */}
+              <g className="source-node" filter="url(#glowCyan)">
+                <rect x="268" y="72" width="264" height="76" rx="12" ry="12"
+                  fill="#0c1829" stroke="#06b6d4" strokeWidth="1.5" />
+                {/* Active badge */}
+                <rect x="278" y="82" width="52" height="16" rx="4" fill="rgba(0,230,118,0.15)" stroke="rgba(0,230,118,0.4)" strokeWidth="0.8" />
+                <text x="304" y="94" textAnchor="middle" fontSize="9" fill="#00E676" fontFamily="Inter,system-ui,sans-serif" fontWeight="700">ACTIVE</text>
+                {/* Address */}
+                <text x="400" y="99" textAnchor="middle" fontSize="11" fill="#06b6d4" fontFamily="'Courier New',monospace" fontWeight="600">bc1qwfes4nt…nkmf5</text>
+                {/* Stats */}
+                <text x="400" y="117" textAnchor="middle" fontSize="9.5" fill="#94a3b8" fontFamily="Inter,system-ui,sans-serif">75,588 BTC lifetime · 5,182 txs</text>
+                <text x="400" y="133" textAnchor="middle" fontSize="9" fill="#475569" fontFamily="Inter,system-ui,sans-serif">$7.18B processed · 45.08 BTC balance</text>
+              </g>
+
+              {/* ── "1 tx every ~4 min" label ── */}
+              <text x="400" y="168" textAnchor="middle" fontSize="10" fill="#475569" fontFamily="Inter,system-ui,sans-serif" fontStyle="italic">1 tx every ~4 min</text>
+              <line x1="400" y1="148" x2="400" y2="158" stroke="#1e3a4a" strokeWidth="1" strokeDasharray="3 2" />
+
+              {/* ── Destination nodes config ── */}
+              {/* cx positions for 6 nodes spread across 800px */}
+              {(() => {
+                const dests = [
+                  { cx: 80,  label: "Dest A", btc: "0.001 BTC", cat: "Exchange deposit", color: "#00E676", fill: "rgba(0,230,118,0.12)",  stroke: "#00E676", glow: "url(#glowGreen)", delay: 0 },
+                  { cx: 210, label: "Dest B", btc: "0.003 BTC", cat: "Unknown wallet",   color: "#64748b", fill: "rgba(100,116,139,0.1)", stroke: "#475569", glow: "url(#glowGray)",  delay: 1 },
+                  { cx: 340, label: "Dest C", btc: "0.0008 BTC",cat: "Unknown wallet",   color: "#64748b", fill: "rgba(100,116,139,0.1)", stroke: "#475569", glow: "url(#glowGray)",  delay: 2 },
+                  { cx: 460, label: "Dest D", btc: "0.0015 BTC",cat: "Mixer",            color: "#FF4757", fill: "rgba(255,71,87,0.12)",  stroke: "#FF4757", glow: "url(#glowRed)",   delay: 3 },
+                  { cx: 590, label: "Dest E", btc: "0.002 BTC", cat: "Unknown wallet",   color: "#64748b", fill: "rgba(100,116,139,0.1)", stroke: "#475569", glow: "url(#glowGray)",  delay: 4 },
+                  { cx: 720, label: "Dest F", btc: "0.0009 BTC",cat: "Exchange deposit", color: "#00E676", fill: "rgba(0,230,118,0.12)",  stroke: "#00E676", glow: "url(#glowGreen)", delay: 5 },
+                ];
+                const srcX = 400, srcY = 148;
+                const nodeY = 215, nodeW = 100, nodeH = 44, nodeR = 8;
+                const badgeY = 310;
+
+                return dests.map((d, i) => {
+                  const nx = d.cx;
+                  const lineY1 = srcY + 28;
+                  const lineY2 = nodeY;
+                  // Cubic bezier: start at source bottom, fan out to dest center
+                  const path = `M ${srcX} ${lineY1} C ${srcX} ${(lineY1 + lineY2) / 2}, ${nx} ${(lineY1 + lineY2) / 2}, ${nx} ${lineY2}`;
+                  return (
+                    <g key={d.label} className={`dest-g-${i}`}>
+                      {/* Flow line */}
+                      <path d={path} fill="none" stroke="url(#lineGrad)" strokeWidth="1.5"
+                        className="flow-line"
+                        style={{ animationDelay: `${i * 0.5}s` }} />
+                      {/* Destination node */}
+                      <g filter={d.glow}>
+                        <rect x={nx - nodeW / 2} y={nodeY} width={nodeW} height={nodeH} rx={nodeR}
+                          fill={d.fill} stroke={d.stroke} strokeWidth="1" />
+                        <text x={nx} y={nodeY + 16} textAnchor="middle" fontSize="10" fill="#e2e8f0"
+                          fontFamily="Inter,system-ui,sans-serif" fontWeight="600">{d.label}</text>
+                        <text x={nx} y={nodeY + 30} textAnchor="middle" fontSize="9" fill="#94a3b8"
+                          fontFamily="'Courier New',monospace">{d.btc}</text>
+                      </g>
+                      {/* Classification badge */}
+                      <rect x={nx - 46} y={badgeY} width={92} height={18} rx={5}
+                        fill={d.color === "#00E676" ? "rgba(0,230,118,0.12)" : d.color === "#FF4757" ? "rgba(255,71,87,0.12)" : "rgba(100,116,139,0.1)"}
+                        stroke={d.color} strokeWidth="0.7" strokeOpacity="0.5" />
+                      <text x={nx} y={badgeY + 12} textAnchor="middle" fontSize="8.5" fill={d.color}
+                        fontFamily="Inter,system-ui,sans-serif" fontWeight="600">{d.cat}</text>
+                    </g>
+                  );
+                });
+              })()}
+
+              {/* ── "(3–8 outputs per tx)" caption ── */}
+              <text x="400" y="370" textAnchor="middle" fontSize="9.5" fill="#334155"
+                fontFamily="Inter,system-ui,sans-serif" fontStyle="italic">3–8 outputs per transaction · 849 unique destinations in 18.6 hours</text>
+            </svg>
           </div>
           <p className="text-sm mt-4 leading-relaxed" style={{ color: "#94a3b8" }}>
             The 849 unique destinations seen in 18.6 hours do not represent 849 individual scam victims — they represent the <em>downstream hop</em> after consolidation. Individual victim funds have already been pooled before arriving here.
