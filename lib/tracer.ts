@@ -1056,36 +1056,99 @@ async function traceBitcoin(
       continue;
     }
 
-    const outgoing = txs.filter(tx =>
+    // FIX#5: Pagination — if no outgoing found and mempool returned a full page, fetch older txs
+    let allTxs = txs;
+    if (txs.length === 50) {
+      let page = 1;
+      let lastTxid = txs[txs.length - 1]?.txid;
+      while (page < 3 && lastTxid) {
+        try {
+          const pageRes = await fetch(
+            `https://mempool.space/api/address/${address}/txs/chain/${lastTxid}`,
+            { next: { revalidate: 60 }, signal: AbortSignal.timeout(15_000) }
+          );
+          if (!pageRes.ok) { console.log(`[MEMPOOL] pagination HTTP ${pageRes.status} at page ${page + 1}`); break; }
+          const pageJson = await pageRes.json();
+          const pageTxs: MempoolTx[] = Array.isArray(pageJson) ? (pageJson as MempoolTx[]) : [];
+          if (pageTxs.length === 0) break;
+          allTxs = allTxs.concat(pageTxs);
+          lastTxid = pageTxs[pageTxs.length - 1]?.txid;
+          page++;
+          if (pageTxs.length < 50) break;
+        } catch (err) {
+          console.log(`[MEMPOOL] pagination fetch error page ${page + 1}: ${(err as Error)?.message}`);
+          break;
+        }
+      }
+    }
+
+    const outgoing = allTxs.filter(tx =>
       tx.vin.some(v => v.prevout?.scriptpubkey_address === address)
     );
 
-    console.log(`[MEMPOOL] txs: ${txs.length}, outgoing: ${outgoing.length}`);
+    console.log(`[MEMPOOL] txs: ${allTxs.length}, outgoing: ${outgoing.length}`);
 
     const logEntry: BfsLogEntry = {
       address, depth,
-      nativeTxCount: txs.length,
+      nativeTxCount: allTxs.length,
       tokenTxCount: 0,
       outgoingCount: outgoing.length,
     };
 
-    // mempool.space returns newest first; sort ascending by block_time for chronological flow
-    outgoing.sort((a, b) => (a.status.block_time ?? 0) - (b.status.block_time ?? 0));
+    // FIX#4: Deposit-only detection — incoming txs but zero outgoing
+    if (outgoing.length === 0 && allTxs.length > 0) {
+      const hasIncoming = allTxs.some(tx => tx.vout.some(o => o.scriptpubkey_address === address));
+      if (hasIncoming && hops.length > 0) {
+        hops[hops.length - 1].label = hops[hops.length - 1].label ?? "Deposit address (no outflow)";
+        hops[hops.length - 1].partial_trace = true;
+      }
+      logEntry.skipReason = "deposit-only: no outgoing txs";
+      bfsLog?.push(logEntry);
+      console.log(`[btc-bfs] skip deposit-only`, { depth, address, txCount: allTxs.length });
+      break;
+    }
+
+    // FIX#2: Sort — treat missing block_time as Infinity (unconfirmed goes to end)
+    // FIX#3: Depth-0 genesis — sort descending to pick most recent outgoing tx
+    const confirmedOutgoing = outgoing.filter(tx => tx.status.block_time !== undefined);
+    const unconfirmedOutgoing = outgoing.filter(tx => tx.status.block_time === undefined);
+    if (depth === 0 && fundingTs === 0) {
+      // Genesis address: pick most recent confirmed outgoing tx
+      confirmedOutgoing.sort((a, b) => (b.status.block_time ?? 0) - (a.status.block_time ?? 0));
+    } else {
+      // Normal: oldest confirmed first (chronological flow)
+      confirmedOutgoing.sort((a, b) => (a.status.block_time ?? 0) - (b.status.block_time ?? 0));
+    }
+    // Prefer confirmed; fall back to unconfirmed only if no confirmed exist
+    const sortedOutgoing = confirmedOutgoing.length > 0 ? confirmedOutgoing : unconfirmedOutgoing;
 
     // Filter to txs at or after this address was funded (temporal integrity)
-    const validOutgoing = fundingTs > 0 ? outgoing.filter(tx => (tx.status.block_time ?? 0) >= fundingTs) : outgoing;
+    const validOutgoing = fundingTs > 0
+      ? sortedOutgoing.filter(tx => (tx.status.block_time ?? 0) >= fundingTs)
+      : sortedOutgoing;
 
     if (!validOutgoing.length) {
-      logEntry.skipReason = outgoing.length > 0 ? "no-valid-outgoing-after-funding" : "no outgoing txs";
+      const reason = outgoing.length > 0 ? "no-valid-outgoing-after-funding" : "no outgoing txs";
+      logEntry.skipReason = reason;
+      if (hops.length > 0) hops[hops.length - 1].partial_trace = true; // FIX#7
       bfsLog?.push(logEntry);
+      console.log(`[btc-bfs] skip ${reason}`, { depth, address, outgoingCount: outgoing.length, fundingTs });
       continue;
     }
 
     const outTx = validOutgoing[0];
-    const destVout = outTx.vout.find(o => o.scriptpubkey_address && o.scriptpubkey_address !== address);
+
+    // FIX#6: Pick largest-value non-self vout instead of first non-self (avoids change outputs)
+    const externalVouts = outTx.vout.filter(o => o.scriptpubkey_address && o.scriptpubkey_address !== address);
+    const destVout = externalVouts.reduce<typeof externalVouts[0] | undefined>(
+      (best, o) => (!best || o.value > best.value ? o : best),
+      undefined
+    );
     if (!destVout || !destVout.scriptpubkey_address) {
       logEntry.skipReason = "no external recipient";
+      if (hops.length > 0) hops[hops.length - 1].partial_trace = true; // FIX#7
       bfsLog?.push(logEntry);
+      console.log(`[btc-bfs] skip no-external-recipient`, { depth, address, txid: outTx.txid });
       continue;
     }
 
@@ -1124,7 +1187,7 @@ async function traceBitcoin(
       if (beyondCexRemaining <= 0) break;
     }
 
-    console.log("[btc-bfs] hop-pick", { depth, fundingTs, outgoingCount: outgoing.length, validAfterFilter: validOutgoing.length, picked: { txHash: outTx.txid, ts: timestamp } });
+    console.log("[btc-bfs] hop-pick", { depth, fundingTs, outgoingCount: outgoing.length, validAfterFilter: validOutgoing.length, picked: { txHash: outTx.txid, ts: timestamp, dest } });
     queue.push({ address: dest, depth: depth + 1, fundingTs: timestamp });
   }
 
