@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     const { user } = await getUser(request);
     const adminUser = user ? await isAdminById(user.id) : false;
 
-    const hops = await traceAddress(address.trim(), typedChain);
+    const hops = await traceAddress(address.trim(), typedChain, adminUser ? 50 : 10);
     const risk = await scoreAddress(address.trim(), typedChain, hops, body.intent);
 
     // Create a report record in the database for the free trace
