@@ -832,6 +832,9 @@ async function traceTron(
   ];
   const apiKey = env.TRONGRID_API_KEY ?? "";
 
+  console.log("[tron-bfs] start", { address: startAddress, maxDepth, queueSize: queue.length });
+  let terminationReason = "queue-empty";
+
   while (queue.length > 0 && hops.length < maxDepth) {
     const item = queue.shift();
     if (!item) break;
@@ -970,9 +973,11 @@ async function traceTron(
       if (beyondCexRemaining <= 0) stopAfter = true;
     }
     queue.push({ address: chosenTo, depth: depth + 1 });
-    if (stopAfter) break;
+    if (stopAfter) { terminationReason = "cex-beyond-limit"; break; }
   }
 
+  if (hops.length >= maxDepth) terminationReason = "depth-cap-reached";
+  console.log("[tron-bfs] end", { hopsFound: hops.length, terminationReason, maxDepth });
   return hops;
 }
 
