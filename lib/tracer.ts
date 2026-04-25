@@ -841,6 +841,7 @@ async function traceTron(
     const { address, depth } = item;
     if (visited.has(address) || depth >= maxDepth) continue;
     visited.add(address);
+    console.log("[tron-bfs] iter", { depth, queueSize: queue.length, hopsCollected: hops.length });
 
     // Fetch TRX native + TRC-20 transfers in parallel
     const [trxRes, trc20Res] = await Promise.all([
@@ -1165,7 +1166,9 @@ export async function traceAddress(
   // Cache check — skip if caller passed bfsLog (debug mode wants live data)
   if (!bfsLog) {
     const cached = await getTraceCache(address, chain);
+    console.log("[cache] supabase-check", { address, chain, hit: !!cached, hopCount: cached?.hops?.length ?? 0 });
     if (cached) return cached.hops;
+    console.log("[cache] miss-running-bfs", { address, chain, maxHops });
   }
 
   let hops: Hop[];

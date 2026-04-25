@@ -13,6 +13,7 @@ import { checkOrigin } from "@/lib/origin-check";
 import { getUser } from "@/lib/auth-helpers";
 import { getAdminClient } from "@/lib/supabase";
 import { isAdminById } from "@/lib/auth-admin";
+import { clearTraceCache } from "@/lib/trace-cache";
 import { randomBytes } from "crypto";
 import { env } from "@/lib/config";
 
@@ -63,7 +64,13 @@ export async function POST(request: NextRequest) {
     const { user } = await getUser(request);
     const adminUser = user ? await isAdminById(user.id) : false;
     const resolvedHopLimit = adminUser ? 50 : 10;
-    console.log("[trace] userId=%s userEmail=%s isAdmin=%s resolvedHopLimit=%d tier=free", user?.id ?? "anon", user?.email ?? "anon", adminUser, resolvedHopLimit);
+    const fresh = adminUser && request.nextUrl?.searchParams?.get("fresh") === "1";
+    console.log("[trace] userId=%s userEmail=%s isAdmin=%s resolvedHopLimit=%d fresh=%s tier=free", user?.id ?? "anon", user?.email ?? "anon", adminUser, resolvedHopLimit, fresh);
+
+    if (fresh) {
+      await clearTraceCache(address.trim(), typedChain);
+      console.log("[cache] cleared for fresh admin trace", { address: address.trim(), chain: typedChain });
+    }
 
     const hops = await traceAddress(address.trim(), typedChain, resolvedHopLimit);
     const risk = await scoreAddress(address.trim(), typedChain, hops, body.intent);
