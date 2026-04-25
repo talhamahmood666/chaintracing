@@ -1100,7 +1100,6 @@ async function traceBitcoin(
       const hasIncoming = allTxs.some(tx => tx.vout.some(o => o.scriptpubkey_address === address));
       if (hasIncoming && hops.length > 0) {
         hops[hops.length - 1].label = hops[hops.length - 1].label ?? "Deposit address (no outflow)";
-        hops[hops.length - 1].partial_trace = true;
       }
       logEntry.skipReason = "deposit-only: no outgoing txs";
       bfsLog?.push(logEntry);
@@ -1130,9 +1129,14 @@ async function traceBitcoin(
     if (!validOutgoing.length) {
       const reason = outgoing.length > 0 ? "no-valid-outgoing-after-funding" : "no outgoing txs";
       logEntry.skipReason = reason;
-      if (hops.length > 0) hops[hops.length - 1].partial_trace = true; // FIX#7
+      // Temporal filter exit = clean terminal (pooled/processor address), NOT a partial trace.
+      // Only label as high-volume hot wallet when tx count suggests it.
+      if (reason === "no-valid-outgoing-after-funding" && allTxs.length >= 50 && hops.length > 0) {
+        const lastHop = hops[hops.length - 1];
+        if (!lastHop.label) lastHop.label = "Likely processor or hot wallet (high tx volume, funds pooled)";
+      }
       bfsLog?.push(logEntry);
-      console.log(`[btc-bfs] skip ${reason}`, { depth, address, outgoingCount: outgoing.length, fundingTs });
+      console.log(`[btc-bfs] skip ${reason}`, { depth, address, outgoingCount: outgoing.length, fundingTs, txTotal: allTxs.length });
       continue;
     }
 
