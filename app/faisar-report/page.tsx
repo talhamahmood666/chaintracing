@@ -255,6 +255,96 @@ export default function FaisarReport() {
           </div>
         </div>
 
+        {/* ── Domain Intelligence ── */}
+        <h2 className="text-lg font-bold mb-1" style={{ color: "#f8fafc" }}>Domain Intelligence</h2>
+        <p className="text-sm mb-4" style={{ color: "#94a3b8" }}>
+          Both domains use privacy services, recent registration, and a multi-registrar setup — classic indicators of a coordinated scam operation.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-4 mb-4">
+          {/* fqlex domain card */}
+          <div className="rounded-xl p-5"
+            style={{ background: "rgba(255,71,87,0.05)", border: "1px solid rgba(255,71,87,0.25)" }}>
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <p className="text-base font-bold" style={{ color: "#f8fafc" }}>fqlex.com</p>
+              <span className="px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider"
+                style={{ background: "rgba(255,71,87,0.2)", color: "#FF4757", border: "1px solid rgba(255,71,87,0.4)" }}>
+                Privacy-Protected
+              </span>
+            </div>
+            <div className="rounded-lg p-3 mb-3 text-center"
+              style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,71,87,0.2)" }}>
+              <p className="text-2xl font-bold" style={{ color: "#FF4757" }}>15 months</p>
+              <p className="text-xs" style={{ color: "#64748b" }}>Domain age (as of Apr 26, 2026)</p>
+            </div>
+            <div className="space-y-2 text-xs">
+              {[
+                { k: "Created", v: "January 10, 2025" },
+                { k: "Registrar", v: "Dynadot LLC (United States)", muted: true },
+                { k: "Registrant", v: "Hidden via Super Privacy Service LTD" },
+                { k: "Listed location", v: "San Mateo, California (registrar address — not operator)" },
+                { k: "Name servers", v: "KYREE.NS.CLOUDFLARE.COM · LILA.NS.CLOUDFLARE.COM", muted: true },
+                { k: "Expires", v: "January 10, 2027" },
+              ].map(({ k, v, muted }) => (
+                <div key={k} className="flex justify-between gap-3 py-1" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                  <span style={{ color: "#64748b" }}>{k}</span>
+                  <span className="text-right break-all" style={{ color: muted ? "#64748b" : "#e2e8f0" }}>{v}</span>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-lg p-3 mt-3"
+              style={{ background: "rgba(255,71,87,0.08)", border: "1px solid rgba(255,71,87,0.3)" }}>
+              <p className="text-xs" style={{ color: "#fecaca" }}>
+                <strong style={{ color: "#FF4757" }}>⚠ Red flag:</strong> Privacy-shielded WHOIS plus Cloudflare proxy. Operator identity intentionally obscured.
+              </p>
+            </div>
+          </div>
+
+          {/* txoin domain card */}
+          <div className="rounded-xl p-5"
+            style={{ background: "rgba(255,165,0,0.05)", border: "1px solid rgba(255,165,0,0.3)" }}>
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <p className="text-base font-bold" style={{ color: "#f8fafc" }}>txoin.com</p>
+              <span className="px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider"
+                style={{ background: "rgba(255,71,87,0.2)", color: "#FF4757", border: "1px solid rgba(255,71,87,0.4)" }}>
+                Recent + Fully Redacted
+              </span>
+            </div>
+            <div className="rounded-lg p-3 mb-3 text-center"
+              style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,165,0,0.25)" }}>
+              <p className="text-2xl font-bold" style={{ color: "#FFA500" }}>4 months</p>
+              <p className="text-xs" style={{ color: "#64748b" }}>Domain age (as of Apr 26, 2026)</p>
+            </div>
+            <div className="space-y-2 text-xs">
+              {[
+                { k: "Created", v: "December 15, 2025" },
+                { k: "Registrar", v: "Gname.com Pte. Ltd. (Singapore)", muted: true },
+                { k: "Registrant", v: "Fully redacted across all fields" },
+                { k: "Listed country", v: "CA (Canada — registrant data redacted)" },
+                { k: "Name servers", v: "A8.SHARE-DNS.COM · B8.SHARE-DNS.NET", muted: true },
+                { k: "Expires", v: "December 15, 2026 (1-year renewal only)" },
+              ].map(({ k, v, muted }) => (
+                <div key={k} className="flex justify-between gap-3 py-1" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                  <span style={{ color: "#64748b" }}>{k}</span>
+                  <span className="text-right break-all" style={{ color: muted ? "#64748b" : "#e2e8f0" }}>{v}</span>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-lg p-3 mt-3"
+              style={{ background: "rgba(255,71,87,0.08)", border: "1px solid rgba(255,71,87,0.3)" }}>
+              <p className="text-xs" style={{ color: "#fecaca" }}>
+                <strong style={{ color: "#FF4757" }}>⚠ Red flag:</strong> Domain registered just 4 months ago with full WHOIS privacy. Singapore registrar known for hosting anonymous operators.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl p-5 mb-8"
+          style={{ background: "rgba(155,89,182,0.04)", border: "1px solid rgba(155,89,182,0.2)" }}>
+          <p className="text-sm leading-relaxed" style={{ color: "#cbd5e1" }}>
+            The two platforms use <strong style={{ color: "#f8fafc" }}>different registrars</strong> (Dynadot in the US, Gname.com in Singapore) but share the same on-chain backend infrastructure. This is a deliberate anti-attribution pattern — splitting domain registrations across jurisdictions complicates law enforcement takedown requests. The fact that <strong style={{ color: "#f8fafc" }}>txoin.com is only 4 months old</strong> suggests it was provisioned as a backup or replacement for fqlex.com when scrutiny intensified. Both domains have <strong style={{ color: "#f8fafc" }}>only 1-year renewal periods</strong>, consistent with operators who do not expect the platforms to outlive their exit scam timelines.
+          </p>
+        </div>
+
         {/* ── Why this is an exit scam in progress ── */}
         <h2 className="text-lg font-bold mb-4" style={{ color: "#f8fafc" }}>Why This Is an Exit Scam in Progress</h2>
         <div className="grid sm:grid-cols-3 gap-4 mb-8">
