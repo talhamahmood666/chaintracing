@@ -532,23 +532,40 @@ async function _quickNodeGetLogs(
   }
 }
 
+// Note: pathological high-throughput contracts (USDC token contract, Uniswap
+// routers) have tens of thousands of Transfer events even in tiny windows and
+// will likely never fit under the JSON-RPC payload cap. Real scam-victim
+// addresses have far fewer transfers and succeed at the 5k-block default.
 async function fetchLogsWithRetry(
   address: string,
   latestBlock: number
 ): Promise<QuickNodeLog[]> {
   const topics = [TRANSFER_TOPIC, _padAddress(address), null];
-  const minWindow = 500;
+  const minWindow = 100;
   let window = 5000;
 
-  while (window >= minWindow) {
+  while (true) {
     const fromHex = "0x" + Math.max(0, latestBlock - window).toString(16);
     const res = await _quickNodeGetLogs(fromHex, "latest", topics);
+
     if (res === OVERSIZE) {
       const next = Math.floor(window / 2);
-      console.log(`[base-quicknode] retry: window ${window} → ${next}`);
+      if (next < minWindow) {
+        console.log(`[base-quicknode] oversize at window ${window}, next ${next} below min ${minWindow}, attempting last-ditch 50-block window`);
+        const lastDitchHex = "0x" + Math.max(0, latestBlock - 50).toString(16);
+        const last = await _quickNodeGetLogs(lastDitchHex, "latest", topics);
+        if (last && last !== OVERSIZE) {
+          console.log(`[base-quicknode] last-ditch 50-block window succeeded, results ${last.length}`);
+          return last;
+        }
+        console.log(`[base-quicknode] last-ditch 50-block window failed, returning empty`);
+        return [];
+      }
+      console.log(`[base-quicknode] HTTP 413, retry: window ${window} → ${next}`);
       window = next;
       continue;
     }
+
     if (!res) {
       console.log(`[base-quicknode] non-oversize failure at window ${window}, returning empty`);
       return [];
@@ -568,9 +585,6 @@ async function fetchLogsWithRetry(
     console.log(`[base-quicknode] success at window ${window}, results ${res.length}`);
     return res;
   }
-
-  console.log(`[base-quicknode] all retries exhausted (min window ${minWindow}), returning empty`);
-  return [];
 }
 
 async function fetchBaseViaQuickNode(
