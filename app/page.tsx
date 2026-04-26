@@ -115,17 +115,31 @@ export default async function HomePage() {
 
             <AnimatedStatsCounter reportsCount={reportsCount} flaggedCount={flaggedCount} communityReportsCount={communityReportsCount} />
 
-            <a
-              href="#hero-form-anchor"
-              className="mt-10 inline-block px-8 py-4 rounded-xl font-bold text-sm transition-all duration-200"
-              style={{
-                background: 'linear-gradient(135deg, #00D9FF, #0099BB)',
-                color: '#0A1628',
-                cursor: 'pointer',
-              }}
-            >
-              Check a Wallet — Free
-            </a>
+            <div className="mt-10 flex flex-wrap gap-3 justify-center md:justify-start">
+              <a
+                href="#hero-form-anchor"
+                className="inline-block px-8 py-4 rounded-xl font-bold text-sm transition-all duration-200"
+                style={{
+                  background: 'linear-gradient(135deg, #00D9FF, #0099BB)',
+                  color: '#0A1628',
+                  cursor: 'pointer',
+                }}
+              >
+                Check a Wallet — Free
+              </a>
+              <a
+                href="/services"
+                className="inline-block px-8 py-4 rounded-xl font-bold text-sm transition-all duration-200"
+                style={{
+                  background: 'rgba(245,158,11,0.12)',
+                  border: '1px solid rgba(245,158,11,0.4)',
+                  color: '#f59e0b',
+                  cursor: 'pointer',
+                }}
+              >
+                Hire ChainTracing
+              </a>
+            </div>
           </div>
 
           {/* RIGHT 40% — trace form card */}
@@ -303,6 +317,31 @@ export default async function HomePage() {
           <p className="text-center text-xs mt-6" style={{ color: 'var(--text-muted)' }}>
             Cross-chain hop tracking · Beyond-CEX reliability flagging
           </p>
+        </div>
+      </section>
+
+      {/* g2) BESPOKE HELP */}
+      <section className="py-20 px-4" style={{ background: 'rgba(245,158,11,0.03)' }}>
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-black mb-4" style={{ color: 'var(--text-primary)' }}>
+            Need bespoke help?
+          </h2>
+          <p className="text-lg max-w-2xl mx-auto mb-8" style={{ color: 'var(--text-secondary)' }}>
+            For losses over $1,000 or complex cases involving high-volume mixing services, ChainTracing offers
+            hand-reviewed forensic investigations — UTXO-level tracing, exchange identification, and
+            subpoena-ready evidence packages. Charged after delivery, never before.
+          </p>
+          <a
+            href="/services"
+            className="inline-block px-10 py-4 rounded-xl font-bold text-sm transition-all duration-200"
+            style={{
+              background: 'rgba(245,158,11,0.14)',
+              border: '1px solid rgba(245,158,11,0.4)',
+              color: '#f59e0b',
+            }}
+          >
+            View Investigation Packages →
+          </a>
         </div>
       </section>
 
