@@ -421,6 +421,152 @@ function getBridgeName(address: string, chain: string): string | null {
   return chainBridges[address.toLowerCase()] ?? null;
 }
 
+// ─── Base chain QuickNode fallback ───────────────────────────────────────────
+// Etherscan V2 free tier excludes Base (chainId 8453) — calls return NOTOK
+// and Ankr free tier doesn't reliably index Base either. We use direct
+// QuickNode JSON-RPC for ERC20 logs instead. Native ETH on Base is rare in
+// scam contexts, so we skip it for now (TODO: block-scan if needed).
+
+const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
+async function quickNodeRpc<T>(method: string, params: unknown[]): Promise<T | null> {
+  const url = process.env.QUICKNODE_BASE_URL;
+  if (!url) return null;
+  try {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!r.ok) {
+      console.log(`[base-quicknode] HTTP ${r.status} on ${method}`);
+      return null;
+    }
+    const j = await r.json();
+    if (j.error) {
+      console.log(`[base-quicknode] rpc error on ${method}:`, j.error?.message);
+      return null;
+    }
+    return j.result as T;
+  } catch (err) {
+    console.log(`[base-quicknode] fetch error on ${method}:`, (err as Error)?.message);
+    return null;
+  }
+}
+
+function _padAddress(a: string): string {
+  return "0x" + a.toLowerCase().replace(/^0x/, "").padStart(64, "0");
+}
+
+function _decodeStringResult(hex: string): string {
+  if (!hex || hex === "0x") return "";
+  const data = hex.slice(2);
+  // Short bytes32-style return (no offset/length encoding)
+  if (data.length < 128) {
+    return Buffer.from(data, "hex").toString("utf8").replace(/\0+/g, "").trim();
+  }
+  const len = parseInt(data.slice(64, 128), 16);
+  if (!len || len > 256) return "";
+  const strHex = data.slice(128, 128 + len * 2);
+  return Buffer.from(strHex, "hex").toString("utf8").replace(/\0+/g, "").trim();
+}
+
+interface QuickNodeLog {
+  address: string;
+  topics: string[];
+  data: string;
+  transactionHash: string;
+  blockNumber: string;
+}
+
+async function fetchBaseViaQuickNode(
+  address: string,
+  limit = 100
+): Promise<{ native: NormalizedTx[]; token: NormalizedTx[] }> {
+  if (!process.env.QUICKNODE_BASE_URL) {
+    console.log("[base-quicknode] QUICKNODE_BASE_URL not set, returning empty");
+    return { native: [], token: [] };
+  }
+
+  const latestHex = await quickNodeRpc<string>("eth_blockNumber", []);
+  if (!latestHex) return { native: [], token: [] };
+  const latest = parseInt(latestHex, 16);
+  const fromBlock = "0x" + Math.max(0, latest - 100_000).toString(16);
+
+  const logs = await quickNodeRpc<QuickNodeLog[]>("eth_getLogs", [{
+    fromBlock,
+    toBlock: "latest",
+    topics: [TRANSFER_TOPIC, _padAddress(address), null],
+  }]);
+  if (!logs || !Array.isArray(logs) || logs.length === 0) {
+    console.log("[fetch:base-quicknode]", { address, returned: 0 });
+    return { native: [], token: [] };
+  }
+
+  const sorted = logs
+    .slice()
+    .sort((a, b) => parseInt(b.blockNumber, 16) - parseInt(a.blockNumber, 16))
+    .slice(0, limit);
+
+  const metaCache = new Map<string, { symbol: string; decimals: number }>();
+  async function getMeta(contract: string): Promise<{ symbol: string; decimals: number }> {
+    const key = contract.toLowerCase();
+    const hit = metaCache.get(key);
+    if (hit) return hit;
+    let symbol = "ERC20", decimals = 18;
+    const symRes = await quickNodeRpc<string>("eth_call", [{ to: contract, data: "0x95d89b41" }, "latest"]);
+    if (symRes) { const s = _decodeStringResult(symRes); if (s) symbol = s; }
+    const decRes = await quickNodeRpc<string>("eth_call", [{ to: contract, data: "0x313ce567" }, "latest"]);
+    if (decRes && decRes !== "0x") { const d = parseInt(decRes, 16); if (Number.isFinite(d) && d >= 0 && d <= 36) decimals = d; }
+    const m = { symbol, decimals };
+    metaCache.set(key, m);
+    return m;
+  }
+
+  const tsCache = new Map<string, number>();
+  async function getTs(blockHex: string): Promise<number> {
+    const hit = tsCache.get(blockHex);
+    if (hit !== undefined) return hit;
+    const blk = await quickNodeRpc<{ timestamp: string }>("eth_getBlockByNumber", [blockHex, false]);
+    const ts = blk?.timestamp ? parseInt(blk.timestamp, 16) : 0;
+    tsCache.set(blockHex, ts);
+    await new Promise(r => setTimeout(r, 40)); // QuickNode free tier: 25 req/sec
+    return ts;
+  }
+
+  const result: NormalizedTx[] = [];
+  for (const log of sorted) {
+    try {
+      const meta = await getMeta(log.address);
+      const ts = await getTs(log.blockNumber);
+      const toRaw = log.topics[2] ?? "0x0";
+      const to = "0x" + toRaw.slice(-40).toLowerCase();
+      const valueRaw = BigInt(log.data || "0x0").toString();
+      const valueHuman = (Number(BigInt(valueRaw)) / Math.pow(10, meta.decimals))
+        .toFixed(meta.decimals > 6 ? 6 : meta.decimals);
+      result.push({
+        hash: log.transactionHash,
+        from: address.toLowerCase(),
+        to,
+        valueRaw,
+        valueHuman,
+        token: meta.symbol,
+        blockNumber: parseInt(log.blockNumber, 16),
+        timestamp: ts,
+      });
+    } catch (err) {
+      console.log("[base-quicknode] log parse error:", (err as Error)?.message);
+    }
+  }
+
+  const oldestTs = result.length ? Math.min(...result.map(t => t.timestamp)) : 0;
+  const newestTs = result.length ? Math.max(...result.map(t => t.timestamp)) : 0;
+  console.log("[fetch:base-quicknode]", { address, returned: result.length, oldestTs, newestTs });
+
+  return { native: [], token: result };
+}
+
 // ─── Per-request Etherscan cache ─────────────────────────────────────────────
 
 interface TxCache {
@@ -439,6 +585,14 @@ async function fetchWithCache(
   if (hit && Date.now() - hit.fetchedAt < TX_CACHE_TTL_MS) {
     return { native: hit.native, token: hit.token };
   }
+
+  // Base (chainId 8453) is excluded from Etherscan V2 free tier — use QuickNode RPC.
+  if (config.chainId === "8453") {
+    const result = await fetchBaseViaQuickNode(address, 100);
+    cache.set(address, { native: result.native, token: result.token, fetchedAt: Date.now() });
+    return result;
+  }
+
   // Sequential to stay under Etherscan's 5 req/s free-tier limit
   let native: NormalizedTx[] = [];
   let token: NormalizedTx[] = [];
