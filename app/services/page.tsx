@@ -77,8 +77,8 @@ const TIERS = [
 const WHY_ITEMS = [
   {
     icon: "💳",
-    title: "Charged after delivery",
-    body: "We invoice after the deliverable is sent — not before. If we can't produce useful findings we'll tell you before charging.",
+    title: "Fair payment terms",
+    body: "We charge a 50% deposit upfront and the remaining 50% on delivery of the report. If we can't produce useful findings, we tell you before the deep work begins and refund the deposit.",
   },
   {
     icon: "🚫",
@@ -98,7 +98,7 @@ const WHY_ITEMS = [
   {
     icon: "🏠",
     title: "One operator, no outsourcing",
-    body: "No offshore call centers. No third-party contractors. One analyst, based in the UK, who owns the work.",
+    body: "No offshore call centers. No third-party contractors. One analyst, based in Lahore, Pakistan, who owns the work.",
   },
 ];
 
@@ -123,7 +123,7 @@ export default function ServicesPage() {
           We produce the evidence law enforcement needs to do their job.
         </p>
         <p className="text-sm max-w-xl mx-auto" style={{ color: "#64748b" }}>
-          Charged after delivery · Hand-reviewed · No upfront payment required
+          50% deposit upfront · 50% on delivery · Hand-reviewed every time
         </p>
       </section>
 
