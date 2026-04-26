@@ -480,6 +480,99 @@ interface QuickNodeLog {
   blockNumber: string;
 }
 
+const OVERSIZE = "OVERSIZE" as const;
+type LogsResult = QuickNodeLog[] | typeof OVERSIZE | null;
+
+function _isOversizeMessage(msg: string | undefined): boolean {
+  if (!msg) return false;
+  const m = msg.toLowerCase();
+  return m.includes("too large") || m.includes("size limit") ||
+    m.includes("exceeds") || m.includes("response size") ||
+    m.includes("limit exceeded") || m.includes("payload");
+}
+
+async function _quickNodeGetLogs(
+  fromBlockHex: string,
+  toBlockHex: string,
+  topics: (string | null)[]
+): Promise<LogsResult> {
+  const url = process.env.QUICKNODE_BASE_URL;
+  if (!url) return null;
+  try {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0", id: 1, method: "eth_getLogs",
+        params: [{ fromBlock: fromBlockHex, toBlock: toBlockHex, topics }],
+      }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (r.status === 413) {
+      console.log(`[base-quicknode] HTTP 413 (payload too large) on eth_getLogs`);
+      return OVERSIZE;
+    }
+    if (!r.ok) {
+      console.log(`[base-quicknode] HTTP ${r.status} on eth_getLogs`);
+      return null;
+    }
+    const j = await r.json();
+    if (j.error) {
+      if (_isOversizeMessage(j.error?.message)) {
+        console.log(`[base-quicknode] RPC oversize error on eth_getLogs:`, j.error.message);
+        return OVERSIZE;
+      }
+      console.log(`[base-quicknode] rpc error on eth_getLogs:`, j.error?.message);
+      return null;
+    }
+    return Array.isArray(j.result) ? (j.result as QuickNodeLog[]) : null;
+  } catch (err) {
+    console.log(`[base-quicknode] fetch error on eth_getLogs:`, (err as Error)?.message);
+    return null;
+  }
+}
+
+async function fetchLogsWithRetry(
+  address: string,
+  latestBlock: number
+): Promise<QuickNodeLog[]> {
+  const topics = [TRANSFER_TOPIC, _padAddress(address), null];
+  const minWindow = 500;
+  let window = 5000;
+
+  while (window >= minWindow) {
+    const fromHex = "0x" + Math.max(0, latestBlock - window).toString(16);
+    const res = await _quickNodeGetLogs(fromHex, "latest", topics);
+    if (res === OVERSIZE) {
+      const next = Math.floor(window / 2);
+      console.log(`[base-quicknode] retry: window ${window} → ${next}`);
+      window = next;
+      continue;
+    }
+    if (!res) {
+      console.log(`[base-quicknode] non-oversize failure at window ${window}, returning empty`);
+      return [];
+    }
+
+    // Success: try one expansion if results are sparse
+    if (res.length < 50 && window < 20000) {
+      const expanded = Math.min(window * 4, 20000);
+      const expHex = "0x" + Math.max(0, latestBlock - expanded).toString(16);
+      const expRes = await _quickNodeGetLogs(expHex, "latest", topics);
+      if (expRes && expRes !== OVERSIZE) {
+        console.log(`[base-quicknode] expanded window ${window} → ${expanded}, results ${res.length} → ${expRes.length}`);
+        return expRes;
+      }
+      console.log(`[base-quicknode] expansion to ${expanded} failed, keeping ${res.length} results from window ${window}`);
+    }
+    console.log(`[base-quicknode] success at window ${window}, results ${res.length}`);
+    return res;
+  }
+
+  console.log(`[base-quicknode] all retries exhausted (min window ${minWindow}), returning empty`);
+  return [];
+}
+
 async function fetchBaseViaQuickNode(
   address: string,
   limit = 100
@@ -492,18 +585,14 @@ async function fetchBaseViaQuickNode(
   const latestHex = await quickNodeRpc<string>("eth_blockNumber", []);
   if (!latestHex) return { native: [], token: [] };
   const latest = parseInt(latestHex, 16);
-  const fromBlock = "0x" + Math.max(0, latest - 100_000).toString(16);
 
-  const logs = await quickNodeRpc<QuickNodeLog[]>("eth_getLogs", [{
-    fromBlock,
-    toBlock: "latest",
-    topics: [TRANSFER_TOPIC, _padAddress(address), null],
-  }]);
-  if (!logs || !Array.isArray(logs) || logs.length === 0) {
+  const logs = await fetchLogsWithRetry(address, latest);
+  if (logs.length === 0) {
     console.log("[fetch:base-quicknode]", { address, returned: 0 });
     return { native: [], token: [] };
   }
 
+  // Cap to most-recent `limit` to keep BFS fast.
   const sorted = logs
     .slice()
     .sort((a, b) => parseInt(b.blockNumber, 16) - parseInt(a.blockNumber, 16))
