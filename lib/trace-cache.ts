@@ -1,5 +1,9 @@
+// CACHE VERSIONING: bump TRACER_VERSION whenever tracer logic changes.
+// Format: YYYY-MM-DD-shortdesc. This auto-invalidates all cached entries.
 import { getAdminClient } from "@/lib/supabase";
 import type { Hop, BfsLogEntry, Chain } from "@/lib/tracer";
+
+const TRACER_VERSION = "2026-04-25-tiered-selection";
 
 const CACHE_TTL_HOURS = 24;
 const PARTIAL_CACHE_TTL_HOURS = 1; // shorter TTL so partial traces get retried sooner
@@ -17,12 +21,24 @@ export async function getTraceCache(
     const db = getAdminClient();
     const { data, error } = await db
       .from("trace_cache")
-      .select("hops, bfs_log")
+      .select("hops, bfs_log, tracer_version")
       .eq("address", address.toLowerCase())
       .eq("chain", chain)
       .gt("expires_at", new Date().toISOString())
       .single();
     if (error || !data) return null;
+
+    if ((data as { tracer_version?: string | null }).tracer_version !== TRACER_VERSION) {
+      // Stale cache from a prior tracer version — fire-and-forget delete, treat as miss.
+      void db
+        .from("trace_cache")
+        .delete()
+        .eq("address", address.toLowerCase())
+        .eq("chain", chain)
+        .then(() => undefined, () => undefined);
+      return null;
+    }
+
     return {
       hops: data.hops as Hop[],
       bfsLog: data.bfs_log as BfsLogEntry[] | null,
@@ -52,6 +68,7 @@ export async function setTraceCache(
         bfs_log: bfsLog ?? null,
         traced_at: new Date().toISOString(),
         expires_at: expiresAt,
+        tracer_version: TRACER_VERSION,
       },
       { onConflict: "address,chain" }
     );
@@ -72,6 +89,19 @@ export async function clearTraceCache(
       .eq("address", address.toLowerCase());
     if (chain) q = q.eq("chain", chain);
     const { error } = await q;
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
+export async function clearAllTraceCache(): Promise<boolean> {
+  try {
+    const db = getAdminClient();
+    const { error } = await db
+      .from("trace_cache")
+      .delete()
+      .neq("address", "__never_match__");
     return !error;
   } catch {
     return false;
