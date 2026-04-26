@@ -290,28 +290,34 @@ async function etherscanFetch(
   }
 }
 
+type FetchMode = "recent" | "from-block";
+
 /**
- * Fetch native transactions (ETH/BNB/MATIC etc.) sorted ASC so earliest transfers
- * come first — critical for following money right after a theft.
+ * Fetch native transactions (ETH/BNB/MATIC etc.).
+ * Default mode "recent" pulls the newest `limit` txs; the BFS re-sorts the
+ * merged candidate set ascending for temporal integrity. Use "from-block" for
+ * incident-mode tracing forward from a known hack block.
  */
 async function fetchNativeTxs(
   address: string,
   config: ChainConfig,
-  limit = 100
+  limit = 100,
+  fetchMode: FetchMode = "recent",
+  fromBlock?: number
 ): Promise<NormalizedTx[]> {
   const raw = (await etherscanFetch({
     chainid: config.chainId,
     module: "account",
     action: "txlist",
     address,
-    startblock: "0",
+    startblock: String(fetchMode === "from-block" ? (fromBlock ?? 0) : 0),
     endblock: "99999999",
     page: "1",
     offset: String(limit),
-    sort: "asc", // oldest first so we follow the theft timeline
+    sort: fetchMode === "recent" ? "desc" : "asc",
   })) as RawEvmTx[];
 
-  return raw
+  const result = raw
     .filter(tx => tx.isError === "0" && BigInt(tx.value || "0") > 0n)
     .map(tx => ({
       hash: tx.hash,
@@ -323,6 +329,10 @@ async function fetchNativeTxs(
       blockNumber: parseInt(tx.blockNumber, 10),
       timestamp: parseInt(tx.timeStamp, 10),
     }));
+  const oldestTs = result.length ? Math.min(...result.map(t => t.timestamp)) : 0;
+  const newestTs = result.length ? Math.max(...result.map(t => t.timestamp)) : 0;
+  console.log(`[fetch:evm-native]`, { address, chainId: config.chainId, mode: fetchMode, returned: result.length, oldestTs, newestTs });
+  return result;
 }
 
 /**
@@ -332,21 +342,23 @@ async function fetchNativeTxs(
 async function fetchTokenTxs(
   address: string,
   config: ChainConfig,
-  limit = 100
+  limit = 100,
+  fetchMode: FetchMode = "recent",
+  fromBlock?: number
 ): Promise<NormalizedTx[]> {
   const raw = (await etherscanFetch({
     chainid: config.chainId,
     module: "account",
     action: "tokentx",
     address,
-    startblock: "0",
+    startblock: String(fetchMode === "from-block" ? (fromBlock ?? 0) : 0),
     endblock: "99999999",
     page: "1",
     offset: String(limit),
-    sort: "asc",
+    sort: fetchMode === "recent" ? "desc" : "asc",
   })) as RawErc20Tx[];
 
-  return raw
+  const result = raw
     .filter(tx => BigInt(tx.value || "0") > 0n)
     .map(tx => {
       const dec = parseInt(tx.tokenDecimal, 10) || 18;
@@ -362,6 +374,10 @@ async function fetchTokenTxs(
         timestamp: parseInt(tx.timeStamp, 10),
       };
     });
+  const oldestTs = result.length ? Math.min(...result.map(t => t.timestamp)) : 0;
+  const newestTs = result.length ? Math.max(...result.map(t => t.timestamp)) : 0;
+  console.log(`[fetch:evm-token]`, { address, chainId: config.chainId, mode: fetchMode, returned: result.length, oldestTs, newestTs });
+  return result;
 }
 
 // ─── EVM label helpers ────────────────────────────────────────────────────────
@@ -739,7 +755,11 @@ async function traceSolana(
         return [];
       }
       const json = await r.json();
-      return Array.isArray(json) ? (json as HeliusTx[]) : [];
+      const arr = Array.isArray(json) ? (json as HeliusTx[]) : [];
+      const oldestTs = arr.length ? Math.min(...arr.map(t => t.timestamp ?? 0)) : 0;
+      const newestTs = arr.length ? Math.max(...arr.map(t => t.timestamp ?? 0)) : 0;
+      console.log(`[fetch:solana]`, { address, mode: "recent", returned: arr.length, oldestTs, newestTs });
+      return arr;
     } catch (err) {
       console.log(`[HELIUS] fetch error: ${(err as Error)?.message}`);
       return [];
@@ -904,17 +924,18 @@ async function traceTron(
     // Fetch TRX native + TRC-20 transfers in parallel
     const [trxRes, trc20Res] = await Promise.all([
       fetch(
-        `https://api.trongrid.io/v1/accounts/${address}/transactions?limit=50&only_from=true&order_by=block_timestamp,asc`,
+        `https://api.trongrid.io/v1/accounts/${address}/transactions?limit=50&only_from=true&order_by=block_timestamp,desc`,
         { headers: { "TRON-PRO-API-KEY": apiKey }, next: { revalidate: 60 } }
       ).then(r => r.ok ? r.json() : { data: [] }).catch(() => ({ data: [] })),
       fetch(
-        `https://api.trongrid.io/v1/accounts/${address}/transactions/trc20?limit=50&only_from=true&order_by=block_timestamp,asc`,
+        `https://api.trongrid.io/v1/accounts/${address}/transactions/trc20?limit=50&only_from=true&order_by=block_timestamp,desc`,
         { headers: { "TRON-PRO-API-KEY": apiKey }, next: { revalidate: 60 } }
       ).then(r => r.ok ? r.json() : { data: [] }).catch(() => ({ data: [] })),
     ]);
 
     const trxTxs = Array.isArray(trxRes?.data) ? trxRes.data : [];
     const trc20Txs = Array.isArray(trc20Res?.data) ? trc20Res.data : [];
+    console.log(`[fetch:tron]`, { address, mode: "recent", nativeReturned: trxTxs.length, trc20Returned: trc20Txs.length });
 
     // Normalize TRX native txs
     interface NativeTronEntry { from: string; to: string; value: string; timestamp: number; hash: string; blockNumber: number }

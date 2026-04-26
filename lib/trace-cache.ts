@@ -3,7 +3,7 @@
 import { getAdminClient } from "@/lib/supabase";
 import type { Hop, BfsLogEntry, Chain } from "@/lib/tracer";
 
-const TRACER_VERSION = "2026-04-25-tiered-selection";
+const TRACER_VERSION = "2026-04-25-recent-fetch";
 
 const CACHE_TTL_HOURS = 24;
 const PARTIAL_CACHE_TTL_HOURS = 1; // shorter TTL so partial traces get retried sooner
