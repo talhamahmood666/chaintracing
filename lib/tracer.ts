@@ -475,6 +475,7 @@ async function traceEvm(
     { address: startAddress.toLowerCase(), depth: 0, fundingTs: 0 },
   ];
 
+  console.log("[tracer:evm]", { startAddress, chain, maxHops: maxDepth });
   console.log(`[TRACE] Starting BFS: startAddress=${startAddress}, chain=${chain}, maxDepth=${maxDepth}`);
   console.log(`[TRACE] Initial queue size: ${queue.length}, seedVisited size: ${visited.size}`);
 
@@ -668,6 +669,7 @@ async function traceSolana(
     { address: startAddress, depth: 0, fundingTs: 0 },
   ];
 
+  console.log("[tracer:solana]", { startAddress, maxHops: maxDepth });
   const apiKey = env.HELIUS_API_KEY ?? "";
   console.log(`[HELIUS] key length: ${apiKey.length}, address: ${startAddress}, maxDepth: ${maxDepth}`);
   if (!apiKey) {
@@ -836,6 +838,7 @@ async function traceTron(
   const queue: Array<{ address: string; depth: number; fundingTs: number }> = [
     { address: startAddress, depth: 0, fundingTs: 0 },
   ];
+  console.log("[tracer:tron]", { startAddress, maxHops: maxDepth });
   const apiKey = env.TRONGRID_API_KEY ?? "";
 
   console.log("[tron-bfs] start", { address: startAddress, maxDepth, queueSize: queue.length });
@@ -1019,6 +1022,7 @@ async function traceBitcoin(
   bfsLog?: BfsLogEntry[],
   seedVisited?: Set<string>
 ): Promise<Hop[]> {
+  console.log("[tracer:btc]", { startAddress, maxHops: maxDepth });
   if (!BTC_ADDRESS_RE.test(startAddress)) return [];
 
   const hops: Hop[] = [];

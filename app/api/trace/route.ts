@@ -79,9 +79,11 @@ export async function POST(request: NextRequest) {
     // Attempt to attach user_id from session — auth is optional for free traces
     const { user } = await getUser(request);
     const adminUser = user ? await isAdminById(user.id) : false;
-    const resolvedHopLimit = adminUser ? 50 : 10;
+    // Tier-based hop limits: anonymous=2, signed-in=5, admin=50
+    const tier = adminUser ? "admin" : user ? "signed-in" : "anonymous";
+    const resolvedHopLimit = adminUser ? 50 : user ? 5 : 2;
     const fresh = adminUser && request.nextUrl?.searchParams?.get("fresh") === "1";
-    console.log("[trace] userId=%s userEmail=%s isAdmin=%s resolvedHopLimit=%d fresh=%s mode=%s", user?.id ?? "anon", user?.email ?? "anon", adminUser, resolvedHopLimit, fresh, utxoMode ? `utxo startTxid=${startTxid} startVout=${startVout}` : "address");
+    console.log("[trace]", { chain: typedChain, tier, userId: user?.id ?? null, maxHops: resolvedHopLimit, mode: utxoMode ? "utxo" : "address" });
 
     if (fresh) {
       await clearTraceCache(address.trim(), typedChain);
