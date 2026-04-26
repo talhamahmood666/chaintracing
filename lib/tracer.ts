@@ -455,6 +455,71 @@ async function fetchWithCache(
   return { native, token };
 }
 
+// ─── Tiered transfer selection (Bug fix: dimensional comparison) ─────────────
+// Comparing raw BigInt values across tokens with different decimals is invalid:
+// e.g. 0.001 ETH (10^15) appears "larger" than 1,000,000 USDT (10^12). Tier by
+// economic significance instead: stablecoins → natives → same-token fallback.
+
+const STABLECOIN_SYMBOLS = new Set([
+  "USDT", "USDC", "USDC.E", "BUSD", "DAI", "FDUSD", "TUSD", "USDE", "PYUSD", "USDP", "GUSD",
+]);
+const NATIVE_SYMBOLS = new Set([
+  "ETH", "BNB", "MATIC", "POL", "AVAX", "TRX", "SOL", "BTC",
+]);
+
+function _isStable(sym: string): boolean { return STABLECOIN_SYMBOLS.has(sym.toUpperCase()); }
+function _isNative(sym: string): boolean { return NATIVE_SYMBOLS.has(sym.toUpperCase()); }
+
+function _nativeDustRaw(sym: string): bigint {
+  const s = sym.toUpperCase();
+  if (s === "TRX") return 1_000_000n;             // 1 TRX
+  if (s === "BNB" || s === "MATIC" || s === "POL") return 10n ** 16n; // 0.01
+  return 10n ** 15n;                              // 0.001 ETH/AVAX/etc.
+}
+
+interface SelectableTx { token: string; valueRaw: string; valueHuman: string }
+
+function selectBestTransfer<T extends SelectableTx>(txs: T[]): T | null {
+  if (!txs.length) return null;
+
+  // Tier 1: stablecoins ≥ $1, ranked by human-readable value.
+  const stables = txs.filter(t => _isStable(t.token) && parseFloat(t.valueHuman) >= 1.0);
+  if (stables.length) {
+    return stables.reduce((m, t) =>
+      parseFloat(t.valueHuman) > parseFloat(m.valueHuman) ? t : m
+    );
+  }
+
+  // Tier 2: native chain tokens above per-chain dust, ranked by raw value.
+  const natives = txs.filter(t => {
+    if (!_isNative(t.token)) return false;
+    try { return BigInt(t.valueRaw) >= _nativeDustRaw(t.token); } catch { return false; }
+  });
+  if (natives.length) {
+    return natives.reduce((m, t) => {
+      try { return BigInt(t.valueRaw) > BigInt(m.valueRaw) ? t : m; } catch { return m; }
+    });
+  }
+
+  // Tier 3: largest within a single token group (never compare across tokens).
+  const byToken = new Map<string, T[]>();
+  for (const tx of txs) {
+    if (!byToken.has(tx.token)) byToken.set(tx.token, []);
+    byToken.get(tx.token)!.push(tx);
+  }
+  let best: T | null = null;
+  let bestVal = -1n;
+  for (const group of byToken.values()) {
+    for (const t of group) {
+      try {
+        const v = BigInt(t.valueRaw);
+        if (v > bestVal) { bestVal = v; best = t; }
+      } catch { /* skip non-numeric raws */ }
+    }
+  }
+  return best;
+}
+
 // ─── EVM tracer ───────────────────────────────────────────────────────────────
 
 async function traceEvm(
@@ -557,23 +622,10 @@ async function traceEvm(
       continue;
     }
 
-    // Pick the largest outgoing transfer (by raw value in the same token group)
-    // Group by token, pick the group with the largest single transfer
-    const byToken = new Map<string, NormalizedTx[]>();
-    for (const tx of outgoing) {
-      if (!byToken.has(tx.token)) byToken.set(tx.token, []);
-      byToken.get(tx.token)!.push(tx);
-    }
-    let bestTx = outgoing[0];
-    let bestVal = 0n;
-    for (const txs of byToken.values()) {
-      const maxVal = txs.reduce((m, t) => {
-        try { const v = BigInt(t.valueRaw); return v > m ? v : m; } catch { return m; }
-      }, 0n);
-      if (maxVal > bestVal) {
-        bestVal = maxVal;
-        bestTx = txs.find(t => { try { return BigInt(t.valueRaw) === maxVal; } catch { return false; } }) ?? txs[0];
-      }
+    // Tiered selection: stablecoins → natives → same-token fallback.
+    const bestTx = selectBestTransfer(outgoing) ?? outgoing[0];
+    if (chain === "base") {
+      console.log(`[BASE-DEBUG] ${address}: native=${nativeTxs.length}, token=${tokenTxs.length}, outgoing=${outgoing.length}, picked=${bestTx.token} ${bestTx.valueHuman}`);
     }
 
     const dest = bestTx.to;
@@ -736,13 +788,18 @@ async function traceSolana(
       }
       for (const t of tx.tokenTransfers ?? []) {
         if (t.fromUserAccount !== address) continue;
+        const SOL_MINT_SYMBOL: Record<string, string> = {
+          "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "USDC",
+          "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB": "USDT",
+        };
+        const symbol = SOL_MINT_SYMBOL[t.mint] ?? t.mint.slice(0, 8);
         tokenNorm.push({
           from: t.fromUserAccount,
           to: t.toUserAccount,
           valueRaw: String(t.tokenAmount),
           valueHuman: t.tokenAmount.toFixed(6),
           solEquivalent: 0, // unknown USD/SOL conversion; ranked below native
-          token: t.mint.slice(0, 8),
+          token: symbol,
           hash: tx.signature,
           slot: tx.slot,
           timestamp: tx.timestamp,
@@ -768,16 +825,8 @@ async function traceSolana(
       continue;
     }
 
-    // Pick largest by SOL-equivalent; native wins over token when token has no SOL ranking
-    let best = outgoing[0];
-    for (const t of outgoing) {
-      if (t.solEquivalent > best.solEquivalent) best = t;
-    }
-    if (best.solEquivalent === 0 && tokenNorm.length > 0) {
-      // Fall back to largest token by raw value
-      best = tokenNorm.reduce((m, t) =>
-        Number(t.valueRaw) > Number(m.valueRaw) ? t : m, tokenNorm[0]);
-    }
+    // Tiered selection: stablecoins → SOL native → same-token fallback.
+    const best = (selectBestTransfer(outgoing) ?? outgoing[0]) as NormalizedSolTx;
 
     const dest = best.to;
     const solExchanges = exchangeWallets.solana as Record<string, { exchange: string; label: string }>;
@@ -912,36 +961,35 @@ async function traceTron(
       outgoingCount: validNative.length + validTrc20.length,
     };
 
-    // Pick best: largest native if any, else largest TRC-20
-    let chosenFrom = address, chosenTo = "", chosenValue = "", chosenRaw = "0", chosenSymbol = "TRX", chosenTs = 0, chosenHash = "", chosenBlock = 0;
-    let bestRaw = 0n;
-
-    for (const t of validNative) {
-      try {
-        const v = BigInt(t.value);
-        if (v > bestRaw) {
-          bestRaw = v; chosenTo = t.to; chosenRaw = t.value;
-          chosenValue = (Number(v) / 1_000_000).toFixed(6);
-          chosenSymbol = "TRX"; chosenTs = t.timestamp; chosenHash = t.hash; chosenBlock = t.blockNumber;
-        }
-      } catch { /**/ }
+    // Unify into one candidate list, then run tiered selection.
+    interface TronCandidate extends SelectableTx {
+      to: string; timestamp: number; hash: string; blockNumber: number;
     }
-    for (const t of validTrc20) {
-      try {
-        const v = BigInt(t.value);
-        const normalized = Number(v) / Math.pow(10, t.decimals);
-        // Compare USD-rough: treat TRC20 as stablecoin equivalent, native TRX ~$0.12
-        // Simple heuristic: if TRX chosen value < TRC20 value in absolute raw terms, prefer TRC20
-        if (bestRaw === 0n || normalized > Number(bestRaw) / 1_000_000 * 0.12) {
-          // prefer TRC-20 if no native chosen or TRC-20 is bigger in value
-          if (bestRaw === 0n) {
-            chosenTo = t.to; chosenRaw = t.value;
-            chosenValue = normalized.toFixed(6);
-            chosenSymbol = t.symbol; chosenTs = t.timestamp; chosenHash = t.hash; chosenBlock = t.blockNumber;
-            bestRaw = v;
-          }
-        }
-      } catch { /**/ }
+    const candidates: TronCandidate[] = [
+      ...validNative.map(t => ({
+        token: "TRX",
+        valueRaw: t.value,
+        valueHuman: ((() => { try { return Number(BigInt(t.value)) / 1_000_000; } catch { return 0; } })()).toFixed(6),
+        to: t.to, timestamp: t.timestamp, hash: t.hash, blockNumber: t.blockNumber,
+      })),
+      ...validTrc20.map(t => ({
+        token: t.symbol,
+        valueRaw: t.value,
+        valueHuman: ((() => { try { return Number(BigInt(t.value)) / Math.pow(10, t.decimals); } catch { return 0; } })()).toFixed(6),
+        to: t.to, timestamp: t.timestamp, hash: t.hash, blockNumber: t.blockNumber,
+      })),
+    ];
+
+    let chosenFrom = address, chosenTo = "", chosenValue = "", chosenRaw = "0", chosenSymbol = "TRX", chosenTs = 0, chosenHash = "", chosenBlock = 0;
+    const bestCandidate = selectBestTransfer(candidates);
+    if (bestCandidate) {
+      chosenTo = bestCandidate.to;
+      chosenRaw = bestCandidate.valueRaw;
+      chosenValue = bestCandidate.valueHuman;
+      chosenSymbol = bestCandidate.token;
+      chosenTs = bestCandidate.timestamp;
+      chosenHash = bestCandidate.hash;
+      chosenBlock = bestCandidate.blockNumber;
     }
 
     if (!chosenTo) {
