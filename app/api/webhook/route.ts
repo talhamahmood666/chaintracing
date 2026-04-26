@@ -94,6 +94,31 @@ export async function POST(request: Request) {
 
   logger.info("Plisio webhook received", { orderId, txnId, status });
 
+  if ((status === "failed" || status === "expired" || status === "cancelled") && orderId) {
+    const db = getAdminClient();
+    // Only transition pending/tracing → failed. Idempotency: a paid report
+    // cannot be flipped to failed by a late webhook, and a failed report
+    // cannot be re-failed.
+    const { data, error: dbError } = await db
+      .from("reports")
+      .update({ status: "failed" })
+      .eq("id", orderId)
+      .in("status", ["pending", "tracing"])
+      .select("id");
+
+    if (dbError) {
+      logger.error("Webhook failed-status DB update failed", { orderId, txnId, plisioStatus: status, error: dbError.message });
+      return new Response("Database error", { status: 500 });
+    }
+
+    if (!data || data.length === 0) {
+      logger.info("Webhook failure ignored — report not in pending/tracing", { orderId, txnId, plisioStatus: status });
+    } else {
+      logger.warn("Report marked as failed", { orderId, txnId, plisioStatus: status });
+    }
+    return new Response("OK", { status: 200 });
+  }
+
   if (status === "completed" && orderId) {
     const db = getAdminClient();
     // Only transition pending/tracing → paid. This prevents duplicate webhooks

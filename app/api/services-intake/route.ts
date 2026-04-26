@@ -164,10 +164,16 @@ export async function POST(request: NextRequest) {
       `chaintracing.org`,
     ].join("\n");
 
+    let operatorEmail = process.env.OPERATOR_EMAIL;
+    if (!operatorEmail) {
+      logger.warn("OPERATOR_EMAIL env var not set — falling back to hardcoded recipient");
+      operatorEmail = "talhamahmood666@gmail.com";
+    }
+
     await Promise.allSettled([
       resend.emails.send({
         from,
-        to: "talhamahmood666@gmail.com",
+        to: operatorEmail,
         subject: `[ChainTracing] New ${tier.toUpperCase()} intake: ${caseId} — ${name.trim()}`,
         text: notifyText,
       }).catch(e => logger.warn("Resend operator email failed", e)),

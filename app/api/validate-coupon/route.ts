@@ -1,7 +1,11 @@
 import { NextRequest } from "next/server";
 import { getAdminClient } from "@/lib/supabase";
+import { rateLimit, rateLimits } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
+  const limitRes = await rateLimit(request, rateLimits.couponLimit);
+  if (limitRes) return limitRes;
+
   const { searchParams } = new URL(request.url);
   const code = (searchParams.get("code") ?? "").trim().toUpperCase();
   const email = (searchParams.get("email") ?? "").trim().toLowerCase();
@@ -13,7 +17,7 @@ export async function GET(request: NextRequest) {
   const db = getAdminClient();
   const { data: coupon } = await db
     .from("coupons")
-    .select("id, discount_type, discount_value, max_uses, uses, expires_at, active")
+    .select("id, max_uses, uses, expires_at, active")
     .eq("code", code)
     .single();
 
@@ -37,9 +41,5 @@ export async function GET(request: NextRequest) {
     if (existing) return Response.json({ valid: false, reason: "Coupon already used for this email" });
   }
 
-  return Response.json({
-    valid: true,
-    discount_type: coupon.discount_type,
-    discount_value: coupon.discount_value,
-  });
+  return Response.json({ valid: true });
 }

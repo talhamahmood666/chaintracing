@@ -170,6 +170,14 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
 
   const allHops = displayReport.hops as Hop[];
   const isPaid = displayReport.status === "paid";
+  const paymentFailed = displayReport.status === "failed";
+
+  // Strip full ai_narrative for unpaid reports — only ship the first sentence
+  // to the client so the locked card cannot be bypassed via DOM inspection.
+  if (!isPaid && typeof displayReport.ai_narrative === "string" && displayReport.ai_narrative) {
+    const firstSentence = displayReport.ai_narrative.split(". ")[0];
+    displayReport = { ...displayReport, ai_narrative: firstSentence ? `${firstSentence}.` : "" };
+  }
 
   // Determine how many hops to show based on auth status
   const isAuthenticated = !!user || !!displayReport.user_id;
@@ -196,6 +204,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
       deepScanAvailable={deepScanAvailable}
       allHops={allHops}
       totalHopCount={allHops.length}
+      paymentFailed={paymentFailed}
     />
   );
 }

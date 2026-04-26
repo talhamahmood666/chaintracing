@@ -17,6 +17,7 @@ interface Props {
   deepScanAvailable?: boolean;
   allHops?: Hop[];       // full hop list for checkout (server strips visible hops)
   totalHopCount?: number; // actual detected hops for teaser display
+  paymentFailed?: boolean;
 }
 
 const TAG_STYLES: Record<string, { bg: string; color: string; label: string }> = {
@@ -31,14 +32,14 @@ function HopTag({ label, bg, color }: { label: string; bg: string; color: string
   );
 }
 
-export default function ReportView({ report, viewToken, isPaid = false, deepScanAvailable = true, allHops, totalHopCount }: Props) {
+export default function ReportView({ report, viewToken, isPaid = false, deepScanAvailable = true, allHops, totalHopCount, paymentFailed = false }: Props) {
   const searchParams = useSearchParams();
   const utxoMode = searchParams.get("utxo") === "1";
   const [user, setUser] = useState<any>(null);
   const [checkoutLoading, setCheckoutLoading] = useState<"quick" | "deep" | null>(null);
   const [firstReportDiscount, setFirstReportDiscount] = useState(false);
   const [couponInput, setCouponInput] = useState("");
-  const [couponStatus, setCouponStatus] = useState<{ valid: boolean; discount_type?: string; discount_value?: number; reason?: string } | null>(null);
+  const [couponStatus, setCouponStatus] = useState<{ valid: boolean; reason?: string } | null>(null);
 
   useEffect(() => {
     createClient().auth.getUser().then(({ data }) => {
@@ -137,6 +138,19 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
         <div className="rounded-xl px-4 py-2.5 mb-3 text-xs font-semibold text-center"
           style={{ background: "rgba(255,165,0,0.06)", border: "1px solid rgba(255,165,0,0.18)", color: "#FFA500" }}>
           ℹ️ High-volume address — more transactions may exist beyond the visible trace window.
+        </div>
+      )}
+
+      {/* Payment failed banner */}
+      {paymentFailed && (
+        <div className="rounded-xl px-4 py-3 mb-3 flex flex-wrap items-center justify-between gap-3"
+          style={{ background: 'rgba(255,71,87,0.08)', border: '1px solid rgba(255,71,87,0.3)', color: '#FF4757' }}>
+          <span className="text-sm font-semibold">✗ Payment failed or expired. Please try again to unlock the full report.</span>
+          <button onClick={() => handleCheckout("quick")} disabled={!!checkoutLoading}
+            className="px-4 py-2 rounded-xl text-xs font-bold"
+            style={{ background: 'rgba(255,71,87,0.15)', border: '1px solid rgba(255,71,87,0.4)', color: '#FF4757' }}>
+            {checkoutLoading ? 'Redirecting…' : 'Restart checkout →'}
+          </button>
         </div>
       )}
 
@@ -252,9 +266,7 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
             />
             {couponStatus && (
               <p className="mt-1.5 text-xs font-semibold" style={{ color: couponStatus.valid ? '#00E676' : '#FF4757' }}>
-                {couponStatus.valid
-                  ? `✓ ${couponStatus.discount_type === 'percent' ? `${couponStatus.discount_value}% off` : `$${couponStatus.discount_value} off`} applied`
-                  : `✗ ${couponStatus.reason}`}
+                {couponStatus.valid ? '✓ Coupon applied — discount will be calculated at checkout' : `✗ ${couponStatus.reason}`}
               </p>
             )}
           </div>
@@ -274,27 +286,26 @@ export default function ReportView({ report, viewToken, isPaid = false, deepScan
         </div>
       )}
 
-      {/* Analyst Summary teaser (free tier) */}
+      {/* Analyst Summary teaser (free tier) — server sends only first sentence */}
       {!isPaid && report.ai_narrative && (
-        <div className="glass rounded-2xl p-6 mb-6 relative overflow-hidden" style={{ border: '1px solid rgba(0,217,255,0.15)' }}>
+        <div className="glass rounded-2xl p-6 mb-6" style={{ border: '1px solid rgba(0,217,255,0.15)' }}>
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#00D9FF' }}>Analyst Summary</span>
             <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'rgba(0,217,255,0.12)', color: '#00D9FF', border: '1px solid rgba(0,217,255,0.25)' }}>AI-Generated</span>
           </div>
-          <p className="text-sm leading-relaxed mb-2" style={{ color: 'var(--text-secondary)' }}>
-            {report.ai_narrative.split('. ')[0]}.
+          <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+            {report.ai_narrative}
           </p>
-          <div className="relative">
-            <p className="text-sm leading-relaxed blur-sm select-none" style={{ color: 'var(--text-secondary)' }}>
-              {report.ai_narrative.split('. ').slice(1).join('. ')}
+          <div className="rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3"
+            style={{ background: 'rgba(0,217,255,0.06)', border: '1px solid rgba(0,217,255,0.2)' }}>
+            <p className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+              🔒 Full forensic narrative available with Deep Trace ($29.99)
             </p>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <button onClick={() => handleCheckout("quick")} disabled={!!checkoutLoading}
-                className="px-4 py-2 rounded-xl text-xs font-bold"
-                style={{ background: 'linear-gradient(135deg, #00D9FF, #0099BB)', color: '#0A1628' }}>
-                {checkoutLoading ? 'Redirecting…' : 'Unlock full analysis →'}
-              </button>
-            </div>
+            <button onClick={() => handleCheckout("deep")} disabled={!!checkoutLoading}
+              className="px-4 py-2 rounded-xl text-xs font-bold"
+              style={{ background: 'linear-gradient(135deg, #00D9FF, #0099BB)', color: '#0A1628' }}>
+              {checkoutLoading === 'deep' ? 'Redirecting…' : 'Unlock full analysis →'}
+            </button>
           </div>
         </div>
       )}

@@ -11,7 +11,7 @@ import { logger } from "./logger";
 // Fail-open: if Upstash is unreachable we log the error and allow the request
 // so that a Redis outage never takes down the app.
 
-type LimiterType = "trace" | "checkout" | "share" | "paymentStatus" | "submit" | "reportView";
+type LimiterType = "trace" | "checkout" | "share" | "paymentStatus" | "submit" | "reportView" | "coupon";
 
 // undefined = not yet initialised; null = init failed / env vars missing
 let traceRatelimit: Ratelimit | null | undefined = undefined;
@@ -20,6 +20,7 @@ let shareRatelimit: Ratelimit | null | undefined = undefined;
 let paymentStatusRatelimit: Ratelimit | null | undefined = undefined;
 let submitRatelimit: Ratelimit | null | undefined = undefined;
 let reportViewRatelimit: Ratelimit | null | undefined = undefined;
+let couponRatelimit: Ratelimit | null | undefined = undefined;
 
 function initLimiters(): void {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -32,6 +33,7 @@ function initLimiters(): void {
     shareRatelimit = null;
     paymentStatusRatelimit = null;
     submitRatelimit = null;
+    couponRatelimit = null;
     return;
   }
 
@@ -73,6 +75,13 @@ function initLimiters(): void {
     limiter: Ratelimit.slidingWindow(30, "60 s"),
     prefix: "rl:report-view",
   });
+
+  // 10 coupon validations per hour per IP — prevents code enumeration
+  couponRatelimit = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(10, "3600 s"),
+    prefix: "rl:coupon",
+  });
 }
 
 function getLimiter(type: LimiterType): Ratelimit | null {
@@ -82,6 +91,7 @@ function getLimiter(type: LimiterType): Ratelimit | null {
   if (type === "paymentStatus") return paymentStatusRatelimit ?? null;
   if (type === "submit") return submitRatelimit ?? null;
   if (type === "reportView") return reportViewRatelimit ?? null;
+  if (type === "coupon") return couponRatelimit ?? null;
   return traceRatelimit ?? null;
 }
 
@@ -164,4 +174,6 @@ export const rateLimits = {
   submitLimit: { limiterType: "submit" as LimiterType, prefix: "submit" },
   // 30 report page loads per minute per IP (L1: prevents token brute-force)
   reportViewLimit: { limiterType: "reportView" as LimiterType, prefix: "report-view" },
+  // 10 coupon validations per hour per IP (prevents code enumeration)
+  couponLimit: { limiterType: "coupon" as LimiterType, prefix: "coupon" },
 };
