@@ -670,6 +670,207 @@ async function fetchBaseViaQuickNode(
   return { native: [], token: result };
 }
 
+// ─── BSC via Alchemy RPC (Etherscan V2 free tier excludes BSC) ───────────────
+
+async function alchemyBscRpc<T>(method: string, params: unknown[]): Promise<T | null> {
+  const url = process.env.ALCHEMY_BSC_URL;
+  if (!url) return null;
+  try {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!r.ok) {
+      console.log(`[bsc-alchemy] HTTP ${r.status} on ${method}`);
+      return null;
+    }
+    const j = await r.json();
+    if (j.error) {
+      console.log(`[bsc-alchemy] rpc error on ${method}:`, j.error?.message);
+      return null;
+    }
+    return j.result as T;
+  } catch (err) {
+    console.log(`[bsc-alchemy] fetch error on ${method}:`, (err as Error)?.message);
+    return null;
+  }
+}
+
+async function _alchemyBscGetLogs(
+  fromBlockHex: string,
+  toBlockHex: string,
+  topics: (string | null)[]
+): Promise<LogsResult> {
+  const url = process.env.ALCHEMY_BSC_URL;
+  if (!url) return null;
+  try {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0", id: 1, method: "eth_getLogs",
+        params: [{ fromBlock: fromBlockHex, toBlock: toBlockHex, topics }],
+      }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (r.status === 413) {
+      console.log(`[bsc-alchemy] HTTP 413 (payload too large) on eth_getLogs`);
+      return OVERSIZE;
+    }
+    if (!r.ok) {
+      console.log(`[bsc-alchemy] HTTP ${r.status} on eth_getLogs`);
+      return null;
+    }
+    const j = await r.json();
+    if (j.error) {
+      if (_isOversizeMessage(j.error?.message)) {
+        console.log(`[bsc-alchemy] RPC oversize error on eth_getLogs:`, j.error.message);
+        return OVERSIZE;
+      }
+      console.log(`[bsc-alchemy] rpc error on eth_getLogs:`, j.error?.message);
+      return null;
+    }
+    return Array.isArray(j.result) ? (j.result as QuickNodeLog[]) : null;
+  } catch (err) {
+    console.log(`[bsc-alchemy] fetch error on eth_getLogs:`, (err as Error)?.message);
+    return null;
+  }
+}
+
+async function fetchBscLogsWithRetry(
+  address: string,
+  latestBlock: number
+): Promise<QuickNodeLog[]> {
+  const topics = [TRANSFER_TOPIC, _padAddress(address), null];
+  const minWindow = 100;
+  let window = 5000;
+
+  while (true) {
+    const fromHex = "0x" + Math.max(0, latestBlock - window).toString(16);
+    const res = await _alchemyBscGetLogs(fromHex, "latest", topics);
+
+    if (res === OVERSIZE) {
+      const next = Math.floor(window / 2);
+      if (next < minWindow) {
+        console.log(`[bsc-alchemy] oversize at window ${window}, next ${next} below min ${minWindow}, attempting last-ditch 50-block window`);
+        const lastDitchHex = "0x" + Math.max(0, latestBlock - 50).toString(16);
+        const last = await _alchemyBscGetLogs(lastDitchHex, "latest", topics);
+        if (last && last !== OVERSIZE) {
+          console.log(`[bsc-alchemy] last-ditch 50-block window succeeded, results ${last.length}`);
+          return last;
+        }
+        console.log(`[bsc-alchemy] last-ditch 50-block window failed, returning empty`);
+        return [];
+      }
+      console.log(`[bsc-alchemy] HTTP 413, retry: window ${window} → ${next}`);
+      window = next;
+      continue;
+    }
+
+    if (!res) {
+      console.log(`[bsc-alchemy] non-oversize failure at window ${window}, returning empty`);
+      return [];
+    }
+
+    if (res.length < 50 && window < 20000) {
+      const expanded = Math.min(window * 4, 20000);
+      const expHex = "0x" + Math.max(0, latestBlock - expanded).toString(16);
+      const expRes = await _alchemyBscGetLogs(expHex, "latest", topics);
+      if (expRes && expRes !== OVERSIZE) {
+        console.log(`[bsc-alchemy] expanded window ${window} → ${expanded}, results ${res.length} → ${expRes.length}`);
+        return expRes;
+      }
+      console.log(`[bsc-alchemy] expansion to ${expanded} failed, keeping ${res.length} results from window ${window}`);
+    }
+    console.log(`[bsc-alchemy] success at window ${window}, results ${res.length}`);
+    return res;
+  }
+}
+
+async function fetchBscViaAlchemy(
+  address: string,
+  limit = 100
+): Promise<{ native: NormalizedTx[]; token: NormalizedTx[] }> {
+  if (!process.env.ALCHEMY_BSC_URL) {
+    console.log("[bsc-alchemy] missing ALCHEMY_BSC_URL");
+    return { native: [], token: [] };
+  }
+
+  const latestHex = await alchemyBscRpc<string>("eth_blockNumber", []);
+  if (!latestHex) return { native: [], token: [] };
+  const latest = parseInt(latestHex, 16);
+
+  const logs = await fetchBscLogsWithRetry(address, latest);
+  if (logs.length === 0) {
+    console.log("[fetch:bsc-alchemy]", { address, returned: 0 });
+    return { native: [], token: [] };
+  }
+
+  const sorted = logs
+    .slice()
+    .sort((a, b) => parseInt(b.blockNumber, 16) - parseInt(a.blockNumber, 16))
+    .slice(0, limit);
+
+  const metaCache = new Map<string, { symbol: string; decimals: number }>();
+  async function getMeta(contract: string): Promise<{ symbol: string; decimals: number }> {
+    const key = contract.toLowerCase();
+    const hit = metaCache.get(key);
+    if (hit) return hit;
+    let symbol = "ERC20", decimals = 18;
+    const symRes = await alchemyBscRpc<string>("eth_call", [{ to: contract, data: "0x95d89b41" }, "latest"]);
+    if (symRes) { const s = _decodeStringResult(symRes); if (s) symbol = s; }
+    const decRes = await alchemyBscRpc<string>("eth_call", [{ to: contract, data: "0x313ce567" }, "latest"]);
+    if (decRes && decRes !== "0x") { const d = parseInt(decRes, 16); if (Number.isFinite(d) && d >= 0 && d <= 36) decimals = d; }
+    const m = { symbol, decimals };
+    metaCache.set(key, m);
+    return m;
+  }
+
+  const tsCache = new Map<string, number>();
+  async function getTs(blockHex: string): Promise<number> {
+    const hit = tsCache.get(blockHex);
+    if (hit !== undefined) return hit;
+    const blk = await alchemyBscRpc<{ timestamp: string }>("eth_getBlockByNumber", [blockHex, false]);
+    const ts = blk?.timestamp ? parseInt(blk.timestamp, 16) : 0;
+    tsCache.set(blockHex, ts);
+    await new Promise(r => setTimeout(r, 40));
+    return ts;
+  }
+
+  const result: NormalizedTx[] = [];
+  for (const log of sorted) {
+    try {
+      const meta = await getMeta(log.address);
+      const ts = await getTs(log.blockNumber);
+      const toRaw = log.topics[2] ?? "0x0";
+      const to = "0x" + toRaw.slice(-40).toLowerCase();
+      const valueRaw = BigInt(log.data || "0x0").toString();
+      const valueHuman = (Number(BigInt(valueRaw)) / Math.pow(10, meta.decimals))
+        .toFixed(meta.decimals > 6 ? 6 : meta.decimals);
+      result.push({
+        hash: log.transactionHash,
+        from: address.toLowerCase(),
+        to,
+        valueRaw,
+        valueHuman,
+        token: meta.symbol,
+        blockNumber: parseInt(log.blockNumber, 16),
+        timestamp: ts,
+      });
+    } catch (err) {
+      console.log("[bsc-alchemy] log parse error:", (err as Error)?.message);
+    }
+  }
+
+  const oldestTs = result.length ? Math.min(...result.map(t => t.timestamp)) : 0;
+  const newestTs = result.length ? Math.max(...result.map(t => t.timestamp)) : 0;
+  console.log("[fetch:bsc-alchemy]", { address, returned: result.length, oldestTs, newestTs });
+
+  return { native: [], token: result };
+}
+
 // ─── Per-request Etherscan cache ─────────────────────────────────────────────
 
 interface TxCache {
@@ -692,6 +893,13 @@ async function fetchWithCache(
   // Base (chainId 8453) is excluded from Etherscan V2 free tier — use QuickNode RPC.
   if (config.chainId === "8453") {
     const result = await fetchBaseViaQuickNode(address, 100);
+    cache.set(address, { native: result.native, token: result.token, fetchedAt: Date.now() });
+    return result;
+  }
+
+  // BSC (chainId 56) is excluded from Etherscan V2 free tier — use Alchemy RPC.
+  if (config.chainId === "56") {
+    const result = await fetchBscViaAlchemy(address, 100);
     cache.set(address, { native: result.native, token: result.token, fetchedAt: Date.now() });
     return result;
   }
@@ -814,6 +1022,9 @@ async function traceEvm(
   ];
 
   console.log("[tracer:evm]", { startAddress, chain, maxHops: maxDepth });
+  if (chain === "bsc") {
+    console.log("[tracer:bsc]", { startAddress, maxHops: maxDepth });
+  }
   console.log(`[TRACE] Starting BFS: startAddress=${startAddress}, chain=${chain}, maxDepth=${maxDepth}`);
   console.log(`[TRACE] Initial queue size: ${queue.length}, seedVisited size: ${visited.size}`);
 
