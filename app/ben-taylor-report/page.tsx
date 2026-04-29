@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function BenTaylorReport() {
   const address = "bc1qwfes4nt3a9xr6glslyk4tlqf773rv2lznmkmf5";
 
@@ -50,7 +52,7 @@ export default function BenTaylorReport() {
 
         {/* ── Top bar ── */}
         <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
-          <a href="/" style={{ color: "#00D9FF", fontSize: 14, fontWeight: 600 }}>← ChainTracing</a>
+          <Link href="/" style={{ color: "#00D9FF", fontSize: 14, fontWeight: 600 }}>← ChainTracing</Link>
           <div className="flex items-center gap-3">
             <span className="px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5"
               style={{ background: "rgba(0,217,255,0.1)", border: "1px solid rgba(0,217,255,0.3)", color: "#00D9FF" }}>
@@ -116,7 +118,7 @@ export default function BenTaylorReport() {
             The address <span className="font-mono text-xs" style={{ color: "#00D9FF" }}>{address}</span> is part of a <strong style={{ color: "#f8fafc" }}>2-address cluster identified by Arkham Intelligence</strong> (cluster ID 032e). The cluster activated on <strong style={{ color: "#f8fafc" }}>March 11, 2026</strong> and has processed <strong style={{ color: "#f8fafc" }}>$10.57 billion USD in 44 days</strong> — averaging $240 million per day. This is not a personal scammer wallet. It is the operational backbone of either a high-volume laundering service, an unlicensed mixer, or a compromised exchange hot wallet.
           </p>
           <p className="text-sm leading-relaxed mb-3" style={{ color: "#cbd5e1" }}>
-            The cluster's velocity, lifespan, and fan-out pattern (<strong style={{ color: "#f8fafc" }}>one transaction every 4 minutes</strong>, <strong style={{ color: "#f8fafc" }}>849 unique destinations</strong> in any 18-hour window) match the operational signature of services used by organized scam networks to obscure victim funds at scale.
+            The cluster&apos;s velocity, lifespan, and fan-out pattern (<strong style={{ color: "#f8fafc" }}>one transaction every 4 minutes</strong>, <strong style={{ color: "#f8fafc" }}>849 unique destinations</strong> in any 18-hour window) match the operational signature of services used by organized scam networks to obscure victim funds at scale.
           </p>
           <p className="text-sm leading-relaxed" style={{ color: "#cbd5e1" }}>
             Standard blockchain tracing terminates at this layer. <strong style={{ color: "#f8fafc" }}>Recovery requires identifying the service operator via a coordinated exchange subpoena and law enforcement referral.</strong>

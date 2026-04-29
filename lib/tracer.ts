@@ -1406,14 +1406,15 @@ async function traceTron(
     console.log(`[fetch:tron]`, { address, mode: "recent", nativeReturned: trxTxs.length, trc20Returned: trc20Txs.length });
 
     // Normalize TRX native txs
+    interface RawTronTx { raw_data?: { contract?: Array<{ type: string; parameter?: { value: { amount?: number; to_address?: string; from_address?: string } } }> }; ret?: Array<{ contractRet: string }>; block_timestamp: number; txID: string; blockNumber?: number }
     interface NativeTronEntry { from: string; to: string; value: string; timestamp: number; hash: string; blockNumber: number }
     const nativeNorm: NativeTronEntry[] = trxTxs
-      .filter((tx: any) =>
+      .filter((tx: RawTronTx) =>
         tx.raw_data?.contract?.[0]?.type === "TransferContract" &&
         tx.ret?.[0]?.contractRet === "SUCCESS"
       )
-      .map((tx: any) => {
-        const c = tx.raw_data.contract[0].parameter.value;
+      .map((tx: RawTronTx) => {
+        const c = tx.raw_data!.contract![0].parameter!.value;
         return {
           from: address,
           to: c.to_address,
@@ -1425,10 +1426,11 @@ async function traceTron(
       });
 
     // Normalize TRC-20 txs
+    interface RawTrc20Tx { from: string; to: string; value: string; symbol?: string; decimals?: number; block_timestamp: number; transaction_id: string; blockNumber?: number; token_info?: { symbol?: string; decimals?: number } }
     interface Trc20Entry { from: string; to: string; value: string; symbol: string; decimals: number; timestamp: number; hash: string; blockNumber: number }
     const trc20Norm: Trc20Entry[] = trc20Txs
-      .filter((tx: any) => tx.from === address)
-      .map((tx: any) => ({
+      .filter((tx: RawTrc20Tx) => tx.from === address)
+      .map((tx: RawTrc20Tx) => ({
         from: tx.from,
         to: tx.to,
         value: tx.value,
@@ -1469,7 +1471,8 @@ async function traceTron(
       })),
     ];
 
-    let chosenFrom = address, chosenTo = "", chosenValue = "", chosenRaw = "0", chosenSymbol = "TRX", chosenTs = 0, chosenHash = "", chosenBlock = 0;
+    const chosenFrom = address;
+    let chosenTo = "", chosenValue = "", chosenRaw = "0", chosenSymbol = "TRX", chosenTs = 0, chosenHash = "", chosenBlock = 0;
     const bestCandidate = selectBestTransfer(candidates);
     if (bestCandidate) {
       chosenTo = bestCandidate.to;

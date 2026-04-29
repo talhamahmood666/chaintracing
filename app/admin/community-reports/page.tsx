@@ -94,7 +94,7 @@ export default async function AdminCommunityReportsPage({
 
       <div className="space-y-4">
         {(reports ?? []).length === 0 && (
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No reports with status "{statusFilter}".</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No reports with status &quot;{statusFilter}&quot;.</p>
         )}
         {((reports ?? []) as UserReport[]).map((r) => (
           <div key={r.id} className="glass rounded-xl p-5">

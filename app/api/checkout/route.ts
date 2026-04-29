@@ -349,8 +349,9 @@ export async function POST(request: NextRequest) {
             reportId,
             totalHops: extendedHops.length,
           });
-        } catch (err: any) {
-          const isTimeout = err?.message === "deep_trace_timeout";
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : undefined;
+          const isTimeout = message === "deep_trace_timeout";
           logger.error(isTimeout ? "Background deep trace timed out" : "Background deep trace failed", err, { reportId });
           // On timeout: mark the last client hop as partial so UI can warn user
           const fallbackHops = isTimeout

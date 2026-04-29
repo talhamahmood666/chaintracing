@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function FaisarReport() {
   const handlePrint = () => window.print();
   const shortAddr = (a: string) => `${a.slice(0, 10)}…${a.slice(-8)}`;
@@ -33,7 +35,7 @@ export default function FaisarReport() {
 
         {/* ── Top bar ── */}
         <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
-          <a href="/" style={{ color: "#00D9FF", fontSize: 14, fontWeight: 600 }}>← ChainTracing</a>
+          <Link href="/" style={{ color: "#00D9FF", fontSize: 14, fontWeight: 600 }}>← ChainTracing</Link>
           <div className="flex items-center gap-3">
             <span className="px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5"
               style={{ background: "rgba(255,71,87,0.12)", border: "1px solid rgba(255,71,87,0.4)", color: "#FF4757" }}>

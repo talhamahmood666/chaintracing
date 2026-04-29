@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase-browser";
 
@@ -78,7 +79,7 @@ export default function ReportScamPage() {
         </div>
         <h1 className="text-3xl font-black mb-2" style={{ color: 'var(--text-primary)' }}>Report a Scam Address</h1>
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          Help protect the crypto community by submitting scam wallets you've encountered.
+          Help protect the crypto community by submitting scam wallets you&apos;ve encountered.
         </p>
       </div>
 
@@ -104,10 +105,10 @@ export default function ReportScamPage() {
               style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-primary)' }}>
               Submit Another
             </button>
-            <a href="/" className="px-5 py-2.5 rounded-xl text-sm font-bold"
+            <Link href="/" className="px-5 py-2.5 rounded-xl text-sm font-bold"
               style={{ background: 'rgba(0,217,255,0.12)', border: '1px solid rgba(0,217,255,0.3)', color: '#00D9FF' }}>
               Trace an Address
-            </a>
+            </Link>
           </div>
         </div>
       ) : (

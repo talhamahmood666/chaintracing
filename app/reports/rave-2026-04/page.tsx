@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function RaveReport() {
   const handlePrint = () => window.print();
 
@@ -89,7 +91,7 @@ export default function RaveReport() {
 
         {/* ── Top bar ── */}
         <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
-          <a href="/" style={{ color: "#00D9FF", fontSize: 14, fontWeight: 600 }}>← ChainTracing</a>
+          <Link href="/" style={{ color: "#00D9FF", fontSize: 14, fontWeight: 600 }}>← ChainTracing</Link>
           <div className="flex items-center gap-3">
             <span className="px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5"
               style={{ background: "rgba(0,217,255,0.1)", border: "1px solid rgba(0,217,255,0.3)", color: "#00D9FF" }}>
@@ -621,9 +623,9 @@ export default function RaveReport() {
             Independent forensic analysis. No payment received from any party.
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <a href="/" style={{ color: "#00D9FF", fontSize: 12, textDecoration: "underline" }}>
+            <Link href="/" style={{ color: "#00D9FF", fontSize: 12, textDecoration: "underline" }}>
               chaintracing.org
-            </a>
+            </Link>
             <a href="https://x.com/chaintracing" target="_blank" rel="noopener noreferrer"
               style={{ color: "#64748b", fontSize: 12, textDecoration: "underline" }}>
               @chaintracing on X

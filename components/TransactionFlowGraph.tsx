@@ -17,6 +17,7 @@ import ReactFlow, {
   type NodeProps,
   type OnNodesChange,
   type OnEdgesChange,
+  type MarkerType,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import type { Hop } from '@/lib/tracer';
@@ -168,7 +169,7 @@ function buildGraph(hops: Hop[]): { nodes: Node<NodeData>[]; edges: Edge[] } {
 
   hops.forEach((hop, i) => {
     const id = `hop-${hop.hop}`;
-    const hasScamMatch = Array.isArray((hop as any).scamMatches) && (hop as any).scamMatches.length > 0;
+    const hasScamMatch = (hop.scamMatches?.length ?? 0) > 0;
 
     nodes.push({
       id, type: 'hop', position: { x: (i + 1) * GAP_X, y: 0 },
@@ -192,7 +193,7 @@ function buildGraph(hops: Hop[]): { nodes: Node<NodeData>[]; edges: Edge[] } {
       style: { stroke: color, strokeWidth: flagged ? 2 : 1.5 },
       labelStyle: { fill: '#A0B4C8', fontSize: 9, fontFamily: 'monospace' },
       labelBgStyle: { fill: '#0D1B2A', fillOpacity: 0.85 },
-      markerEnd: { type: 'arrowclosed' as any, color, width: 16, height: 16 },
+      markerEnd: { type: 'arrowclosed' as MarkerType, color, width: 16, height: 16 },
     });
   });
 

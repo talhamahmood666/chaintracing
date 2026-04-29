@@ -10,8 +10,24 @@ import RiskMeter from "@/components/RiskMeter";
 import type { Hop } from "@/lib/tracer";
 import PricingTiers from "@/components/PricingTiers";
 
+interface ReportData {
+  id: string;
+  email?: string | null;
+  address: string;
+  chain: string;
+  hops: Hop[];
+  riskScore?: number | null;
+  risk_score?: number | null;
+  risk_level?: string | null;
+  created_at: string;
+  summary?: string | null;
+  riskSummary?: string | null;
+  discount_applied?: boolean | null;
+  ai_narrative?: string | null;
+}
+
 interface Props {
-  report: any;
+  report: ReportData;
   viewToken: string;
   isPaid?: boolean;
   deepScanAvailable?: boolean;
@@ -35,7 +51,7 @@ function HopTag({ label, bg, color }: { label: string; bg: string; color: string
 export default function ReportView({ report, viewToken, isPaid = false, deepScanAvailable = true, allHops, totalHopCount, paymentFailed = false }: Props) {
   const searchParams = useSearchParams();
   const utxoMode = searchParams.get("utxo") === "1";
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState<"quick" | "deep" | null>(null);
   const [firstReportDiscount, setFirstReportDiscount] = useState(false);
   const [couponInput, setCouponInput] = useState("");

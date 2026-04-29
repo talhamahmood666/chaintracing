@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { getAdminClient } from "@/lib/supabase";
 
@@ -23,6 +24,7 @@ function useCountdown(expiresAt: string | undefined): number | null {
       ? Number(expiresAt) * 1000
       : new Date(expiresAt).getTime();
     const calc = () => Math.max(0, Math.floor((ms - Date.now()) / 1000));
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- countdown must start ticking on mount
     setSecs(calc());
     const id = setInterval(() => setSecs(calc()), 1000);
     return () => clearInterval(id);
@@ -54,6 +56,7 @@ export default function PayPage() {
   // Only mark expired once the countdown has initialised (secs !== null) and
   // actually reached zero — prevents false-positive on first render.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- react to countdown reaching zero
     if (secs === 0 && paymentData) setExpired(true);
   }, [secs, paymentData]); // secs===null is never 0, so this is safe
 
@@ -106,6 +109,18 @@ export default function PayPage() {
     return () => clearInterval(id);
   }, [reportId, token, router, expired]);
 
+  const secsNum = secs ?? 0;
+  const [invoiceDurationSecs, setInvoiceDurationSecs] = useState<number | null>(null);
+  useEffect(() => {
+    if (paymentData?.expiresAt && secs !== null && invoiceDurationSecs === null) {
+      const nowMs = Date.now();
+      const remainingMs = secs * 1000;
+      const expiresMs = new Date(paymentData.expiresAt).getTime();
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- compute total duration once on first valid tick
+      setInvoiceDurationSecs(Math.max(1, Math.floor((expiresMs - nowMs + remainingMs) / 1000)));
+    }
+  }, [paymentData?.expiresAt, secs, invoiceDurationSecs]);
+
   const copy = useCallback(() => {
     if (!paymentData) return;
     navigator.clipboard.writeText(paymentData.walletAddress).then(() => {
@@ -129,18 +144,15 @@ export default function PayPage() {
           <div className="text-4xl mb-4">⏱</div>
           <h2 className="text-xl font-black mb-2" style={{ color: 'var(--text-primary)' }}>Invoice Expired</h2>
           <p className="mb-6 text-sm" style={{ color: 'var(--text-secondary)' }}>The payment window has closed. Start a new trace to generate a fresh invoice.</p>
-          <a href="/" className="inline-block px-6 py-3 rounded-xl font-bold text-sm" style={{ background: 'rgba(0,217,255,0.12)', border: '1px solid rgba(0,217,255,0.3)', color: '#00D9FF' }}>
+          <Link href="/" className="inline-block px-6 py-3 rounded-xl font-bold text-sm" style={{ background: 'rgba(0,217,255,0.12)', border: '1px solid rgba(0,217,255,0.3)', color: '#00D9FF' }}>
             Start New Trace
-          </a>
+          </Link>
         </div>
       </div>
     );
   }
 
-  const secsNum = secs ?? 0;
-  const pct = paymentData.expiresAt && secs !== null
-    ? Math.min(100, (secsNum / Math.max(1, Math.floor((new Date(paymentData.expiresAt).getTime() - Date.now() + secsNum * 1000) / 1000))) * 100)
-    : 100;
+  const pct = invoiceDurationSecs ? Math.min(100, (secsNum / invoiceDurationSecs) * 100) : 100;
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase-browser";
 
@@ -144,10 +145,10 @@ function TracesTab({ reports, isAdmin }: { reports: Report[]; isAdmin?: boolean 
             {reports.length === 0 ? "Start a scan to create your first trace" : "Try adjusting your filters"}
           </p>
           {reports.length === 0 && (
-            <a href="/" className="px-6 py-2.5 rounded-xl font-bold text-sm"
+            <Link href="/" className="px-6 py-2.5 rounded-xl font-bold text-sm"
               style={{ background: 'rgba(0,217,255,0.1)', border: '1px solid rgba(0,217,255,0.25)', color: '#00D9FF' }}>
               Start First Trace →
-            </a>
+            </Link>
           )}
         </div>
       ) : (

@@ -46,7 +46,7 @@ export default function TraceLoadingOverlay() {
             {MESSAGES[messageIdx]}...
           </p>
           <p className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-            This usually takes 20 to 60 seconds. Please don't close this tab.
+            This usually takes 20 to 60 seconds. Please don&apos;t close this tab.
           </p>
         </div>
       </div>

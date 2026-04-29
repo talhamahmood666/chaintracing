@@ -1,6 +1,7 @@
 import { ImageResponse } from "@vercel/og";
 import { NextRequest } from "next/server";
 import { getAdminClient } from "@/lib/supabase";
+import type { Hop } from "@/lib/tracer";
 
 export const runtime = "edge";
 
@@ -29,9 +30,9 @@ export async function GET(
     riskScore >= 75 ? "CRITICAL RISK" : riskScore >= 50 ? "HIGH RISK" : riskScore >= 25 ? "MEDIUM RISK" : "LOW RISK";
 
   // First 3 hops for mini diagram
-  const hops: any[] = Array.isArray(report?.hops) ? report.hops.slice(0, 3) : [];
+  const hops: Hop[] = Array.isArray(report?.hops) ? report.hops.slice(0, 3) : [];
 
-  function hopColor(hop: any) {
+  function hopColor(hop: Hop) {
     if (hop?.isSanctioned) return "#FF4757";
     if (hop?.isMixer) return "#FFA500";
     if (hop?.isBridge) return "#9B59B6";

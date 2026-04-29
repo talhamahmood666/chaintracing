@@ -3,6 +3,14 @@ import GlassCard from "@/components/GlassCard";
 import { getAdminClient } from "@/lib/supabase";
 import CommentForm from "./CommentForm";
 
+interface Comment {
+  id: string;
+  author_name: string;
+  content: string;
+  category: string;
+  created_at: string;
+}
+
 export const metadata: Metadata = {
   title: "Roadmap — ChainTracing",
   description: "What we have built, what is coming next, and what we are thinking about at ChainTracing.",
@@ -196,7 +204,7 @@ export default async function RoadmapPage() {
 
         {comments.length > 0 && (
           <div className="space-y-4 mb-8">
-            {comments.map((c: any) => (
+            {comments.map((c: Comment) => (
               <GlassCard key={c.id}>
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <span className="text-xs font-bold" style={{ color: "var(--text-primary)" }}>

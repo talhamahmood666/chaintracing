@@ -23,7 +23,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   const levelText =
     riskScore >= 75 ? "CRITICAL" : riskScore >= 50 ? "HIGH" : riskScore >= 25 ? "MEDIUM" : "LOW";
   const hopCount = Array.isArray(report?.hops) ? report.hops.length : 0;
-  const hops: any[] = Array.isArray(report?.hops) ? report.hops : [];
+  const hops: Hop[] = Array.isArray(report?.hops) ? report.hops : [];
   const lastHop = hops[hops.length - 1];
   const destType = lastHop?.isSanctioned
     ? "a sanctioned address"

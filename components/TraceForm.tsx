@@ -126,6 +126,7 @@ export default function TraceForm() {
   const [txidError, setTxidError] = useState<string | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- init from localStorage + API on mount
     setHistory(loadHistory());
     fetch("/api/stats").then(r => r.json()).then(d => {
       if (d.scans) setLiveScans(d.scans);

@@ -342,7 +342,7 @@ function formatGap(seconds: number): string {
 }
 
 function hopCircleColor(hop: Hop): string {
-  const hasScam = (hop as any).scamMatches?.length > 0;
+  const hasScam = (hop.scamMatches?.length ?? 0) > 0;
   if (hop.isSanctioned || hasScam) return C.red;
   if (hop.isMixer) return C.orange;
   if (hop.label) return C.green;
@@ -350,7 +350,7 @@ function hopCircleColor(hop: Hop): string {
 }
 
 function hopFlagLabel(hop: Hop): { text: string; color: string } | null {
-  const hasScam = (hop as any).scamMatches?.length > 0;
+  const hasScam = (hop.scamMatches?.length ?? 0) > 0;
   if (hop.isSanctioned) return { text: "OFAC Sanctioned", color: C.red };
   if (hasScam)          return { text: "Scam DB match", color: C.red };
   if (hop.isMixer)      return { text: "Mixer / Tumbler", color: C.orange };

@@ -7,23 +7,25 @@ import * as THREE from 'three';
 const PARTICLE_COUNT = 120;
 const CONNECTION_DIST = 2.2;
 
+function initParticles(): { positions: Float32Array; velocities: Float32Array } {
+  const pos = new Float32Array(PARTICLE_COUNT * 3);
+  const vel = new Float32Array(PARTICLE_COUNT * 3);
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    pos[i * 3]     = (Math.random() - 0.5) * 14;
+    pos[i * 3 + 1] = (Math.random() - 0.5) * 10;
+    pos[i * 3 + 2] = (Math.random() - 0.5) * 6;
+    vel[i * 3]     = (Math.random() - 0.5) * 0.004;
+    vel[i * 3 + 1] = (Math.random() - 0.5) * 0.004;
+    vel[i * 3 + 2] = (Math.random() - 0.5) * 0.002;
+  }
+  return { positions: pos, velocities: vel };
+}
+
 function Particles() {
   const meshRef = useRef<THREE.Points>(null);
   const { mouse } = useThree();
 
-  const { positions, velocities } = useMemo(() => {
-    const pos = new Float32Array(PARTICLE_COUNT * 3);
-    const vel = new Float32Array(PARTICLE_COUNT * 3);
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      pos[i * 3]     = (Math.random() - 0.5) * 14;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 6;
-      vel[i * 3]     = (Math.random() - 0.5) * 0.004;
-      vel[i * 3 + 1] = (Math.random() - 0.5) * 0.004;
-      vel[i * 3 + 2] = (Math.random() - 0.5) * 0.002;
-    }
-    return { positions: pos, velocities: vel };
-  }, []);
+  const { positions, velocities } = useMemo(() => initParticles(), []);
 
   useFrame(() => {
     if (!meshRef.current) return;
@@ -32,6 +34,7 @@ function Particles() {
       pos[i * 3]     += velocities[i * 3]     + mouse.x * 0.0008;
       pos[i * 3 + 1] += velocities[i * 3 + 1] + mouse.y * 0.0008;
       pos[i * 3 + 2] += velocities[i * 3 + 2];
+      // eslint-disable-next-line react-hooks/immutability -- velocities mutated in animation loop by design
       if (Math.abs(pos[i * 3])     > 7)  velocities[i * 3]     *= -1;
       if (Math.abs(pos[i * 3 + 1]) > 5)  velocities[i * 3 + 1] *= -1;
       if (Math.abs(pos[i * 3 + 2]) > 3)  velocities[i * 3 + 2] *= -1;
@@ -106,6 +109,7 @@ export default function ThreeBackground() {
   const [mobile, setMobile] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- matchMedia must be read on client mount
     setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     setMobile(window.matchMedia('(max-width: 768px)').matches);
   }, []);

@@ -36,6 +36,7 @@ export default function AdminSidebar() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration guard, must run once on mount
     setMounted(true);
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "1") setCollapsed(true);

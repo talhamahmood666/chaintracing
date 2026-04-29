@@ -17,6 +17,8 @@ function AdminStatCard({ label, value, color = '#00D9FF' }: { label: string; val
 export default async function AdminOverviewPage() {
   await requireAdmin();
   const db = getAdminClient();
+  // eslint-disable-next-line react-hooks/purity -- Server Component, runs once per request
+  const now = Date.now();
 
   const [
     { count: totalReports },
@@ -33,7 +35,7 @@ export default async function AdminOverviewPage() {
     db.from("shares").select("*", { count: "exact", head: true }),
     db.from("reports")
       .select("created_at, status, tier")
-      .gte("created_at", new Date(Date.now() - 30 * 86400_000).toISOString())
+      .gte("created_at", new Date(now - 30 * 86400_000).toISOString())
       .order("created_at", { ascending: true }),
   ]);
 
@@ -43,7 +45,7 @@ export default async function AdminOverviewPage() {
 
   const dayMap: Record<string, { total: number; paid: number }> = {};
   for (let i = 29; i >= 0; i--) {
-    const d = new Date(Date.now() - i * 86400_000).toISOString().slice(0, 10);
+    const d = new Date(now - i * 86400_000).toISOString().slice(0, 10);
     dayMap[d] = { total: 0, paid: 0 };
   }
   for (const r of last7 ?? []) {

@@ -9,6 +9,7 @@ export default function DisclaimerBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- check sessionStorage once on mount
     if (!sessionStorage.getItem(SESSION_KEY)) setVisible(true);
   }, []);
 
