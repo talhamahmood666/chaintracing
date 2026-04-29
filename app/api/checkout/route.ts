@@ -390,7 +390,7 @@ export async function POST(request: NextRequest) {
       source_currency: "USD",
       source_amount: price,
       currency: "USDT_TRX",
-      callback_url: `${baseUrl}/api/webhook`,
+      callback_url: `${baseUrl}/api/webhook?json=true`,
       success_url: `${baseUrl}/report/${report.id}?token=${viewToken}`,
       fail_url: `${baseUrl}/?error=payment`,
     });

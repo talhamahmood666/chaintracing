@@ -11,8 +11,10 @@ export const maxDuration = 30;
 // Origin header. Authentication is handled by HMAC-SHA1 signature verification.
 export async function POST(request: Request) {
   // ── Parse body ──────────────────────────────────────────────────────────────
-  // Read raw text first so we aren't dependent on JSON.stringify round-tripping.
-  // Plisio sends JSON when callback_url includes `?json=true`.
+  // Plisio sends JSON when callback_url includes `?json=true`, form-encoded
+  // otherwise. We parse both so a missing `?json=true` param or a misconfigured
+  // callback won't silently drop payments.
+  const contentType = request.headers.get("content-type") ?? "";
   let rawBody: string;
   try {
     rawBody = await request.text();
@@ -21,10 +23,14 @@ export async function POST(request: Request) {
   }
 
   let body: Record<string, unknown>;
-  try {
-    body = JSON.parse(rawBody);
-  } catch {
-    return new Response("Bad request: invalid JSON", { status: 400 });
+  if (contentType.includes("application/json")) {
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return new Response("Bad request: invalid JSON", { status: 400 });
+    }
+  } else {
+    body = Object.fromEntries(new URLSearchParams(rawBody));
   }
 
   const plisioKey = env.PLISIO_SECRET_KEY;
