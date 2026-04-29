@@ -1,0 +1,3579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="label" for="node" attr.name="label" attr.type="string"/>
+  <key id="node_type" for="node" attr.name="node_type" attr.type="string"/>
+  <key id="source_file" for="node" attr.name="source_file" attr.type="string"/>
+  <key id="community" for="node" attr.name="community" attr.type="int"/>
+  <key id="relation" for="edge" attr.name="relation" attr.type="string"/>
+  <key id="confidence" for="edge" attr.name="confidence" attr.type="string"/>
+  <key id="confidence_score" for="edge" attr.name="confidence_score" attr.type="double"/>
+  <key id="weight" for="edge" attr.name="weight" attr.type="double"/>
+  <graph id="G" edgedefault="undirected">
+    <node id="middleware_ts">
+      <data key="label">middleware</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./middleware.ts</data>
+      <data key="community">23</data>
+    </node>
+    <node id="middleware_ts_import_supabase_ssr_createserverclient">
+      <data key="label">@supabase/ssr/createServerClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./middleware.ts</data>
+      <data key="community">23</data>
+    </node>
+    <node id="middleware_ts_import_next_server_nextresponse">
+      <data key="label">next/server/NextResponse</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./middleware.ts</data>
+      <data key="community">23</data>
+    </node>
+    <node id="middleware_ts_import_next_server_nextrequest">
+      <data key="label">next/server/NextRequest</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./middleware.ts</data>
+      <data key="community">23</data>
+    </node>
+    <node id="middleware_ts_middleware">
+      <data key="label">middleware()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./middleware.ts</data>
+      <data key="community">23</data>
+    </node>
+    <node id="lib_chain_utils_ts">
+      <data key="label">chain-utils</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/chain-utils.ts</data>
+      <data key="community">9</data>
+    </node>
+    <node id="lib_chain_utils_ts_import_tracer_chain">
+      <data key="label">./tracer/Chain</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/chain-utils.ts</data>
+      <data key="community">9</data>
+    </node>
+    <node id="lib_chain_utils_ts_validateaddress">
+      <data key="label">validateAddress()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/chain-utils.ts</data>
+      <data key="community">9</data>
+    </node>
+    <node id="lib_chain_utils_ts_getexploreraddressurl">
+      <data key="label">getExplorerAddressUrl()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/chain-utils.ts</data>
+      <data key="community">9</data>
+    </node>
+    <node id="lib_chain_utils_ts_getexplorertxurl">
+      <data key="label">getExplorerTxUrl()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/chain-utils.ts</data>
+      <data key="community">9</data>
+    </node>
+    <node id="lib_chain_utils_ts_getnativetoken">
+      <data key="label">getNativeToken()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/chain-utils.ts</data>
+      <data key="community">9</data>
+    </node>
+    <node id="lib_chain_utils_ts_isevmchain">
+      <data key="label">isEvmChain()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/chain-utils.ts</data>
+      <data key="community">9</data>
+    </node>
+    <node id="lib_chain_utils_ts_getchainid">
+      <data key="label">getChainId()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/chain-utils.ts</data>
+      <data key="community">9</data>
+    </node>
+    <node id="lib_chain_utils_ts_shortaddr">
+      <data key="label">shortAddr()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/chain-utils.ts</data>
+      <data key="community">9</data>
+    </node>
+    <node id="lib_auth_helpers_ts">
+      <data key="label">auth-helpers</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/auth-helpers.ts</data>
+      <data key="community">13</data>
+    </node>
+    <node id="lib_auth_helpers_ts_import_supabase_ssr_createserverclient">
+      <data key="label">@supabase/ssr/createServerClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/auth-helpers.ts</data>
+      <data key="community">13</data>
+    </node>
+    <node id="lib_auth_helpers_ts_import_next_server_nextresponse">
+      <data key="label">next/server/NextResponse</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/auth-helpers.ts</data>
+      <data key="community">13</data>
+    </node>
+    <node id="lib_auth_helpers_ts_import_next_server_nextrequest">
+      <data key="label">next/server/NextRequest</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/auth-helpers.ts</data>
+      <data key="community">13</data>
+    </node>
+    <node id="lib_auth_helpers_ts_import_next_headers_cookies">
+      <data key="label">next/headers/cookies</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/auth-helpers.ts</data>
+      <data key="community">13</data>
+    </node>
+    <node id="lib_auth_helpers_ts_createclient">
+      <data key="label">createClient()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/auth-helpers.ts</data>
+      <data key="community">13</data>
+    </node>
+    <node id="lib_auth_helpers_ts_requireuser">
+      <data key="label">requireUser()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/auth-helpers.ts</data>
+      <data key="community">13</data>
+    </node>
+    <node id="lib_auth_helpers_ts_getuser">
+      <data key="label">getUser()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/auth-helpers.ts</data>
+      <data key="community">13</data>
+    </node>
+    <node id="lib_supabase_ts">
+      <data key="label">supabase</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/supabase.ts</data>
+      <data key="community">27</data>
+    </node>
+    <node id="lib_supabase_ts_import_supabase_supabase_js_createclient">
+      <data key="label">@supabase/supabase-js/createClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/supabase.ts</data>
+      <data key="community">27</data>
+    </node>
+    <node id="lib_supabase_ts_import_config_env">
+      <data key="label">./config/env</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/supabase.ts</data>
+      <data key="community">27</data>
+    </node>
+    <node id="lib_supabase_ts_getadminclient">
+      <data key="label">getAdminClient()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/supabase.ts</data>
+      <data key="community">27</data>
+    </node>
+    <node id="lib_tracer_ts">
+      <data key="label">tracer</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_import_data_exchange_wallets_json_exchangewallets">
+      <data key="label">@/data/exchange-wallets.json/exchangeWallets</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_import_data_bridge_contracts_json_bridgecontracts">
+      <data key="label">@/data/bridge-contracts.json/bridgeContracts</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_import_data_mixer_addresses_json_mixeraddresses">
+      <data key="label">@/data/mixer-addresses.json/mixerAddresses</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_import_lib_chain_utils_evm_chain_config">
+      <data key="label">@/lib/chain-utils/EVM_CHAIN_CONFIG</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_import_lib_chain_utils_getexplorertxurl">
+      <data key="label">@/lib/chain-utils/getExplorerTxUrl</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_import_lib_chain_utils_evmchainconfig">
+      <data key="label">@/lib/chain-utils/EvmChainConfig</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_import_config_env">
+      <data key="label">./config/env</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_import_scam_db_lookupscamaddressbatch">
+      <data key="label">./scam-db/lookupScamAddressBatch</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_import_scam_db_scammatch">
+      <data key="label">./scam-db/ScamMatch</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_fetchevmtransactions">
+      <data key="label">fetchEvmTransactions()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">16</data>
+    </node>
+    <node id="lib_tracer_ts_weitoeth">
+      <data key="label">weiToEth()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">16</data>
+    </node>
+    <node id="lib_tracer_ts_isknownexchange">
+      <data key="label">isKnownExchange()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">16</data>
+    </node>
+    <node id="lib_tracer_ts_ismixeraddress">
+      <data key="label">isMixerAddress()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">16</data>
+    </node>
+    <node id="lib_tracer_ts_issanctionedaddress">
+      <data key="label">isSanctionedAddress()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">16</data>
+    </node>
+    <node id="lib_tracer_ts_getbridgename">
+      <data key="label">getBridgeName()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">16</data>
+    </node>
+    <node id="lib_tracer_ts_traceevm">
+      <data key="label">traceEvm()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">16</data>
+    </node>
+    <node id="lib_tracer_ts_tracesolana">
+      <data key="label">traceSolana()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">25</data>
+    </node>
+    <node id="lib_tracer_ts_tracetron">
+      <data key="label">traceTron()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">25</data>
+    </node>
+    <node id="lib_tracer_ts_detectbridges">
+      <data key="label">detectBridges()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_detectdeepmixers">
+      <data key="label">detectDeepMixers()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_clusterwallets">
+      <data key="label">clusterWallets()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_analyzetimings">
+      <data key="label">analyzeTimings()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_tracer_ts_traceaddress">
+      <data key="label">traceAddress()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">25</data>
+    </node>
+    <node id="lib_tracer_ts_annotatehopswithscam">
+      <data key="label">annotateHopsWithScam()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">25</data>
+    </node>
+    <node id="lib_tracer_ts_continuetrace">
+      <data key="label">continueTrace()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">25</data>
+    </node>
+    <node id="lib_tracer_ts_getexploreraddressurl">
+      <data key="label">getExplorerAddressUrl()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/tracer.ts</data>
+      <data key="community">3</data>
+    </node>
+    <node id="lib_rate_limit_ts">
+      <data key="label">rate-limit</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/rate-limit.ts</data>
+      <data key="community">8</data>
+    </node>
+    <node id="lib_rate_limit_ts_import_upstash_ratelimit_ratelimit">
+      <data key="label">@upstash/ratelimit/Ratelimit</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/rate-limit.ts</data>
+      <data key="community">8</data>
+    </node>
+    <node id="lib_rate_limit_ts_import_upstash_redis_redis">
+      <data key="label">@upstash/redis/Redis</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/rate-limit.ts</data>
+      <data key="community">8</data>
+    </node>
+    <node id="lib_rate_limit_ts_import_next_server_nextrequest">
+      <data key="label">next/server/NextRequest</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/rate-limit.ts</data>
+      <data key="community">8</data>
+    </node>
+    <node id="lib_rate_limit_ts_import_next_server_nextresponse">
+      <data key="label">next/server/NextResponse</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/rate-limit.ts</data>
+      <data key="community">8</data>
+    </node>
+    <node id="lib_rate_limit_ts_import_logger_logger">
+      <data key="label">./logger/logger</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/rate-limit.ts</data>
+      <data key="community">8</data>
+    </node>
+    <node id="lib_rate_limit_ts_initlimiters">
+      <data key="label">initLimiters()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/rate-limit.ts</data>
+      <data key="community">8</data>
+    </node>
+    <node id="lib_rate_limit_ts_getlimiter">
+      <data key="label">getLimiter()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/rate-limit.ts</data>
+      <data key="community">8</data>
+    </node>
+    <node id="lib_rate_limit_ts_getclientip">
+      <data key="label">getClientIp()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/rate-limit.ts</data>
+      <data key="community">8</data>
+    </node>
+    <node id="lib_rate_limit_ts_ratelimit">
+      <data key="label">rateLimit()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/rate-limit.ts</data>
+      <data key="community">8</data>
+    </node>
+    <node id="lib_risk_ts">
+      <data key="label">risk</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/risk.ts</data>
+      <data key="community">11</data>
+    </node>
+    <node id="lib_risk_ts_import_tracer_hop">
+      <data key="label">./tracer/Hop</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/risk.ts</data>
+      <data key="community">11</data>
+    </node>
+    <node id="lib_risk_ts_import_tracer_chain">
+      <data key="label">./tracer/Chain</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/risk.ts</data>
+      <data key="community">11</data>
+    </node>
+    <node id="lib_risk_ts_import_data_exchange_wallets_json_exchangewallets">
+      <data key="label">@/data/exchange-wallets.json/exchangeWallets</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/risk.ts</data>
+      <data key="community">11</data>
+    </node>
+    <node id="lib_risk_ts_import_config_env">
+      <data key="label">./config/env</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/risk.ts</data>
+      <data key="community">11</data>
+    </node>
+    <node id="lib_risk_ts_import_scam_db_lookupscamaddress">
+      <data key="label">./scam-db/lookupScamAddress</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/risk.ts</data>
+      <data key="community">11</data>
+    </node>
+    <node id="lib_risk_ts_getwalletfirstseen">
+      <data key="label">getWalletFirstSeen()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/risk.ts</data>
+      <data key="community">11</data>
+    </node>
+    <node id="lib_risk_ts_scoreaddress">
+      <data key="label">scoreAddress()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/risk.ts</data>
+      <data key="community">11</data>
+    </node>
+    <node id="lib_risk_ts_buildsummary">
+      <data key="label">buildSummary()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/risk.ts</data>
+      <data key="community">11</data>
+    </node>
+    <node id="lib_pdf_tsx">
+      <data key="label">pdf</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_react_pdf_renderer_document">
+      <data key="label">@react-pdf/renderer/Document</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_react_pdf_renderer_page">
+      <data key="label">@react-pdf/renderer/Page</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_react_pdf_renderer_text">
+      <data key="label">@react-pdf/renderer/Text</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_react_pdf_renderer_view">
+      <data key="label">@react-pdf/renderer/View</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_react_pdf_renderer_stylesheet">
+      <data key="label">@react-pdf/renderer/StyleSheet</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_react_pdf_renderer_link">
+      <data key="label">@react-pdf/renderer/Link</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_react_pdf_renderer_pdf">
+      <data key="label">@react-pdf/renderer/pdf</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_tracer_hop">
+      <data key="label">./tracer/Hop</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_tracer_chain">
+      <data key="label">./tracer/Chain</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_tracer_clusterresult">
+      <data key="label">./tracer/ClusterResult</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_tracer_timingflag">
+      <data key="label">./tracer/TimingFlag</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_import_risk_riskflag">
+      <data key="label">./risk/RiskFlag</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">5</data>
+    </node>
+    <node id="lib_pdf_tsx_riskcolor">
+      <data key="label">riskColor()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">22</data>
+    </node>
+    <node id="lib_pdf_tsx_flagbordercolor">
+      <data key="label">flagBorderColor()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">22</data>
+    </node>
+    <node id="lib_pdf_tsx_shortaddr">
+      <data key="label">shortAddr()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">22</data>
+    </node>
+    <node id="lib_pdf_tsx_formattimestamp">
+      <data key="label">formatTimestamp()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">22</data>
+    </node>
+    <node id="lib_pdf_tsx_formatgap">
+      <data key="label">formatGap()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">22</data>
+    </node>
+    <node id="lib_pdf_tsx_chaintracingreport">
+      <data key="label">ChainTracingReport()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/pdf.tsx</data>
+      <data key="community">22</data>
+    </node>
+    <node id="lib_supabase_server_ts">
+      <data key="label">supabase-server</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/supabase-server.ts</data>
+      <data key="community">29</data>
+    </node>
+    <node id="lib_supabase_server_ts_import_supabase_ssr_createserverclient">
+      <data key="label">@supabase/ssr/createServerClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/supabase-server.ts</data>
+      <data key="community">29</data>
+    </node>
+    <node id="lib_supabase_server_ts_import_next_headers_cookies">
+      <data key="label">next/headers/cookies</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/supabase-server.ts</data>
+      <data key="community">29</data>
+    </node>
+    <node id="lib_supabase_server_ts_createclient">
+      <data key="label">createClient()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/supabase-server.ts</data>
+      <data key="community">29</data>
+    </node>
+    <node id="lib_scam_db_ts">
+      <data key="label">scam-db</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/scam-db.ts</data>
+      <data key="community">20</data>
+    </node>
+    <node id="lib_scam_db_ts_import_supabase_supabase_js_createclient">
+      <data key="label">@supabase/supabase-js/createClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/scam-db.ts</data>
+      <data key="community">20</data>
+    </node>
+    <node id="lib_scam_db_ts_getscamdbclient">
+      <data key="label">getScamDbClient()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/scam-db.ts</data>
+      <data key="community">20</data>
+    </node>
+    <node id="lib_scam_db_ts_normalizechain">
+      <data key="label">normalizeChain()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/scam-db.ts</data>
+      <data key="community">20</data>
+    </node>
+    <node id="lib_scam_db_ts_lookupscamaddress">
+      <data key="label">lookupScamAddress()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/scam-db.ts</data>
+      <data key="community">20</data>
+    </node>
+    <node id="lib_scam_db_ts_lookupscamaddressbatch">
+      <data key="label">lookupScamAddressBatch()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/scam-db.ts</data>
+      <data key="community">20</data>
+    </node>
+    <node id="lib_origin_check_ts">
+      <data key="label">origin-check</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/origin-check.ts</data>
+      <data key="community">33</data>
+    </node>
+    <node id="lib_origin_check_ts_import_config_env">
+      <data key="label">./config/env</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/origin-check.ts</data>
+      <data key="community">33</data>
+    </node>
+    <node id="lib_origin_check_ts_checkorigin">
+      <data key="label">checkOrigin()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/origin-check.ts</data>
+      <data key="community">33</data>
+    </node>
+    <node id="lib_logger_ts">
+      <data key="label">logger</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/logger.ts</data>
+      <data key="community">21</data>
+    </node>
+    <node id="lib_logger_ts_shouldlog">
+      <data key="label">shouldLog()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/logger.ts</data>
+      <data key="community">21</data>
+    </node>
+    <node id="lib_logger_ts_formattimestamp">
+      <data key="label">formatTimestamp()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/logger.ts</data>
+      <data key="community">21</data>
+    </node>
+    <node id="lib_logger_ts_formatlogentry">
+      <data key="label">formatLogEntry()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/logger.ts</data>
+      <data key="community">21</data>
+    </node>
+    <node id="lib_logger_ts_log">
+      <data key="label">log()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/logger.ts</data>
+      <data key="community">21</data>
+    </node>
+    <node id="lib_logger_ts_createrequestlogger">
+      <data key="label">createRequestLogger()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/logger.ts</data>
+      <data key="community">21</data>
+    </node>
+    <node id="lib_supabase_browser_ts">
+      <data key="label">supabase-browser</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/supabase-browser.ts</data>
+      <data key="community">32</data>
+    </node>
+    <node id="lib_supabase_browser_ts_import_supabase_ssr_createbrowserclient">
+      <data key="label">@supabase/ssr/createBrowserClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./lib/supabase-browser.ts</data>
+      <data key="community">32</data>
+    </node>
+    <node id="lib_supabase_browser_ts_createclient">
+      <data key="label">createClient()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/supabase-browser.ts</data>
+      <data key="community">32</data>
+    </node>
+    <node id="lib_config_ts">
+      <data key="label">config</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./lib/config.ts</data>
+      <data key="community">31</data>
+    </node>
+    <node id="lib_config_ts_validateenv">
+      <data key="label">validateEnv()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/config.ts</data>
+      <data key="community">31</data>
+    </node>
+    <node id="lib_config_ts_baseurl">
+      <data key="label">baseUrl()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./lib/config.ts</data>
+      <data key="community">31</data>
+    </node>
+    <node id="next_config_ts">
+      <data key="label">next.config</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./next.config.ts</data>
+      <data key="community">34</data>
+    </node>
+    <node id="next_config_ts_import_next_nextconfig">
+      <data key="label">next/NextConfig</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./next.config.ts</data>
+      <data key="community">34</data>
+    </node>
+    <node id="components_authbutton_tsx">
+      <data key="label">AuthButton</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./components/AuthButton.tsx</data>
+      <data key="community">19</data>
+    </node>
+    <node id="components_authbutton_tsx_import_lib_supabase_browser_createclient">
+      <data key="label">@/lib/supabase-browser/createClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./components/AuthButton.tsx</data>
+      <data key="community">19</data>
+    </node>
+    <node id="components_authbutton_tsx_import_react_useeffect">
+      <data key="label">react/useEffect</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./components/AuthButton.tsx</data>
+      <data key="community">19</data>
+    </node>
+    <node id="components_authbutton_tsx_import_react_usestate">
+      <data key="label">react/useState</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./components/AuthButton.tsx</data>
+      <data key="community">19</data>
+    </node>
+    <node id="components_authbutton_tsx_import_next_navigation_userouter">
+      <data key="label">next/navigation/useRouter</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./components/AuthButton.tsx</data>
+      <data key="community">19</data>
+    </node>
+    <node id="components_authbutton_tsx_handlesignout">
+      <data key="label">handleSignOut()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./components/AuthButton.tsx</data>
+      <data key="community">19</data>
+    </node>
+    <node id="components_header_tsx">
+      <data key="label">Header</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./components/Header.tsx</data>
+      <data key="community">26</data>
+    </node>
+    <node id="components_header_tsx_import_authbutton_authbutton">
+      <data key="label">./AuthButton/AuthButton</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./components/Header.tsx</data>
+      <data key="community">26</data>
+    </node>
+    <node id="components_header_tsx_import_next_link_link">
+      <data key="label">next/link/Link</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./components/Header.tsx</data>
+      <data key="community">26</data>
+    </node>
+    <node id="components_header_tsx_header">
+      <data key="label">Header()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./components/Header.tsx</data>
+      <data key="community">26</data>
+    </node>
+    <node id="next_env_d_ts">
+      <data key="label">next-env.d</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./next-env.d.ts</data>
+      <data key="community">35</data>
+    </node>
+    <node id="next_env_d_ts_import_next_types_routes_d_ts">
+      <data key="label">./.next/types/routes.d.ts</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./next-env.d.ts</data>
+      <data key="community">35</data>
+    </node>
+    <node id="scripts_ingest_ingest_ofac_ts">
+      <data key="label">ingest-ofac</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./scripts/ingest/ingest-ofac.ts</data>
+      <data key="community">7</data>
+    </node>
+    <node id="scripts_ingest_ingest_ofac_ts_import_undici_agent">
+      <data key="label">undici/Agent</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./scripts/ingest/ingest-ofac.ts</data>
+      <data key="community">7</data>
+    </node>
+    <node id="scripts_ingest_ingest_ofac_ts_import_undici_setglobaldispatcher">
+      <data key="label">undici/setGlobalDispatcher</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./scripts/ingest/ingest-ofac.ts</data>
+      <data key="community">7</data>
+    </node>
+    <node id="scripts_ingest_ingest_ofac_ts_import_xml2js_parsestringpromise">
+      <data key="label">xml2js/parseStringPromise</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./scripts/ingest/ingest-ofac.ts</data>
+      <data key="community">7</data>
+    </node>
+    <node id="scripts_ingest_ingest_ofac_ts_import_supabase_supabase_js_createclient">
+      <data key="label">@supabase/supabase-js/createClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./scripts/ingest/ingest-ofac.ts</data>
+      <data key="community">7</data>
+    </node>
+    <node id="scripts_ingest_ingest_ofac_ts_getsupabaseclient">
+      <data key="label">getSupabaseClient()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./scripts/ingest/ingest-ofac.ts</data>
+      <data key="community">7</data>
+    </node>
+    <node id="scripts_ingest_ingest_ofac_ts_parsechain">
+      <data key="label">parseChain()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./scripts/ingest/ingest-ofac.ts</data>
+      <data key="community">7</data>
+    </node>
+    <node id="scripts_ingest_ingest_ofac_ts_fetchandparsexml">
+      <data key="label">fetchAndParseXml()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./scripts/ingest/ingest-ofac.ts</data>
+      <data key="community">7</data>
+    </node>
+    <node id="scripts_ingest_ingest_ofac_ts_upsertbatch">
+      <data key="label">upsertBatch()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./scripts/ingest/ingest-ofac.ts</data>
+      <data key="community">7</data>
+    </node>
+    <node id="scripts_ingest_ingest_ofac_ts_main">
+      <data key="label">main()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./scripts/ingest/ingest-ofac.ts</data>
+      <data key="community">7</data>
+    </node>
+    <node id="scripts_ingest_run_all_ts">
+      <data key="label">run-all</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./scripts/ingest/run-all.ts</data>
+      <data key="community">30</data>
+    </node>
+    <node id="scripts_ingest_run_all_ts_import_child_process_execsync">
+      <data key="label">child_process/execSync</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./scripts/ingest/run-all.ts</data>
+      <data key="community">30</data>
+    </node>
+    <node id="scripts_ingest_run_all_ts_import_path_resolve">
+      <data key="label">path/resolve</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./scripts/ingest/run-all.ts</data>
+      <data key="community">30</data>
+    </node>
+    <node id="scripts_ingest_run_all_ts_run">
+      <data key="label">run()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./scripts/ingest/run-all.ts</data>
+      <data key="community">30</data>
+    </node>
+    <node id="scripts_ingest_ingest_cryptoscamdb_ts">
+      <data key="label">ingest-cryptoscamdb</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./scripts/ingest/ingest-cryptoscamdb.ts</data>
+      <data key="community">14</data>
+    </node>
+    <node id="scripts_ingest_ingest_cryptoscamdb_ts_import_undici_agent">
+      <data key="label">undici/Agent</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./scripts/ingest/ingest-cryptoscamdb.ts</data>
+      <data key="community">14</data>
+    </node>
+    <node id="scripts_ingest_ingest_cryptoscamdb_ts_import_undici_setglobaldispatcher">
+      <data key="label">undici/setGlobalDispatcher</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./scripts/ingest/ingest-cryptoscamdb.ts</data>
+      <data key="community">14</data>
+    </node>
+    <node id="scripts_ingest_ingest_cryptoscamdb_ts_import_supabase_supabase_js_createclient">
+      <data key="label">@supabase/supabase-js/createClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./scripts/ingest/ingest-cryptoscamdb.ts</data>
+      <data key="community">14</data>
+    </node>
+    <node id="scripts_ingest_ingest_cryptoscamdb_ts_getsupabaseclient">
+      <data key="label">getSupabaseClient()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./scripts/ingest/ingest-cryptoscamdb.ts</data>
+      <data key="community">14</data>
+    </node>
+    <node id="scripts_ingest_ingest_cryptoscamdb_ts_fetchaddresses">
+      <data key="label">fetchAddresses()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./scripts/ingest/ingest-cryptoscamdb.ts</data>
+      <data key="community">14</data>
+    </node>
+    <node id="scripts_ingest_ingest_cryptoscamdb_ts_upsertbatch">
+      <data key="label">upsertBatch()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./scripts/ingest/ingest-cryptoscamdb.ts</data>
+      <data key="community">14</data>
+    </node>
+    <node id="scripts_ingest_ingest_cryptoscamdb_ts_main">
+      <data key="label">main()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./scripts/ingest/ingest-cryptoscamdb.ts</data>
+      <data key="community">14</data>
+    </node>
+    <node id="app_signup_page_tsx">
+      <data key="label">page</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/signup/page.tsx</data>
+      <data key="community">18</data>
+    </node>
+    <node id="app_signup_page_tsx_import_react_usestate">
+      <data key="label">react/useState</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/signup/page.tsx</data>
+      <data key="community">18</data>
+    </node>
+    <node id="app_signup_page_tsx_import_next_link_link">
+      <data key="label">next/link/Link</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/signup/page.tsx</data>
+      <data key="community">18</data>
+    </node>
+    <node id="app_signup_page_tsx_import_next_navigation_userouter">
+      <data key="label">next/navigation/useRouter</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/signup/page.tsx</data>
+      <data key="community">18</data>
+    </node>
+    <node id="app_signup_page_tsx_import_lib_supabase_browser_createclient">
+      <data key="label">@/lib/supabase-browser/createClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/signup/page.tsx</data>
+      <data key="community">18</data>
+    </node>
+    <node id="app_signup_page_tsx_handlesignup">
+      <data key="label">handleSignup()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/signup/page.tsx</data>
+      <data key="community">18</data>
+    </node>
+    <node id="app_signup_page_tsx_handlegoogle">
+      <data key="label">handleGoogle()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/signup/page.tsx</data>
+      <data key="community">18</data>
+    </node>
+    <node id="app_login_page_tsx">
+      <data key="label">page</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/login/page.tsx</data>
+      <data key="community">10</data>
+    </node>
+    <node id="app_login_page_tsx_import_react_usestate">
+      <data key="label">react/useState</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/login/page.tsx</data>
+      <data key="community">10</data>
+    </node>
+    <node id="app_login_page_tsx_import_react_suspense">
+      <data key="label">react/Suspense</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/login/page.tsx</data>
+      <data key="community">10</data>
+    </node>
+    <node id="app_login_page_tsx_import_next_link_link">
+      <data key="label">next/link/Link</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/login/page.tsx</data>
+      <data key="community">10</data>
+    </node>
+    <node id="app_login_page_tsx_import_next_navigation_userouter">
+      <data key="label">next/navigation/useRouter</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/login/page.tsx</data>
+      <data key="community">10</data>
+    </node>
+    <node id="app_login_page_tsx_import_next_navigation_usesearchparams">
+      <data key="label">next/navigation/useSearchParams</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/login/page.tsx</data>
+      <data key="community">10</data>
+    </node>
+    <node id="app_login_page_tsx_import_lib_supabase_browser_createclient">
+      <data key="label">@/lib/supabase-browser/createClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/login/page.tsx</data>
+      <data key="community">10</data>
+    </node>
+    <node id="app_login_page_tsx_handlelogin">
+      <data key="label">handleLogin()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/login/page.tsx</data>
+      <data key="community">10</data>
+    </node>
+    <node id="app_login_page_tsx_handlegoogle">
+      <data key="label">handleGoogle()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/login/page.tsx</data>
+      <data key="community">10</data>
+    </node>
+    <node id="app_api_webhook_route_ts">
+      <data key="label">route</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/api/webhook/route.ts</data>
+      <data key="community">15</data>
+    </node>
+    <node id="app_api_webhook_route_ts_import_crypto_createhmac">
+      <data key="label">crypto/createHmac</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/webhook/route.ts</data>
+      <data key="community">15</data>
+    </node>
+    <node id="app_api_webhook_route_ts_import_crypto_timingsafeequal">
+      <data key="label">crypto/timingSafeEqual</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/webhook/route.ts</data>
+      <data key="community">15</data>
+    </node>
+    <node id="app_api_webhook_route_ts_import_lib_supabase_getadminclient">
+      <data key="label">@/lib/supabase/getAdminClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/webhook/route.ts</data>
+      <data key="community">15</data>
+    </node>
+    <node id="app_api_webhook_route_ts_import_lib_logger_logger">
+      <data key="label">@/lib/logger/logger</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/webhook/route.ts</data>
+      <data key="community">15</data>
+    </node>
+    <node id="app_api_webhook_route_ts_import_lib_config_env">
+      <data key="label">@/lib/config/env</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/webhook/route.ts</data>
+      <data key="community">15</data>
+    </node>
+    <node id="app_api_webhook_route_ts_post">
+      <data key="label">POST()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/api/webhook/route.ts</data>
+      <data key="community">15</data>
+    </node>
+    <node id="app_api_checkout_route_ts">
+      <data key="label">route</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_next_server_nextrequest">
+      <data key="label">next/server/NextRequest</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_undici_agent">
+      <data key="label">undici/Agent</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_undici_setglobaldispatcher">
+      <data key="label">undici/setGlobalDispatcher</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_supabase_getadminclient">
+      <data key="label">@/lib/supabase/getAdminClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_tracer_continuetrace">
+      <data key="label">@/lib/tracer/continueTrace</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_tracer_detectbridges">
+      <data key="label">@/lib/tracer/detectBridges</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_tracer_detectdeepmixers">
+      <data key="label">@/lib/tracer/detectDeepMixers</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_tracer_clusterwallets">
+      <data key="label">@/lib/tracer/clusterWallets</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_tracer_analyzetimings">
+      <data key="label">@/lib/tracer/analyzeTimings</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_tracer_chain">
+      <data key="label">@/lib/tracer/Chain</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_tracer_hop">
+      <data key="label">@/lib/tracer/Hop</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_risk_scoreaddress">
+      <data key="label">@/lib/risk/scoreAddress</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_rate_limit_ratelimit">
+      <data key="label">@/lib/rate-limit/rateLimit</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_rate_limit_ratelimits">
+      <data key="label">@/lib/rate-limit/rateLimits</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_logger_logger">
+      <data key="label">@/lib/logger/logger</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_origin_check_checkorigin">
+      <data key="label">@/lib/origin-check/checkOrigin</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_auth_helpers_getuser">
+      <data key="label">@/lib/auth-helpers/getUser</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_lib_config_env">
+      <data key="label">@/lib/config/env</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_import_crypto_randombytes">
+      <data key="label">crypto/randomBytes</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_isvalidhoparray">
+      <data key="label">isValidHopArray()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_checkout_route_ts_post">
+      <data key="label">POST()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/api/checkout/route.ts</data>
+      <data key="community">0</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts">
+      <data key="label">route</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_next_server_nextrequest">
+      <data key="label">next/server/NextRequest</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_supabase_getadminclient">
+      <data key="label">@/lib/supabase/getAdminClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_pdf_generatepdfbuffer">
+      <data key="label">@/lib/pdf/generatePdfBuffer</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_pdf_scamdbmatchentry">
+      <data key="label">@/lib/pdf/ScamDbMatchEntry</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_tracer_clusterwallets">
+      <data key="label">@/lib/tracer/clusterWallets</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_tracer_analyzetimings">
+      <data key="label">@/lib/tracer/analyzeTimings</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_tracer_hop">
+      <data key="label">@/lib/tracer/Hop</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_tracer_chain">
+      <data key="label">@/lib/tracer/Chain</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_risk_riskflag">
+      <data key="label">@/lib/risk/RiskFlag</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_rate_limit_ratelimit">
+      <data key="label">@/lib/rate-limit/rateLimit</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_rate_limit_ratelimits">
+      <data key="label">@/lib/rate-limit/rateLimits</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_origin_check_checkorigin">
+      <data key="label">@/lib/origin-check/checkOrigin</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_import_lib_config">
+      <data key="label">@/lib/config</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_report_id_pdf_route_ts_get">
+      <data key="label">GET()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/api/report/[id]/pdf/route.ts</data>
+      <data key="community">2</data>
+    </node>
+    <node id="app_api_trace_route_ts">
+      <data key="label">route</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_next_server_nextrequest">
+      <data key="label">next/server/NextRequest</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_tracer_traceaddress">
+      <data key="label">@/lib/tracer/traceAddress</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_tracer_chain">
+      <data key="label">@/lib/tracer/Chain</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_risk_scoreaddress">
+      <data key="label">@/lib/risk/scoreAddress</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_rate_limit_ratelimit">
+      <data key="label">@/lib/rate-limit/rateLimit</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_rate_limit_ratelimits">
+      <data key="label">@/lib/rate-limit/rateLimits</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_chain_utils_supported_chains">
+      <data key="label">@/lib/chain-utils/SUPPORTED_CHAINS</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_chain_utils_address_patterns">
+      <data key="label">@/lib/chain-utils/ADDRESS_PATTERNS</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_chain_utils_address_hints">
+      <data key="label">@/lib/chain-utils/ADDRESS_HINTS</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_chain_utils_validateaddress">
+      <data key="label">@/lib/chain-utils/validateAddress</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_logger_logger">
+      <data key="label">@/lib/logger/logger</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_origin_check_checkorigin">
+      <data key="label">@/lib/origin-check/checkOrigin</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_import_lib_auth_helpers_getuser">
+      <data key="label">@/lib/auth-helpers/getUser</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_api_trace_route_ts_post">
+      <data key="label">POST()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/api/trace/route.ts</data>
+      <data key="community">1</data>
+    </node>
+    <node id="app_layout_tsx">
+      <data key="label">layout</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/layout.tsx</data>
+      <data key="community">17</data>
+    </node>
+    <node id="app_layout_tsx_import_next_metadata">
+      <data key="label">next/Metadata</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/layout.tsx</data>
+      <data key="community">17</data>
+    </node>
+    <node id="app_layout_tsx_import_next_font_google_geist">
+      <data key="label">next/font/google/Geist</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/layout.tsx</data>
+      <data key="community">17</data>
+    </node>
+    <node id="app_layout_tsx_import_next_font_google_geist_mono">
+      <data key="label">next/font/google/Geist_Mono</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/layout.tsx</data>
+      <data key="community">17</data>
+    </node>
+    <node id="app_layout_tsx_import_globals_css">
+      <data key="label">./globals.css</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/layout.tsx</data>
+      <data key="community">17</data>
+    </node>
+    <node id="app_layout_tsx_import_components_header_header">
+      <data key="label">@/components/Header/Header</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/layout.tsx</data>
+      <data key="community">17</data>
+    </node>
+    <node id="app_layout_tsx_rootlayout">
+      <data key="label">RootLayout()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/layout.tsx</data>
+      <data key="community">17</data>
+    </node>
+    <node id="app_dashboard_page_tsx">
+      <data key="label">page</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/dashboard/page.tsx</data>
+      <data key="community">28</data>
+    </node>
+    <node id="app_dashboard_page_tsx_import_lib_supabase_server_createclient">
+      <data key="label">@/lib/supabase-server/createClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/dashboard/page.tsx</data>
+      <data key="community">28</data>
+    </node>
+    <node id="app_dashboard_page_tsx_import_next_navigation_redirect">
+      <data key="label">next/navigation/redirect</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/dashboard/page.tsx</data>
+      <data key="community">28</data>
+    </node>
+    <node id="app_dashboard_page_tsx_import_next_link_link">
+      <data key="label">next/link/Link</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/dashboard/page.tsx</data>
+      <data key="community">28</data>
+    </node>
+    <node id="app_page_tsx">
+      <data key="label">page</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_import_react_usestate">
+      <data key="label">react/useState</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_import_lib_tracer_chain">
+      <data key="label">@/lib/tracer/Chain</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_import_lib_risk_riskflag">
+      <data key="label">@/lib/risk/RiskFlag</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_import_lib_chain_utils_chain_display_names">
+      <data key="label">@/lib/chain-utils/CHAIN_DISPLAY_NAMES</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_import_lib_chain_utils_address_placeholders">
+      <data key="label">@/lib/chain-utils/ADDRESS_PLACEHOLDERS</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_import_lib_chain_utils_validateaddress">
+      <data key="label">@/lib/chain-utils/validateAddress</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_riskmeter">
+      <data key="label">RiskMeter()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_handleaddresschange">
+      <data key="label">handleAddressChange()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_handlechainchange">
+      <data key="label">handleChainChange()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_handletrace">
+      <data key="label">handleTrace()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_page_tsx_handlebuytier">
+      <data key="label">handleBuyTier()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/page.tsx</data>
+      <data key="community">6</data>
+    </node>
+    <node id="app_report_id_report_view_tsx">
+      <data key="label">report-view</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_import_react_usestate">
+      <data key="label">react/useState</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_import_next_link_link">
+      <data key="label">next/link/Link</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_import_lib_tracer_hop">
+      <data key="label">@/lib/tracer/Hop</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_import_lib_tracer_chain">
+      <data key="label">@/lib/tracer/Chain</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_import_lib_risk_riskflag">
+      <data key="label">@/lib/risk/RiskFlag</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_import_lib_chain_utils_getexploreraddressurl">
+      <data key="label">@/lib/chain-utils/getExplorerAddressUrl</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_import_lib_chain_utils_shortaddr">
+      <data key="label">@/lib/chain-utils/shortAddr</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_riskcolor">
+      <data key="label">riskColor()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_riskbg">
+      <data key="label">riskBg()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_risklabel">
+      <data key="label">riskLabel()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_flagborder">
+      <data key="label">flagBorder()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_flagbadge">
+      <data key="label">flagBadge()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_report_view_tsx_reportview">
+      <data key="label">ReportView()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/report/[id]/report-view.tsx</data>
+      <data key="community">4</data>
+    </node>
+    <node id="app_report_id_page_tsx">
+      <data key="label">page</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/report/[id]/page.tsx</data>
+      <data key="community">12</data>
+    </node>
+    <node id="app_report_id_page_tsx_import_next_navigation_notfound">
+      <data key="label">next/navigation/notFound</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/page.tsx</data>
+      <data key="community">12</data>
+    </node>
+    <node id="app_report_id_page_tsx_import_lib_supabase_getadminclient">
+      <data key="label">@/lib/supabase/getAdminClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/page.tsx</data>
+      <data key="community">12</data>
+    </node>
+    <node id="app_report_id_page_tsx_import_lib_auth_helpers_createclient">
+      <data key="label">@/lib/auth-helpers/createClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/page.tsx</data>
+      <data key="community">12</data>
+    </node>
+    <node id="app_report_id_page_tsx_import_next_headers_cookies">
+      <data key="label">next/headers/cookies</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/page.tsx</data>
+      <data key="community">12</data>
+    </node>
+    <node id="app_report_id_page_tsx_import_next_server_nextrequest">
+      <data key="label">next/server/NextRequest</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/page.tsx</data>
+      <data key="community">12</data>
+    </node>
+    <node id="app_report_id_page_tsx_import_lib_tracer_hop">
+      <data key="label">@/lib/tracer/Hop</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/page.tsx</data>
+      <data key="community">12</data>
+    </node>
+    <node id="app_report_id_page_tsx_import_lib_risk_riskflag">
+      <data key="label">@/lib/risk/RiskFlag</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/page.tsx</data>
+      <data key="community">12</data>
+    </node>
+    <node id="app_report_id_page_tsx_import_report_view_reportview">
+      <data key="label">./report-view/ReportView</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/report/[id]/page.tsx</data>
+      <data key="community">12</data>
+    </node>
+    <node id="app_auth_callback_route_ts">
+      <data key="label">route</data>
+      <data key="node_type">File</data>
+      <data key="source_file">./app/auth/callback/route.ts</data>
+      <data key="community">24</data>
+    </node>
+    <node id="app_auth_callback_route_ts_import_next_server_nextrequest">
+      <data key="label">next/server/NextRequest</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/auth/callback/route.ts</data>
+      <data key="community">24</data>
+    </node>
+    <node id="app_auth_callback_route_ts_import_next_server_nextresponse">
+      <data key="label">next/server/NextResponse</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/auth/callback/route.ts</data>
+      <data key="community">24</data>
+    </node>
+    <node id="app_auth_callback_route_ts_import_lib_supabase_server_createclient">
+      <data key="label">@/lib/supabase-server/createClient</data>
+      <data key="node_type">Module</data>
+      <data key="source_file">./app/auth/callback/route.ts</data>
+      <data key="community">24</data>
+    </node>
+    <node id="app_auth_callback_route_ts_get">
+      <data key="label">GET()</data>
+      <data key="node_type">Function</data>
+      <data key="source_file">./app/auth/callback/route.ts</data>
+      <data key="community">24</data>
+    </node>
+    <edge id="e0" source="middleware_ts" target="middleware_ts_import_supabase_ssr_createserverclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e1" source="middleware_ts" target="middleware_ts_import_next_server_nextresponse">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e2" source="middleware_ts" target="middleware_ts_import_next_server_nextrequest">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e3" source="middleware_ts" target="middleware_ts_middleware">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e4" source="lib_chain_utils_ts" target="lib_chain_utils_ts_import_tracer_chain">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e5" source="lib_chain_utils_ts" target="lib_chain_utils_ts_validateaddress">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e6" source="lib_chain_utils_ts" target="lib_chain_utils_ts_getexploreraddressurl">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e7" source="lib_chain_utils_ts" target="lib_chain_utils_ts_getexplorertxurl">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e8" source="lib_chain_utils_ts" target="lib_chain_utils_ts_getnativetoken">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e9" source="lib_chain_utils_ts" target="lib_chain_utils_ts_isevmchain">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e10" source="lib_chain_utils_ts" target="lib_chain_utils_ts_getchainid">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e11" source="lib_chain_utils_ts" target="lib_chain_utils_ts_shortaddr">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e12" source="lib_auth_helpers_ts" target="lib_auth_helpers_ts_import_supabase_ssr_createserverclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e13" source="lib_auth_helpers_ts" target="lib_auth_helpers_ts_import_next_server_nextresponse">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e14" source="lib_auth_helpers_ts" target="lib_auth_helpers_ts_import_next_server_nextrequest">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e15" source="lib_auth_helpers_ts" target="lib_auth_helpers_ts_import_next_headers_cookies">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e16" source="lib_auth_helpers_ts" target="lib_auth_helpers_ts_createclient">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e17" source="lib_auth_helpers_ts" target="lib_auth_helpers_ts_requireuser">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e18" source="lib_auth_helpers_ts" target="lib_auth_helpers_ts_getuser">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e19" source="lib_auth_helpers_ts_requireuser" target="lib_auth_helpers_ts_createclient">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e20" source="lib_auth_helpers_ts_requireuser" target="lib_auth_helpers_ts_getuser">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e21" source="lib_auth_helpers_ts_getuser" target="lib_auth_helpers_ts_createclient">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e22" source="lib_supabase_ts" target="lib_supabase_ts_import_supabase_supabase_js_createclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e23" source="lib_supabase_ts" target="lib_supabase_ts_import_config_env">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e24" source="lib_supabase_ts" target="lib_supabase_ts_getadminclient">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e25" source="lib_tracer_ts" target="lib_tracer_ts_import_data_exchange_wallets_json_exchangewallets">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e26" source="lib_tracer_ts" target="lib_tracer_ts_import_data_bridge_contracts_json_bridgecontracts">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e27" source="lib_tracer_ts" target="lib_tracer_ts_import_data_mixer_addresses_json_mixeraddresses">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e28" source="lib_tracer_ts" target="lib_tracer_ts_import_lib_chain_utils_evm_chain_config">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e29" source="lib_tracer_ts" target="lib_tracer_ts_import_lib_chain_utils_getexplorertxurl">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e30" source="lib_tracer_ts" target="lib_tracer_ts_import_lib_chain_utils_evmchainconfig">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e31" source="lib_tracer_ts" target="lib_tracer_ts_import_config_env">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e32" source="lib_tracer_ts" target="lib_tracer_ts_import_scam_db_lookupscamaddressbatch">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e33" source="lib_tracer_ts" target="lib_tracer_ts_import_scam_db_scammatch">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e34" source="lib_tracer_ts" target="lib_tracer_ts_fetchevmtransactions">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e35" source="lib_tracer_ts" target="lib_tracer_ts_weitoeth">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e36" source="lib_tracer_ts" target="lib_tracer_ts_isknownexchange">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e37" source="lib_tracer_ts" target="lib_tracer_ts_ismixeraddress">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e38" source="lib_tracer_ts" target="lib_tracer_ts_issanctionedaddress">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e39" source="lib_tracer_ts" target="lib_tracer_ts_getbridgename">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e40" source="lib_tracer_ts" target="lib_tracer_ts_traceevm">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e41" source="lib_tracer_ts" target="lib_tracer_ts_tracesolana">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e42" source="lib_tracer_ts" target="lib_tracer_ts_tracetron">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e43" source="lib_tracer_ts" target="lib_tracer_ts_detectbridges">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e44" source="lib_tracer_ts" target="lib_tracer_ts_detectdeepmixers">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e45" source="lib_tracer_ts" target="lib_tracer_ts_clusterwallets">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e46" source="lib_tracer_ts" target="lib_tracer_ts_analyzetimings">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e47" source="lib_tracer_ts" target="lib_tracer_ts_traceaddress">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e48" source="lib_tracer_ts" target="lib_tracer_ts_annotatehopswithscam">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e49" source="lib_tracer_ts" target="lib_tracer_ts_continuetrace">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e50" source="lib_tracer_ts" target="lib_tracer_ts_getexploreraddressurl">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e51" source="lib_tracer_ts_traceevm" target="lib_tracer_ts_issanctionedaddress">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e52" source="lib_tracer_ts_traceevm" target="lib_tracer_ts_fetchevmtransactions">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e53" source="lib_tracer_ts_traceevm" target="lib_tracer_ts_ismixeraddress">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e54" source="lib_tracer_ts_traceevm" target="lib_tracer_ts_getbridgename">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e55" source="lib_tracer_ts_traceevm" target="lib_tracer_ts_isknownexchange">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e56" source="lib_tracer_ts_traceevm" target="lib_tracer_ts_weitoeth">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e57" source="lib_tracer_ts_traceaddress" target="lib_tracer_ts_annotatehopswithscam">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e58" source="lib_tracer_ts_traceaddress" target="lib_tracer_ts_tracetron">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e59" source="lib_tracer_ts_traceaddress" target="lib_tracer_ts_tracesolana">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e60" source="lib_tracer_ts_traceaddress" target="lib_tracer_ts_traceevm">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e61" source="lib_tracer_ts_continuetrace" target="lib_tracer_ts_annotatehopswithscam">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e62" source="lib_tracer_ts_continuetrace" target="lib_tracer_ts_tracetron">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e63" source="lib_tracer_ts_continuetrace" target="lib_tracer_ts_tracesolana">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e64" source="lib_tracer_ts_continuetrace" target="lib_tracer_ts_traceevm">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e65" source="lib_rate_limit_ts" target="lib_rate_limit_ts_import_upstash_ratelimit_ratelimit">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e66" source="lib_rate_limit_ts" target="lib_rate_limit_ts_import_upstash_redis_redis">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e67" source="lib_rate_limit_ts" target="lib_rate_limit_ts_import_next_server_nextrequest">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e68" source="lib_rate_limit_ts" target="lib_rate_limit_ts_import_next_server_nextresponse">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e69" source="lib_rate_limit_ts" target="lib_rate_limit_ts_import_logger_logger">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e70" source="lib_rate_limit_ts" target="lib_rate_limit_ts_initlimiters">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e71" source="lib_rate_limit_ts" target="lib_rate_limit_ts_getlimiter">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e72" source="lib_rate_limit_ts" target="lib_rate_limit_ts_getclientip">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e73" source="lib_rate_limit_ts" target="lib_rate_limit_ts_ratelimit">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e74" source="lib_rate_limit_ts_initlimiters" target="lib_rate_limit_ts_ratelimit">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e75" source="lib_rate_limit_ts_getlimiter" target="lib_rate_limit_ts_initlimiters">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e76" source="lib_rate_limit_ts_ratelimit" target="lib_rate_limit_ts_getclientip">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e77" source="lib_rate_limit_ts_ratelimit" target="lib_rate_limit_ts_getlimiter">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e78" source="lib_risk_ts" target="lib_risk_ts_import_tracer_hop">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e79" source="lib_risk_ts" target="lib_risk_ts_import_tracer_chain">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e80" source="lib_risk_ts" target="lib_risk_ts_import_data_exchange_wallets_json_exchangewallets">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e81" source="lib_risk_ts" target="lib_risk_ts_import_config_env">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e82" source="lib_risk_ts" target="lib_risk_ts_import_scam_db_lookupscamaddress">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e83" source="lib_risk_ts" target="lib_risk_ts_getwalletfirstseen">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e84" source="lib_risk_ts" target="lib_risk_ts_scoreaddress">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e85" source="lib_risk_ts" target="lib_risk_ts_buildsummary">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e86" source="lib_risk_ts_scoreaddress" target="lib_risk_ts_getwalletfirstseen">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e87" source="lib_risk_ts_scoreaddress" target="lib_risk_ts_buildsummary">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e88" source="lib_pdf_tsx" target="lib_pdf_tsx_import_react_pdf_renderer_document">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e89" source="lib_pdf_tsx" target="lib_pdf_tsx_import_react_pdf_renderer_page">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e90" source="lib_pdf_tsx" target="lib_pdf_tsx_import_react_pdf_renderer_text">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e91" source="lib_pdf_tsx" target="lib_pdf_tsx_import_react_pdf_renderer_view">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e92" source="lib_pdf_tsx" target="lib_pdf_tsx_import_react_pdf_renderer_stylesheet">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e93" source="lib_pdf_tsx" target="lib_pdf_tsx_import_react_pdf_renderer_link">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e94" source="lib_pdf_tsx" target="lib_pdf_tsx_import_react_pdf_renderer_pdf">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e95" source="lib_pdf_tsx" target="lib_pdf_tsx_import_tracer_hop">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e96" source="lib_pdf_tsx" target="lib_pdf_tsx_import_tracer_chain">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e97" source="lib_pdf_tsx" target="lib_pdf_tsx_import_tracer_clusterresult">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e98" source="lib_pdf_tsx" target="lib_pdf_tsx_import_tracer_timingflag">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e99" source="lib_pdf_tsx" target="lib_pdf_tsx_import_risk_riskflag">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e100" source="lib_pdf_tsx" target="lib_pdf_tsx_riskcolor">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e101" source="lib_pdf_tsx" target="lib_pdf_tsx_flagbordercolor">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e102" source="lib_pdf_tsx" target="lib_pdf_tsx_shortaddr">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e103" source="lib_pdf_tsx" target="lib_pdf_tsx_formattimestamp">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e104" source="lib_pdf_tsx" target="lib_pdf_tsx_formatgap">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e105" source="lib_pdf_tsx" target="lib_pdf_tsx_chaintracingreport">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e106" source="lib_pdf_tsx_chaintracingreport" target="lib_pdf_tsx_shortaddr">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e107" source="lib_pdf_tsx_riskcolor" target="lib_pdf_tsx_flagbordercolor">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e108" source="lib_pdf_tsx_riskcolor" target="lib_pdf_tsx_shortaddr">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e109" source="lib_pdf_tsx_riskcolor" target="lib_pdf_tsx_formattimestamp">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e110" source="lib_pdf_tsx_riskcolor" target="lib_pdf_tsx_formatgap">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e111" source="lib_pdf_tsx_riskcolor" target="lib_pdf_tsx_chaintracingreport">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e112" source="lib_pdf_tsx_flagbordercolor" target="lib_pdf_tsx_riskcolor">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e113" source="lib_pdf_tsx_flagbordercolor" target="lib_pdf_tsx_shortaddr">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e114" source="lib_pdf_tsx_flagbordercolor" target="lib_pdf_tsx_formattimestamp">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e115" source="lib_pdf_tsx_flagbordercolor" target="lib_pdf_tsx_formatgap">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e116" source="lib_pdf_tsx_flagbordercolor" target="lib_pdf_tsx_chaintracingreport">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e117" source="lib_pdf_tsx_shortaddr" target="lib_pdf_tsx_riskcolor">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e118" source="lib_pdf_tsx_shortaddr" target="lib_pdf_tsx_flagbordercolor">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e119" source="lib_pdf_tsx_shortaddr" target="lib_pdf_tsx_formattimestamp">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e120" source="lib_pdf_tsx_shortaddr" target="lib_pdf_tsx_formatgap">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e121" source="lib_pdf_tsx_shortaddr" target="lib_pdf_tsx_chaintracingreport">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e122" source="lib_pdf_tsx_formattimestamp" target="lib_pdf_tsx_riskcolor">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e123" source="lib_pdf_tsx_formattimestamp" target="lib_pdf_tsx_flagbordercolor">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e124" source="lib_pdf_tsx_formattimestamp" target="lib_pdf_tsx_shortaddr">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e125" source="lib_pdf_tsx_formattimestamp" target="lib_pdf_tsx_formatgap">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e126" source="lib_pdf_tsx_formattimestamp" target="lib_pdf_tsx_chaintracingreport">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e127" source="lib_pdf_tsx_formatgap" target="lib_pdf_tsx_riskcolor">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e128" source="lib_pdf_tsx_formatgap" target="lib_pdf_tsx_flagbordercolor">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e129" source="lib_pdf_tsx_formatgap" target="lib_pdf_tsx_shortaddr">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e130" source="lib_pdf_tsx_formatgap" target="lib_pdf_tsx_formattimestamp">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e131" source="lib_pdf_tsx_formatgap" target="lib_pdf_tsx_chaintracingreport">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e132" source="lib_pdf_tsx_chaintracingreport" target="lib_pdf_tsx_riskcolor">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e133" source="lib_pdf_tsx_chaintracingreport" target="lib_pdf_tsx_flagbordercolor">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e134" source="lib_pdf_tsx_chaintracingreport" target="lib_pdf_tsx_shortaddr">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e135" source="lib_pdf_tsx_chaintracingreport" target="lib_pdf_tsx_formattimestamp">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e136" source="lib_pdf_tsx_chaintracingreport" target="lib_pdf_tsx_formatgap">
+      <data key="relation">uses</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.8</data>
+      <data key="weight">0.8</data>
+    </edge>
+    <edge id="e137" source="lib_supabase_server_ts" target="lib_supabase_server_ts_import_supabase_ssr_createserverclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e138" source="lib_supabase_server_ts" target="lib_supabase_server_ts_import_next_headers_cookies">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e139" source="lib_supabase_server_ts" target="lib_supabase_server_ts_createclient">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e140" source="lib_scam_db_ts" target="lib_scam_db_ts_import_supabase_supabase_js_createclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e141" source="lib_scam_db_ts" target="lib_scam_db_ts_getscamdbclient">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e142" source="lib_scam_db_ts" target="lib_scam_db_ts_normalizechain">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e143" source="lib_scam_db_ts" target="lib_scam_db_ts_lookupscamaddress">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e144" source="lib_scam_db_ts" target="lib_scam_db_ts_lookupscamaddressbatch">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e145" source="lib_scam_db_ts_lookupscamaddress" target="lib_scam_db_ts_normalizechain">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e146" source="lib_scam_db_ts_lookupscamaddress" target="lib_scam_db_ts_getscamdbclient">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e147" source="lib_scam_db_ts_lookupscamaddressbatch" target="lib_scam_db_ts_normalizechain">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e148" source="lib_scam_db_ts_lookupscamaddressbatch" target="lib_scam_db_ts_getscamdbclient">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e149" source="lib_origin_check_ts" target="lib_origin_check_ts_import_config_env">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e150" source="lib_origin_check_ts" target="lib_origin_check_ts_checkorigin">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e151" source="lib_logger_ts" target="lib_logger_ts_shouldlog">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e152" source="lib_logger_ts" target="lib_logger_ts_formattimestamp">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e153" source="lib_logger_ts" target="lib_logger_ts_formatlogentry">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e154" source="lib_logger_ts" target="lib_logger_ts_log">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e155" source="lib_logger_ts" target="lib_logger_ts_createrequestlogger">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e156" source="lib_logger_ts_log" target="lib_logger_ts_shouldlog">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e157" source="lib_logger_ts_log" target="lib_logger_ts_formatlogentry">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e158" source="lib_logger_ts_log" target="lib_logger_ts_formattimestamp">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e159" source="lib_supabase_browser_ts" target="lib_supabase_browser_ts_import_supabase_ssr_createbrowserclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e160" source="lib_supabase_browser_ts" target="lib_supabase_browser_ts_createclient">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e161" source="lib_config_ts" target="lib_config_ts_validateenv">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e162" source="lib_config_ts" target="lib_config_ts_baseurl">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e163" source="next_config_ts" target="next_config_ts_import_next_nextconfig">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e164" source="components_authbutton_tsx" target="components_authbutton_tsx_import_lib_supabase_browser_createclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e165" source="components_authbutton_tsx" target="components_authbutton_tsx_import_react_useeffect">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e166" source="components_authbutton_tsx" target="components_authbutton_tsx_import_react_usestate">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e167" source="components_authbutton_tsx" target="components_authbutton_tsx_import_next_navigation_userouter">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e168" source="components_authbutton_tsx" target="components_authbutton_tsx_handlesignout">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e169" source="components_header_tsx" target="components_header_tsx_import_authbutton_authbutton">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e170" source="components_header_tsx" target="components_header_tsx_import_next_link_link">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e171" source="components_header_tsx" target="components_header_tsx_header">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e172" source="next_env_d_ts" target="next_env_d_ts_import_next_types_routes_d_ts">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e173" source="scripts_ingest_ingest_ofac_ts" target="scripts_ingest_ingest_ofac_ts_import_undici_agent">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e174" source="scripts_ingest_ingest_ofac_ts" target="scripts_ingest_ingest_ofac_ts_import_undici_setglobaldispatcher">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e175" source="scripts_ingest_ingest_ofac_ts" target="scripts_ingest_ingest_ofac_ts_import_xml2js_parsestringpromise">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e176" source="scripts_ingest_ingest_ofac_ts" target="scripts_ingest_ingest_ofac_ts_import_supabase_supabase_js_createclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e177" source="scripts_ingest_ingest_ofac_ts" target="scripts_ingest_ingest_ofac_ts_getsupabaseclient">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e178" source="scripts_ingest_ingest_ofac_ts" target="scripts_ingest_ingest_ofac_ts_parsechain">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e179" source="scripts_ingest_ingest_ofac_ts" target="scripts_ingest_ingest_ofac_ts_fetchandparsexml">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e180" source="scripts_ingest_ingest_ofac_ts" target="scripts_ingest_ingest_ofac_ts_upsertbatch">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e181" source="scripts_ingest_ingest_ofac_ts" target="scripts_ingest_ingest_ofac_ts_main">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e182" source="scripts_ingest_ingest_ofac_ts_fetchandparsexml" target="scripts_ingest_ingest_ofac_ts_parsechain">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e183" source="scripts_ingest_ingest_ofac_ts_main" target="scripts_ingest_ingest_ofac_ts_getsupabaseclient">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e184" source="scripts_ingest_ingest_ofac_ts_main" target="scripts_ingest_ingest_ofac_ts_upsertbatch">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e185" source="scripts_ingest_ingest_ofac_ts_main" target="scripts_ingest_ingest_ofac_ts_fetchandparsexml">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e186" source="scripts_ingest_run_all_ts" target="scripts_ingest_run_all_ts_import_child_process_execsync">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e187" source="scripts_ingest_run_all_ts" target="scripts_ingest_run_all_ts_import_path_resolve">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e188" source="scripts_ingest_run_all_ts" target="scripts_ingest_run_all_ts_run">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e189" source="scripts_ingest_ingest_cryptoscamdb_ts" target="scripts_ingest_ingest_cryptoscamdb_ts_import_undici_agent">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e190" source="scripts_ingest_ingest_cryptoscamdb_ts" target="scripts_ingest_ingest_cryptoscamdb_ts_import_undici_setglobaldispatcher">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e191" source="scripts_ingest_ingest_cryptoscamdb_ts" target="scripts_ingest_ingest_cryptoscamdb_ts_import_supabase_supabase_js_createclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e192" source="scripts_ingest_ingest_cryptoscamdb_ts" target="scripts_ingest_ingest_cryptoscamdb_ts_getsupabaseclient">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e193" source="scripts_ingest_ingest_cryptoscamdb_ts" target="scripts_ingest_ingest_cryptoscamdb_ts_fetchaddresses">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e194" source="scripts_ingest_ingest_cryptoscamdb_ts" target="scripts_ingest_ingest_cryptoscamdb_ts_upsertbatch">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e195" source="scripts_ingest_ingest_cryptoscamdb_ts" target="scripts_ingest_ingest_cryptoscamdb_ts_main">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e196" source="scripts_ingest_ingest_cryptoscamdb_ts_main" target="scripts_ingest_ingest_cryptoscamdb_ts_getsupabaseclient">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e197" source="scripts_ingest_ingest_cryptoscamdb_ts_main" target="scripts_ingest_ingest_cryptoscamdb_ts_fetchaddresses">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e198" source="scripts_ingest_ingest_cryptoscamdb_ts_main" target="scripts_ingest_ingest_cryptoscamdb_ts_upsertbatch">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e199" source="app_signup_page_tsx" target="app_signup_page_tsx_import_react_usestate">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e200" source="app_signup_page_tsx" target="app_signup_page_tsx_import_next_link_link">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e201" source="app_signup_page_tsx" target="app_signup_page_tsx_import_next_navigation_userouter">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e202" source="app_signup_page_tsx" target="app_signup_page_tsx_import_lib_supabase_browser_createclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e203" source="app_signup_page_tsx" target="app_signup_page_tsx_handlesignup">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e204" source="app_signup_page_tsx" target="app_signup_page_tsx_handlegoogle">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e205" source="app_login_page_tsx" target="app_login_page_tsx_import_react_usestate">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e206" source="app_login_page_tsx" target="app_login_page_tsx_import_react_suspense">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e207" source="app_login_page_tsx" target="app_login_page_tsx_import_next_link_link">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e208" source="app_login_page_tsx" target="app_login_page_tsx_import_next_navigation_userouter">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e209" source="app_login_page_tsx" target="app_login_page_tsx_import_next_navigation_usesearchparams">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e210" source="app_login_page_tsx" target="app_login_page_tsx_import_lib_supabase_browser_createclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e211" source="app_login_page_tsx" target="app_login_page_tsx_handlelogin">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e212" source="app_login_page_tsx" target="app_login_page_tsx_handlegoogle">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e213" source="app_api_webhook_route_ts" target="app_api_webhook_route_ts_import_crypto_createhmac">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e214" source="app_api_webhook_route_ts" target="app_api_webhook_route_ts_import_crypto_timingsafeequal">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e215" source="app_api_webhook_route_ts" target="app_api_webhook_route_ts_import_lib_supabase_getadminclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e216" source="app_api_webhook_route_ts" target="app_api_webhook_route_ts_import_lib_logger_logger">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e217" source="app_api_webhook_route_ts" target="app_api_webhook_route_ts_import_lib_config_env">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e218" source="app_api_webhook_route_ts" target="app_api_webhook_route_ts_post">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e219" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_next_server_nextrequest">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e220" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_undici_agent">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e221" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_undici_setglobaldispatcher">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e222" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_supabase_getadminclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e223" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_tracer_continuetrace">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e224" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_tracer_detectbridges">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e225" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_tracer_detectdeepmixers">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e226" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_tracer_clusterwallets">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e227" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_tracer_analyzetimings">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e228" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_tracer_chain">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e229" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_tracer_hop">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e230" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_risk_scoreaddress">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e231" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_rate_limit_ratelimit">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e232" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_rate_limit_ratelimits">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e233" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_logger_logger">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e234" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_origin_check_checkorigin">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e235" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_auth_helpers_getuser">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e236" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_lib_config_env">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e237" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_import_crypto_randombytes">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e238" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_isvalidhoparray">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e239" source="app_api_checkout_route_ts" target="app_api_checkout_route_ts_post">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e240" source="app_api_checkout_route_ts_post" target="app_api_checkout_route_ts_isvalidhoparray">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e241" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_next_server_nextrequest">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e242" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_supabase_getadminclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e243" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_pdf_generatepdfbuffer">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e244" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_pdf_scamdbmatchentry">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e245" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_tracer_clusterwallets">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e246" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_tracer_analyzetimings">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e247" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_tracer_hop">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e248" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_tracer_chain">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e249" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_risk_riskflag">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e250" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_rate_limit_ratelimit">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e251" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_rate_limit_ratelimits">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e252" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_origin_check_checkorigin">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e253" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_import_lib_config">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e254" source="app_api_report_id_pdf_route_ts" target="app_api_report_id_pdf_route_ts_get">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e255" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_next_server_nextrequest">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e256" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_tracer_traceaddress">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e257" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_tracer_chain">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e258" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_risk_scoreaddress">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e259" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_rate_limit_ratelimit">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e260" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_rate_limit_ratelimits">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e261" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_chain_utils_supported_chains">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e262" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_chain_utils_address_patterns">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e263" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_chain_utils_address_hints">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e264" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_chain_utils_validateaddress">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e265" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_logger_logger">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e266" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_origin_check_checkorigin">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e267" source="app_api_trace_route_ts" target="app_api_trace_route_ts_import_lib_auth_helpers_getuser">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e268" source="app_api_trace_route_ts" target="app_api_trace_route_ts_post">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e269" source="app_layout_tsx" target="app_layout_tsx_import_next_metadata">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e270" source="app_layout_tsx" target="app_layout_tsx_import_next_font_google_geist">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e271" source="app_layout_tsx" target="app_layout_tsx_import_next_font_google_geist_mono">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e272" source="app_layout_tsx" target="app_layout_tsx_import_globals_css">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e273" source="app_layout_tsx" target="app_layout_tsx_import_components_header_header">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e274" source="app_layout_tsx" target="app_layout_tsx_rootlayout">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e275" source="app_dashboard_page_tsx" target="app_dashboard_page_tsx_import_lib_supabase_server_createclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e276" source="app_dashboard_page_tsx" target="app_dashboard_page_tsx_import_next_navigation_redirect">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e277" source="app_dashboard_page_tsx" target="app_dashboard_page_tsx_import_next_link_link">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e278" source="app_page_tsx" target="app_page_tsx_import_react_usestate">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e279" source="app_page_tsx" target="app_page_tsx_import_lib_tracer_chain">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e280" source="app_page_tsx" target="app_page_tsx_import_lib_risk_riskflag">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e281" source="app_page_tsx" target="app_page_tsx_import_lib_chain_utils_chain_display_names">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e282" source="app_page_tsx" target="app_page_tsx_import_lib_chain_utils_address_placeholders">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e283" source="app_page_tsx" target="app_page_tsx_import_lib_chain_utils_validateaddress">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e284" source="app_page_tsx" target="app_page_tsx_riskmeter">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e285" source="app_page_tsx" target="app_page_tsx_handleaddresschange">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e286" source="app_page_tsx" target="app_page_tsx_handlechainchange">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e287" source="app_page_tsx" target="app_page_tsx_handletrace">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e288" source="app_page_tsx" target="app_page_tsx_handlebuytier">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e289" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_import_react_usestate">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e290" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_import_next_link_link">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e291" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_import_lib_tracer_hop">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e292" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_import_lib_tracer_chain">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e293" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_import_lib_risk_riskflag">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e294" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_import_lib_chain_utils_getexploreraddressurl">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e295" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_import_lib_chain_utils_shortaddr">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e296" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_riskcolor">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e297" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_riskbg">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e298" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_risklabel">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e299" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_flagborder">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e300" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_flagbadge">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e301" source="app_report_id_report_view_tsx" target="app_report_id_report_view_tsx_reportview">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e302" source="app_report_id_report_view_tsx_reportview" target="app_report_id_report_view_tsx_riskbg">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e303" source="app_report_id_report_view_tsx_reportview" target="app_report_id_report_view_tsx_risklabel">
+      <data key="relation">calls</data>
+      <data key="confidence">Inferred</data>
+      <data key="confidence_score">0.7</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e304" source="app_report_id_page_tsx" target="app_report_id_page_tsx_import_next_navigation_notfound">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e305" source="app_report_id_page_tsx" target="app_report_id_page_tsx_import_lib_supabase_getadminclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e306" source="app_report_id_page_tsx" target="app_report_id_page_tsx_import_lib_auth_helpers_createclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e307" source="app_report_id_page_tsx" target="app_report_id_page_tsx_import_next_headers_cookies">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e308" source="app_report_id_page_tsx" target="app_report_id_page_tsx_import_next_server_nextrequest">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e309" source="app_report_id_page_tsx" target="app_report_id_page_tsx_import_lib_tracer_hop">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e310" source="app_report_id_page_tsx" target="app_report_id_page_tsx_import_lib_risk_riskflag">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e311" source="app_report_id_page_tsx" target="app_report_id_page_tsx_import_report_view_reportview">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e312" source="app_auth_callback_route_ts" target="app_auth_callback_route_ts_import_next_server_nextrequest">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e313" source="app_auth_callback_route_ts" target="app_auth_callback_route_ts_import_next_server_nextresponse">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e314" source="app_auth_callback_route_ts" target="app_auth_callback_route_ts_import_lib_supabase_server_createclient">
+      <data key="relation">imports</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+    <edge id="e315" source="app_auth_callback_route_ts" target="app_auth_callback_route_ts_get">
+      <data key="relation">defines</data>
+      <data key="confidence">Extracted</data>
+      <data key="confidence_score">1</data>
+      <data key="weight">1</data>
+    </edge>
+  </graph>
+</graphml>

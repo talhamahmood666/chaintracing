@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>POST() — Community 1</title>
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0f0f1a; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; display: flex; height: 100vh; overflow: hidden; }
+#sidebar { width: 320px; min-width: 320px; background: #1a1a2e; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; border-right: 1px solid #2a2a4a; }
+#sidebar h2 { font-size: 18px; color: #F28E2B; margin-bottom: 4px; }
+#sidebar h3 { font-size: 14px; color: #9ca3af; margin-bottom: 8px; }
+.nav-link { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 6px 8px; border-radius: 4px; color: #e0e0e0; text-decoration: none; }
+.nav-link:hover { background: #2a2a4a; }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+#graph-container { flex: 1; position: relative; }
+#search { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #3a3a5a; background: #0f0f1a; color: #e0e0e0; font-size: 14px; }
+#search:focus { outline: none; border-color: #F28E2B; }
+#info-panel { background: #0f0f1a; border-radius: 8px; padding: 12px; font-size: 13px; line-height: 1.6; min-height: 100px; }
+#info-panel .prop { color: #9ca3af; }
+#info-panel .val { color: #e0e0e0; }
+</style>
+</head>
+<body>
+<div id="sidebar">
+    <div>
+        <h2>POST()</h2>
+        <p style="font-size:12px;color:#666;">15 nodes · Community 1</p>
+    </div>
+    <input id="search" type="text" placeholder="Search nodes…" />
+    <div>
+        <h3>Node Info</h3>
+        <div id="info-panel"><i style="color:#666">Click a node to see details</i></div>
+    </div>
+    <div>
+        <h3>Navigation</h3>
+        <a href="index.html" class="nav-link" style="font-weight:bold;">← Overview</a>
+    </div>
+</div>
+<div id="graph-container"></div>
+<script>
+(function() {
+    var nodesData = [{id:"app_api_trace_route_ts",label:"route",title:"route\nType: File\nFile: ./app/api/trace/route.ts\nDegree: 14",color:"#F28E2B",size:23.0},{id:"app_api_trace_route_ts_import_next_server_nextrequest",label:"next/server/NextRequest",title:"next/server/NextRequest\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_tracer_traceaddress",label:"@/lib/tracer/traceAddress",title:"@/lib/tracer/traceAddress\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_tracer_chain",label:"@/lib/tracer/Chain",title:"@/lib/tracer/Chain\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_risk_scoreaddress",label:"@/lib/risk/scoreAddress",title:"@/lib/risk/scoreAddress\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_rate_limit_ratelimit",label:"@/lib/rate-limit/rateLimit",title:"@/lib/rate-limit/rateLimit\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_rate_limit_ratelimits",label:"@/lib/rate-limit/rateLimits",title:"@/lib/rate-limit/rateLimits\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_chain_utils_supported_chains",label:"@/lib/chain-utils/SUPPORTED_CHAINS",title:"@/lib/chain-utils/SUPPORTED_CHAINS\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_chain_utils_address_patterns",label:"@/lib/chain-utils/ADDRESS_PATTERNS",title:"@/lib/chain-utils/ADDRESS_PATTERNS\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_chain_utils_address_hints",label:"@/lib/chain-utils/ADDRESS_HINTS",title:"@/lib/chain-utils/ADDRESS_HINTS\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_chain_utils_validateaddress",label:"@/lib/chain-utils/validateAddress",title:"@/lib/chain-utils/validateAddress\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_logger_logger",label:"@/lib/logger/logger",title:"@/lib/logger/logger\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_origin_check_checkorigin",label:"@/lib/origin-check/checkOrigin",title:"@/lib/origin-check/checkOrigin\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_import_lib_auth_helpers_getuser",label:"@/lib/auth-helpers/getUser",title:"@/lib/auth-helpers/getUser\nType: Module\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0},{id:"app_api_trace_route_ts_post",label:"POST()",title:"POST()\nType: Function\nFile: ./app/api/trace/route.ts\nDegree: 1",color:"#F28E2B",size:12.0}];
+    var edgesData = [{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_next_server_nextrequest",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_next_server_nextrequest\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_tracer_traceaddress",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_tracer_traceaddress\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_tracer_chain",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_tracer_chain\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_risk_scoreaddress",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_risk_scoreaddress\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_rate_limit_ratelimit",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_rate_limit_ratelimit\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_rate_limit_ratelimits",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_rate_limit_ratelimits\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_chain_utils_supported_chains",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_chain_utils_supported_chains\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_chain_utils_address_patterns",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_chain_utils_address_patterns\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_chain_utils_address_hints",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_chain_utils_address_hints\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_chain_utils_validateaddress",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_chain_utils_validateaddress\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_logger_logger",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_logger_logger\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_origin_check_checkorigin",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_origin_check_checkorigin\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_import_lib_auth_helpers_getuser",label:"imports",dashes:false,title:"imports: app_api_trace_route_ts → app_api_trace_route_ts_import_lib_auth_helpers_getuser\nConfidence: Extracted"},{from:"app_api_trace_route_ts",to:"app_api_trace_route_ts_post",label:"defines",dashes:false,title:"defines: app_api_trace_route_ts → app_api_trace_route_ts_post\nConfidence: Extracted"}];
+    var container = document.getElementById('graph-container');
+    var nodes = new vis.DataSet(nodesData);
+    var edges = new vis.DataSet(edgesData);
+    var options = {
+        physics: {solver:'forceAtlas2Based',forceAtlas2Based:{gravitationalConstant:-50,centralGravity:0.01,springLength:120,springConstant:0.08,damping:0.4,avoidOverlap:0.5},stabilization:{iterations:200}},
+        nodes: { shape: 'dot', font: { color: '#e0e0e0', size: 12 }, borderWidth: 2 },
+        edges: { color: { color: '#4a4a6a', highlight: '#F28E2B', hover: '#F28E2B' }, font: { color: '#888', size: 10 }, arrows: { to: { enabled: false } }, smooth: { type: 'continuous' } },
+        interaction: { hover: true, tooltipDelay: 200, zoomView: true, dragView: true }
+    };
+    var network = new vis.Network(container, { nodes: nodes, edges: edges }, options);
+    network.on('stabilizationIterationsDone', function() { network.setOptions({ physics: { enabled: false } }); });
+    network.on('click', function(params) {
+        var panel = document.getElementById('info-panel');
+        if (params.nodes.length > 0) {
+            var node = nodes.get(params.nodes[0]);
+            if (node) {
+                panel.innerHTML = '<div><span class="prop">Label:</span> <span class="val">' + node.label + '</span></div><div><span class="prop">ID:</span> <span class="val">' + node.id + '</span></div>';
+                network.focus(params.nodes[0], { scale: 1.2, animation: true });
+            }
+        }
+    });
+    var searchEl = document.getElementById('search');
+    var sTimer = null;
+    searchEl.addEventListener('input', function() {
+        clearTimeout(sTimer);
+        sTimer = setTimeout(function() {
+            var term = searchEl.value.toLowerCase();
+            var updates = [];
+            nodes.forEach(function(n) {
+                var h = term && !n.label.toLowerCase().includes(term);
+                if (n.hidden !== h) { updates.push({ id: n.id, hidden: h }); }
+            });
+            if (updates.length > 0) { nodes.update(updates); }
+        }, 200);
+    });
+})();
+</script>
+</body>
+</html>
