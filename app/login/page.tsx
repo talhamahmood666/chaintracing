@@ -101,6 +101,11 @@ function LoginForm() {
                 onFocus={e => (e.target.style.borderColor = 'rgba(0,217,255,0.4)')}
                 onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')} />
             </div>
+            <div className="text-right">
+              <Link href="/forgot-password" className="text-xs font-medium" style={{ color: '#00D9FF' }}>
+                Forgot password?
+              </Link>
+            </div>
             <button type="submit" disabled={loading}
               className="w-full py-2.5 rounded-xl font-bold text-sm transition-all duration-200"
               style={{ background: 'linear-gradient(135deg, #00D9FF, #0099BB)', color: '#0A1628', opacity: loading ? 0.6 : 1 }}>
