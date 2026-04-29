@@ -128,13 +128,7 @@ export default function PricingPage() {
 
           {/* DEEP TRACE */}
           <div className="rounded-2xl p-6 flex flex-col relative" style={{ background: "rgba(10,22,40,0.85)", border: "2px solid #FFA500", boxShadow: "0 0 32px rgba(255,165,0,0.15)" }}>
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest whitespace-nowrap"
-                style={{ background: "linear-gradient(135deg, #FFA500, #CC8800)", color: "#0A1628" }}>
-                Most Popular
-              </span>
-            </div>
-            <div className="mb-5 mt-2">
+            <div className="mb-5">
               <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#FFA500" }}>Deep Trace</p>
               <div className="flex items-baseline gap-1 mb-1">
                 <span className="text-4xl font-black font-mono" style={{ color: "#FFA500" }}>$29.99</span>
@@ -163,41 +157,27 @@ export default function PricingPage() {
             </Link>
           </div>
 
-          {/* PRO / AGENCY */}
-          <div className="glass rounded-2xl p-6 flex flex-col relative" style={{ border: "1px solid rgba(155,89,182,0.4)" }}>
+          {/* FOR LAW FIRMS */}
+          <div className="glass rounded-2xl p-6 flex flex-col relative" style={{ border: "1px solid rgba(16,185,129,0.4)" }}>
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
               <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest whitespace-nowrap"
-                style={{ background: "rgba(155,89,182,0.2)", color: "#9B59B6", border: "1px solid rgba(155,89,182,0.4)" }}>
-                Coming Soon
+                style={{ background: "rgba(16,185,129,0.2)", color: "#10b981", border: "1px solid rgba(16,185,129,0.4)" }}>
+                B2B
               </span>
             </div>
             <div className="mb-5 mt-2">
-              <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#9B59B6" }}>Pro / Agency</p>
+              <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#10b981" }}>For Law Firms</p>
               <div className="flex items-baseline gap-1 mb-1">
-                <span className="text-4xl font-black font-mono" style={{ color: "#9B59B6" }}>$199</span>
-                <span className="text-sm" style={{ color: "var(--text-muted)" }}>/mo</span>
+                <span className="text-xl font-black font-mono" style={{ color: "#10b981" }}>Volume &amp; Retainer Pricing</span>
               </div>
-              <p className="text-xs" style={{ color: "var(--text-muted)" }}>For investigators, PIs, compliance teams</p>
+              <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>Dedicated seats, SLA guarantees, and case management integration. Contact us for custom pricing.</p>
             </div>
-            <ul className="space-y-2 mb-6 flex-1 text-sm">
-              {[
-                "50 Deep Traces per month",
-                "API access",
-                "Priority email support",
-                "Custom branding on reports",
-                "Bulk address lookups",
-              ].map(f => (
-                <li key={f} className="flex items-start gap-2">
-                  <span style={{ color: "#9B59B6", flexShrink: 0 }}>✓</span>
-                  <span style={{ color: "var(--text-secondary)" }}>{f}</span>
-                </li>
-              ))}
-            </ul>
-            <a href="mailto:support@chaintracing.org"
+            <div className="flex-1" />
+            <Link href="/services"
               className="block w-full py-2.5 rounded-xl font-bold text-sm text-center transition-all duration-200"
-              style={{ background: "rgba(155,89,182,0.15)", border: "1px solid rgba(155,89,182,0.4)", color: "#9B59B6" }}>
-              Contact Sales
-            </a>
+              style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.4)", color: "#10b981" }}>
+              Talk to Sales
+            </Link>
           </div>
         </div>
 

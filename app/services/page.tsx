@@ -35,7 +35,7 @@ const TIERS = [
     name: "Silver",
     price: "$899",
     tagline: "UTXO Trace + Exchange Identification",
-    popular: true,
+    popular: false,
     turnaround: "5 business days",
     bestFor: "Losses $10,000 to $100,000",
     features: [
@@ -129,6 +129,10 @@ export default function ServicesPage() {
 
       {/* ── Tier cards ── */}
       <section className="max-w-6xl mx-auto px-4 pb-20">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-black mb-3" style={{ color: "#f8fafc" }}>On-Demand Blockchain Intelligence</h2>
+          <p style={{ color: "#94a3b8" }}>Trusted by law firms, insurers, and crypto forensics teams for chain-of-custody analysis and wallet attribution.</p>
+        </div>
         <div className="grid md:grid-cols-3 gap-6">
           {TIERS.map(tier => (
             <div key={tier.id} className="rounded-2xl p-6 flex flex-col relative"
@@ -174,6 +178,41 @@ export default function ServicesPage() {
             </div>
           ))}
         </div>
+
+        {/* ── Firm Retainer ── */}
+        <div className="mt-8 max-w-lg mx-auto rounded-2xl p-6 flex flex-col relative"
+          style={{ background: "rgba(16,185,129,0.06)", border: "1px solid rgba(16,185,129,0.35)" }}>
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+            style={{ background: "#10b981", color: "#0a0e1a" }}>
+            Most Popular
+          </div>
+          <div className="mb-4">
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#10b981" }}>Firm Retainer</span>
+            <div className="text-4xl font-black mt-1 mb-0.5" style={{ color: "#f8fafc" }}>$2,499<span className="text-lg font-semibold" style={{ color: "#94a3b8" }}>/month</span></div>
+            <p className="text-sm font-semibold" style={{ color: "#94a3b8" }}>Monthly retainer for law firms &amp; compliance teams</p>
+          </div>
+          <ul className="space-y-2.5 mb-6 flex-1">
+            {[
+              "10 on-chain investigations/month",
+              "Priority queue",
+              "Dedicated Slack channel",
+              "Case-ready PDF reports",
+              "Multi-chain coverage (EVM/Solana/BTC/TRON)",
+              "3-seat team access",
+              "Monthly retrospective call",
+            ].map(f => (
+              <li key={f} className="flex gap-2 text-sm" style={{ color: "#cbd5e1" }}>
+                <span style={{ color: "#10b981", flexShrink: 0 }}>✓</span>
+                {f}
+              </li>
+            ))}
+          </ul>
+          <a href="mailto:support@chaintracing.org"
+            className="block text-center py-3 rounded-xl font-bold text-sm transition-all"
+            style={{ background: "rgba(16,185,129,0.22)", border: "1px solid rgba(16,185,129,0.66)", color: "#10b981" }}>
+            Contact Sales
+          </a>
+        </div>
       </section>
 
       {/* ── Why ChainTracing ── */}
@@ -212,6 +251,17 @@ export default function ServicesPage() {
             style={{ color: "#00D9FF", textDecoration: "underline" }}>
             View sample forensic report →
           </Link>
+          <div className="mt-4 flex flex-col gap-2">
+            <Link href="/khawar-report" className="text-sm font-semibold" style={{ color: "#00D9FF", textDecoration: "underline" }}>
+              Khawar Wallet Trace Report →
+            </Link>
+            <Link href="/faisar-report" className="text-sm font-semibold" style={{ color: "#00D9FF", textDecoration: "underline" }}>
+              Faisar Wallet Trace Report →
+            </Link>
+            <Link href="/reports/rave-2026-04" className="text-sm font-semibold" style={{ color: "#00D9FF", textDecoration: "underline" }}>
+              RAVE Token Cluster Report →
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -167,10 +167,6 @@ export default function PricingTiers({
 
       {/* QUICK SCAN */}
       <div className="glass rounded-2xl p-6 relative" style={{ border: '2px solid #00D9FF', boxShadow: '0 0 30px rgba(0,217,255,0.15)' }}>
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest whitespace-nowrap"
-            style={{ background: '#00D9FF', color: '#0A1628' }}>Most Popular</span>
-        </div>
         <div className="mb-5">
           <h3 className="text-xl font-black mb-1" style={{ color: '#00D9FF' }}>Quick Scan</h3>
           <div className="flex items-baseline gap-1">
