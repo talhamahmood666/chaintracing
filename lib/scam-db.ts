@@ -31,7 +31,7 @@ function isEvmChain(chain: string): boolean {
   return EVM_CHAINS.has(chain);
 }
 
-function normalizeScamAddress(address: string, chain: string): string {
+export function normalizeScamAddress(address: string, chain: string): string {
   const c = normalizeChain(chain);
   return (c === "solana" || c === "tron" || c === "btc") ? address : address.toLowerCase();
 }

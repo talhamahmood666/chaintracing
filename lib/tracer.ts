@@ -3,7 +3,7 @@ import bridgeContracts from "@/data/bridge-contracts.json";
 import mixerAddresses from "@/data/mixer-addresses.json";
 import { EVM_CHAIN_CONFIG, getExplorerTxUrl, type EvmChainConfig } from "@/lib/chain-utils";
 import { env } from "./config";
-import { lookupScamAddressBatch, type ScamMatch } from "./scam-db";
+import { lookupScamAddressBatch, normalizeScamAddress, type ScamMatch } from "./scam-db";
 import { getTraceCache, setTraceCache } from "./trace-cache";
 
 export type { ScamMatch };
@@ -2058,8 +2058,8 @@ async function annotateHopsWithScam(hops: Hop[], chain: Chain): Promise<Hop[]> {
   const matchMap = await lookupScamAddressBatch(addresses, chain);
   if (matchMap.size === 0) return hops;
   return hops.map(h => {
-    const fromMatches = matchMap.get(h.from.toLowerCase()) ?? [];
-    const toMatches = matchMap.get(h.to.toLowerCase()) ?? [];
+    const fromMatches = matchMap.get(normalizeScamAddress(h.from, chain)) ?? [];
+    const toMatches = matchMap.get(normalizeScamAddress(h.to, chain)) ?? [];
     const allMatches = [...fromMatches, ...toMatches];
     return allMatches.length > 0 ? { ...h, scamMatches: allMatches } : h;
   });
