@@ -1,0 +1,32 @@
+name: Graphify rebuild
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  rebuild-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install graphify
+        run: pip install graphifyy
+
+      - name: Rebuild graph (code-only, no LLM)
+        run: graphify update . || graphify .
+
+      - name: Commit updated graph
+        run: |
+          git config user.name "graphify-bot"
+          git config user.email "graphify-bot@users.noreply.github.com"
+          git add graphify-out/
+          git diff --staged --quiet || git commit -m "chore: auto-update graphify graph"
+          git push
