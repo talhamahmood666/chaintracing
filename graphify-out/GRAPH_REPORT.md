@@ -1,12 +1,12 @@
 # Graph Report - .  (2026-04-29)
 
 ## Corpus Check
-- 125 files · ~111,363 words
+- 130 files · ~111,573 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 578 nodes · 561 edges · 263 communities detected
-- Extraction: 63% EXTRACTED · 37% INFERRED · 0% AMBIGUOUS · INFERRED: 205 edges (avg confidence: 0.78)
+- 585 nodes · 563 edges · 268 communities detected
+- Extraction: 64% EXTRACTED · 36% INFERRED · 0% AMBIGUOUS · INFERRED: 205 edges (avg confidence: 0.78)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -273,6 +273,11 @@
 - [[_COMMUNITY_Community 260|Community 260]]
 - [[_COMMUNITY_Community 261|Community 261]]
 - [[_COMMUNITY_Community 262|Community 262]]
+- [[_COMMUNITY_Community 263|Community 263]]
+- [[_COMMUNITY_Community 264|Community 264]]
+- [[_COMMUNITY_Community 265|Community 265]]
+- [[_COMMUNITY_Community 266|Community 266]]
+- [[_COMMUNITY_Community 267|Community 267]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `POST()` - 43 edges
@@ -293,28 +298,28 @@
   lib/tracer.ts → app/api/trace/route.ts
 - `proxy()` --calls--> `set()`  [INFERRED]
   proxy.ts → app/report-scammer/page.tsx
-- `createClient()` --calls--> `handleSignOut()`  [INFERRED]
-  lib/supabase-browser.ts → components/AuthButton.tsx
-- `log()` --calls--> `main()`  [INFERRED]
-  lib/logger.ts → scripts/ingest/ingest-scamsniffer-domains.ts
+- `handleSignOut()` --calls--> `createClient()`  [INFERRED]
+  components/AuthButton.tsx → lib/supabase-browser.ts
+- `main()` --calls--> `log()`  [INFERRED]
+  scripts/ingest/ingest-scamsniffer-domains.ts → lib/logger.ts
 
 ## Communities
 
 ### Community 0 - "Community 0"
 Cohesion: 0.09
-Nodes (41): validateEnv(), formatLogEntry(), formatTimestamp(), log(), shouldLog(), set(), runAll(), _alchemyBscGetLogs() (+33 more)
+Nodes (39): validateEnv(), formatLogEntry(), formatTimestamp(), log(), shouldLog(), set(), runAll(), _alchemyBscGetLogs() (+31 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.07
-Nodes (24): getCachedAdmin(), isAdminById(), requireAdmin(), setCachedAdmin(), AdminLayout(), checkOrigin(), generateMetadata(), getComments() (+16 more)
+Nodes (26): getCachedAdmin(), isAdminById(), isAdminUser(), requireAdmin(), setCachedAdmin(), AdminLayout(), generateMetadata(), getComments() (+18 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.07
-Nodes (15): isAdminUser(), createClient(), getUser(), requireUser(), handleSignOut(), handleSubmit(), handleSubmit(), handleChangePassword() (+7 more)
+Nodes (14): createClient(), getUser(), requireUser(), handleSignOut(), handleSubmit(), handleSubmit(), handleChangePassword(), handleSignOut() (+6 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.09
-Nodes (8): validateAddress(), getTierPrice(), isFirstReportUser(), isValidHopArray(), makeCaseId(), normalizeChain(), POST(), validateAddress()
+Cohesion: 0.08
+Nodes (9): validateAddress(), checkOrigin(), getTierPrice(), isFirstReportUser(), isValidHopArray(), makeCaseId(), normalizeChain(), POST() (+1 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.16
@@ -333,16 +338,16 @@ Cohesion: 0.38
 Nodes (9): buildSummary(), getWalletFirstSeen(), scoreAddress(), getScamDbClient(), isEvmChain(), lookupScamAddress(), lookupScamAddressBatch(), normalizeChain() (+1 more)
 
 ### Community 8 - "Community 8"
+Cohesion: 0.36
+Nodes (2): handlePrint(), shortAddr()
+
+### Community 9 - "Community 9"
 Cohesion: 0.32
 Nodes (3): e(), GoogleIcon(), handleGoogle()
 
-### Community 9 - "Community 9"
+### Community 10 - "Community 10"
 Cohesion: 0.29
 Nodes (2): filterUrl(), sortLink()
-
-### Community 10 - "Community 10"
-Cohesion: 0.36
-Nodes (2): handlePrint(), shortAddr()
 
 ### Community 11 - "Community 11"
 Cohesion: 0.6
@@ -574,15 +579,15 @@ Nodes (0):
 
 ### Community 68 - "Community 68"
 Cohesion: 1.0
-Nodes (1): @supabase/ssr/createServerClient
+Nodes (0): 
 
 ### Community 69 - "Community 69"
 Cohesion: 1.0
-Nodes (1): next/server/NextResponse
+Nodes (0): 
 
 ### Community 70 - "Community 70"
 Cohesion: 1.0
-Nodes (1): next/server/NextRequest
+Nodes (0): 
 
 ### Community 71 - "Community 71"
 Cohesion: 1.0
@@ -590,19 +595,19 @@ Nodes (0):
 
 ### Community 72 - "Community 72"
 Cohesion: 1.0
-Nodes (1): ./tracer/Chain
+Nodes (0): 
 
 ### Community 73 - "Community 73"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @supabase/ssr/createServerClient
 
 ### Community 74 - "Community 74"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): next/server/NextResponse
 
 ### Community 75 - "Community 75"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): next/server/NextRequest
 
 ### Community 76 - "Community 76"
 Cohesion: 1.0
@@ -610,7 +615,7 @@ Nodes (0):
 
 ### Community 77 - "Community 77"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): ./tracer/Chain
 
 ### Community 78 - "Community 78"
 Cohesion: 1.0
@@ -622,215 +627,215 @@ Nodes (0):
 
 ### Community 80 - "Community 80"
 Cohesion: 1.0
-Nodes (1): @supabase/ssr/createServerClient
+Nodes (0): 
 
 ### Community 81 - "Community 81"
 Cohesion: 1.0
-Nodes (1): next/server/NextResponse
+Nodes (0): 
 
 ### Community 82 - "Community 82"
 Cohesion: 1.0
-Nodes (1): next/server/NextRequest
+Nodes (0): 
 
 ### Community 83 - "Community 83"
 Cohesion: 1.0
-Nodes (1): next/headers/cookies
+Nodes (0): 
 
 ### Community 84 - "Community 84"
 Cohesion: 1.0
-Nodes (1): @supabase/supabase-js/createClient
+Nodes (0): 
 
 ### Community 85 - "Community 85"
 Cohesion: 1.0
-Nodes (1): ./config/env
+Nodes (1): @supabase/ssr/createServerClient
 
 ### Community 86 - "Community 86"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): next/server/NextResponse
 
 ### Community 87 - "Community 87"
 Cohesion: 1.0
-Nodes (1): @/data/exchange-wallets.json/exchangeWallets
+Nodes (1): next/server/NextRequest
 
 ### Community 88 - "Community 88"
 Cohesion: 1.0
-Nodes (1): @/data/bridge-contracts.json/bridgeContracts
+Nodes (1): next/headers/cookies
 
 ### Community 89 - "Community 89"
 Cohesion: 1.0
-Nodes (1): @/data/mixer-addresses.json/mixerAddresses
+Nodes (1): @supabase/supabase-js/createClient
 
 ### Community 90 - "Community 90"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/EVM_CHAIN_CONFIG
+Nodes (1): ./config/env
 
 ### Community 91 - "Community 91"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/getExplorerTxUrl
+Nodes (0): 
 
 ### Community 92 - "Community 92"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/EvmChainConfig
+Nodes (1): @/data/exchange-wallets.json/exchangeWallets
 
 ### Community 93 - "Community 93"
 Cohesion: 1.0
-Nodes (1): ./config/env
+Nodes (1): @/data/bridge-contracts.json/bridgeContracts
 
 ### Community 94 - "Community 94"
 Cohesion: 1.0
-Nodes (1): ./scam-db/lookupScamAddressBatch
+Nodes (1): @/data/mixer-addresses.json/mixerAddresses
 
 ### Community 95 - "Community 95"
 Cohesion: 1.0
-Nodes (1): ./scam-db/ScamMatch
+Nodes (1): @/lib/chain-utils/EVM_CHAIN_CONFIG
 
 ### Community 96 - "Community 96"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/chain-utils/getExplorerTxUrl
 
 ### Community 97 - "Community 97"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/chain-utils/EvmChainConfig
 
 ### Community 98 - "Community 98"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): ./config/env
 
 ### Community 99 - "Community 99"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): ./scam-db/lookupScamAddressBatch
 
 ### Community 100 - "Community 100"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): ./scam-db/ScamMatch
 
 ### Community 101 - "Community 101"
 Cohesion: 1.0
-Nodes (1): @upstash/ratelimit/Ratelimit
+Nodes (0): 
 
 ### Community 102 - "Community 102"
 Cohesion: 1.0
-Nodes (1): @upstash/redis/Redis
+Nodes (0): 
 
 ### Community 103 - "Community 103"
 Cohesion: 1.0
-Nodes (1): next/server/NextRequest
+Nodes (0): 
 
 ### Community 104 - "Community 104"
 Cohesion: 1.0
-Nodes (1): next/server/NextResponse
+Nodes (0): 
 
 ### Community 105 - "Community 105"
 Cohesion: 1.0
-Nodes (1): ./logger/logger
+Nodes (0): 
 
 ### Community 106 - "Community 106"
 Cohesion: 1.0
-Nodes (1): ./tracer/Hop
+Nodes (1): @upstash/ratelimit/Ratelimit
 
 ### Community 107 - "Community 107"
 Cohesion: 1.0
-Nodes (1): ./tracer/Chain
+Nodes (1): @upstash/redis/Redis
 
 ### Community 108 - "Community 108"
 Cohesion: 1.0
-Nodes (1): @/data/exchange-wallets.json/exchangeWallets
+Nodes (1): next/server/NextRequest
 
 ### Community 109 - "Community 109"
 Cohesion: 1.0
-Nodes (1): ./config/env
+Nodes (1): next/server/NextResponse
 
 ### Community 110 - "Community 110"
 Cohesion: 1.0
-Nodes (1): ./scam-db/lookupScamAddress
+Nodes (1): ./logger/logger
 
 ### Community 111 - "Community 111"
 Cohesion: 1.0
-Nodes (1): @react-pdf/renderer/Document
+Nodes (1): ./tracer/Hop
 
 ### Community 112 - "Community 112"
 Cohesion: 1.0
-Nodes (1): @react-pdf/renderer/Page
+Nodes (1): ./tracer/Chain
 
 ### Community 113 - "Community 113"
 Cohesion: 1.0
-Nodes (1): @react-pdf/renderer/Text
+Nodes (1): @/data/exchange-wallets.json/exchangeWallets
 
 ### Community 114 - "Community 114"
 Cohesion: 1.0
-Nodes (1): @react-pdf/renderer/View
+Nodes (1): ./config/env
 
 ### Community 115 - "Community 115"
 Cohesion: 1.0
-Nodes (1): @react-pdf/renderer/StyleSheet
+Nodes (1): ./scam-db/lookupScamAddress
 
 ### Community 116 - "Community 116"
 Cohesion: 1.0
-Nodes (1): @react-pdf/renderer/Link
+Nodes (1): @react-pdf/renderer/Document
 
 ### Community 117 - "Community 117"
 Cohesion: 1.0
-Nodes (1): @react-pdf/renderer/pdf
+Nodes (1): @react-pdf/renderer/Page
 
 ### Community 118 - "Community 118"
 Cohesion: 1.0
-Nodes (1): ./tracer/Hop
+Nodes (1): @react-pdf/renderer/Text
 
 ### Community 119 - "Community 119"
 Cohesion: 1.0
-Nodes (1): ./tracer/Chain
+Nodes (1): @react-pdf/renderer/View
 
 ### Community 120 - "Community 120"
 Cohesion: 1.0
-Nodes (1): ./tracer/ClusterResult
+Nodes (1): @react-pdf/renderer/StyleSheet
 
 ### Community 121 - "Community 121"
 Cohesion: 1.0
-Nodes (1): ./tracer/TimingFlag
+Nodes (1): @react-pdf/renderer/Link
 
 ### Community 122 - "Community 122"
 Cohesion: 1.0
-Nodes (1): ./risk/RiskFlag
+Nodes (1): @react-pdf/renderer/pdf
 
 ### Community 123 - "Community 123"
 Cohesion: 1.0
-Nodes (1): @supabase/ssr/createServerClient
+Nodes (1): ./tracer/Hop
 
 ### Community 124 - "Community 124"
 Cohesion: 1.0
-Nodes (1): next/headers/cookies
+Nodes (1): ./tracer/Chain
 
 ### Community 125 - "Community 125"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): ./tracer/ClusterResult
 
 ### Community 126 - "Community 126"
 Cohesion: 1.0
-Nodes (1): @supabase/supabase-js/createClient
+Nodes (1): ./tracer/TimingFlag
 
 ### Community 127 - "Community 127"
 Cohesion: 1.0
-Nodes (1): ./config/env
+Nodes (1): ./risk/RiskFlag
 
 ### Community 128 - "Community 128"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @supabase/ssr/createServerClient
 
 ### Community 129 - "Community 129"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): next/headers/cookies
 
 ### Community 130 - "Community 130"
 Cohesion: 1.0
-Nodes (1): @supabase/ssr/createBrowserClient
+Nodes (0): 
 
 ### Community 131 - "Community 131"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @supabase/supabase-js/createClient
 
 ### Community 132 - "Community 132"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): ./config/env
 
 ### Community 133 - "Community 133"
 Cohesion: 1.0
@@ -838,582 +843,602 @@ Nodes (0):
 
 ### Community 134 - "Community 134"
 Cohesion: 1.0
-Nodes (1): next/NextConfig
+Nodes (0): 
 
 ### Community 135 - "Community 135"
 Cohesion: 1.0
-Nodes (1): @/lib/supabase-browser/createClient
+Nodes (1): @supabase/ssr/createBrowserClient
 
 ### Community 136 - "Community 136"
 Cohesion: 1.0
-Nodes (1): react/useEffect
+Nodes (0): 
 
 ### Community 137 - "Community 137"
 Cohesion: 1.0
-Nodes (1): react/useState
+Nodes (0): 
 
 ### Community 138 - "Community 138"
 Cohesion: 1.0
-Nodes (1): next/navigation/useRouter
+Nodes (0): 
 
 ### Community 139 - "Community 139"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): next/NextConfig
 
 ### Community 140 - "Community 140"
 Cohesion: 1.0
-Nodes (1): ./AuthButton/AuthButton
+Nodes (1): @/lib/supabase-browser/createClient
 
 ### Community 141 - "Community 141"
 Cohesion: 1.0
-Nodes (1): next/link/Link
+Nodes (1): react/useEffect
 
 ### Community 142 - "Community 142"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): react/useState
 
 ### Community 143 - "Community 143"
 Cohesion: 1.0
-Nodes (1): ./.next/types/routes.d.ts
+Nodes (1): next/navigation/useRouter
 
 ### Community 144 - "Community 144"
 Cohesion: 1.0
-Nodes (1): undici/Agent
+Nodes (0): 
 
 ### Community 145 - "Community 145"
 Cohesion: 1.0
-Nodes (1): undici/setGlobalDispatcher
+Nodes (1): ./AuthButton/AuthButton
 
 ### Community 146 - "Community 146"
 Cohesion: 1.0
-Nodes (1): xml2js/parseStringPromise
+Nodes (1): next/link/Link
 
 ### Community 147 - "Community 147"
 Cohesion: 1.0
-Nodes (1): @supabase/supabase-js/createClient
+Nodes (0): 
 
 ### Community 148 - "Community 148"
 Cohesion: 1.0
-Nodes (1): child_process/execSync
+Nodes (1): ./.next/types/routes.d.ts
 
 ### Community 149 - "Community 149"
 Cohesion: 1.0
-Nodes (1): path/resolve
+Nodes (1): undici/Agent
 
 ### Community 150 - "Community 150"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): undici/setGlobalDispatcher
 
 ### Community 151 - "Community 151"
 Cohesion: 1.0
-Nodes (1): undici/Agent
+Nodes (1): xml2js/parseStringPromise
 
 ### Community 152 - "Community 152"
 Cohesion: 1.0
-Nodes (1): undici/setGlobalDispatcher
+Nodes (1): @supabase/supabase-js/createClient
 
 ### Community 153 - "Community 153"
 Cohesion: 1.0
-Nodes (1): @supabase/supabase-js/createClient
+Nodes (1): child_process/execSync
 
 ### Community 154 - "Community 154"
 Cohesion: 1.0
-Nodes (1): react/useState
+Nodes (1): path/resolve
 
 ### Community 155 - "Community 155"
 Cohesion: 1.0
-Nodes (1): next/link/Link
+Nodes (0): 
 
 ### Community 156 - "Community 156"
 Cohesion: 1.0
-Nodes (1): next/navigation/useRouter
+Nodes (1): undici/Agent
 
 ### Community 157 - "Community 157"
 Cohesion: 1.0
-Nodes (1): @/lib/supabase-browser/createClient
+Nodes (1): undici/setGlobalDispatcher
 
 ### Community 158 - "Community 158"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @supabase/supabase-js/createClient
 
 ### Community 159 - "Community 159"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): react/useState
 
 ### Community 160 - "Community 160"
 Cohesion: 1.0
-Nodes (1): react/useState
+Nodes (1): next/link/Link
 
 ### Community 161 - "Community 161"
 Cohesion: 1.0
-Nodes (1): react/Suspense
+Nodes (1): next/navigation/useRouter
 
 ### Community 162 - "Community 162"
 Cohesion: 1.0
-Nodes (1): next/link/Link
+Nodes (1): @/lib/supabase-browser/createClient
 
 ### Community 163 - "Community 163"
 Cohesion: 1.0
-Nodes (1): next/navigation/useRouter
+Nodes (0): 
 
 ### Community 164 - "Community 164"
 Cohesion: 1.0
-Nodes (1): next/navigation/useSearchParams
+Nodes (0): 
 
 ### Community 165 - "Community 165"
 Cohesion: 1.0
-Nodes (1): @/lib/supabase-browser/createClient
+Nodes (1): react/useState
 
 ### Community 166 - "Community 166"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): react/Suspense
 
 ### Community 167 - "Community 167"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): next/link/Link
 
 ### Community 168 - "Community 168"
 Cohesion: 1.0
-Nodes (1): crypto/createHmac
+Nodes (1): next/navigation/useRouter
 
 ### Community 169 - "Community 169"
 Cohesion: 1.0
-Nodes (1): crypto/timingSafeEqual
+Nodes (1): next/navigation/useSearchParams
 
 ### Community 170 - "Community 170"
 Cohesion: 1.0
-Nodes (1): @/lib/supabase/getAdminClient
+Nodes (1): @/lib/supabase-browser/createClient
 
 ### Community 171 - "Community 171"
 Cohesion: 1.0
-Nodes (1): @/lib/logger/logger
+Nodes (0): 
 
 ### Community 172 - "Community 172"
 Cohesion: 1.0
-Nodes (1): @/lib/config/env
+Nodes (0): 
 
 ### Community 173 - "Community 173"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): crypto/createHmac
 
 ### Community 174 - "Community 174"
 Cohesion: 1.0
-Nodes (1): next/server/NextRequest
+Nodes (1): crypto/timingSafeEqual
 
 ### Community 175 - "Community 175"
 Cohesion: 1.0
-Nodes (1): undici/Agent
+Nodes (1): @/lib/supabase/getAdminClient
 
 ### Community 176 - "Community 176"
 Cohesion: 1.0
-Nodes (1): undici/setGlobalDispatcher
+Nodes (1): @/lib/logger/logger
 
 ### Community 177 - "Community 177"
 Cohesion: 1.0
-Nodes (1): @/lib/supabase/getAdminClient
+Nodes (1): @/lib/config/env
 
 ### Community 178 - "Community 178"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/continueTrace
+Nodes (0): 
 
 ### Community 179 - "Community 179"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/detectBridges
+Nodes (1): next/server/NextRequest
 
 ### Community 180 - "Community 180"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/detectDeepMixers
+Nodes (1): undici/Agent
 
 ### Community 181 - "Community 181"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/clusterWallets
+Nodes (1): undici/setGlobalDispatcher
 
 ### Community 182 - "Community 182"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/analyzeTimings
+Nodes (1): @/lib/supabase/getAdminClient
 
 ### Community 183 - "Community 183"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/Chain
+Nodes (1): @/lib/tracer/continueTrace
 
 ### Community 184 - "Community 184"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/Hop
+Nodes (1): @/lib/tracer/detectBridges
 
 ### Community 185 - "Community 185"
 Cohesion: 1.0
-Nodes (1): @/lib/risk/scoreAddress
+Nodes (1): @/lib/tracer/detectDeepMixers
 
 ### Community 186 - "Community 186"
 Cohesion: 1.0
-Nodes (1): @/lib/rate-limit/rateLimit
+Nodes (1): @/lib/tracer/clusterWallets
 
 ### Community 187 - "Community 187"
 Cohesion: 1.0
-Nodes (1): @/lib/rate-limit/rateLimits
+Nodes (1): @/lib/tracer/analyzeTimings
 
 ### Community 188 - "Community 188"
 Cohesion: 1.0
-Nodes (1): @/lib/logger/logger
+Nodes (1): @/lib/tracer/Chain
 
 ### Community 189 - "Community 189"
 Cohesion: 1.0
-Nodes (1): @/lib/origin-check/checkOrigin
+Nodes (1): @/lib/tracer/Hop
 
 ### Community 190 - "Community 190"
 Cohesion: 1.0
-Nodes (1): @/lib/auth-helpers/getUser
+Nodes (1): @/lib/risk/scoreAddress
 
 ### Community 191 - "Community 191"
 Cohesion: 1.0
-Nodes (1): @/lib/config/env
+Nodes (1): @/lib/rate-limit/rateLimit
 
 ### Community 192 - "Community 192"
 Cohesion: 1.0
-Nodes (1): crypto/randomBytes
+Nodes (1): @/lib/rate-limit/rateLimits
 
 ### Community 193 - "Community 193"
 Cohesion: 1.0
-Nodes (1): next/server/NextRequest
+Nodes (1): @/lib/logger/logger
 
 ### Community 194 - "Community 194"
 Cohesion: 1.0
-Nodes (1): @/lib/supabase/getAdminClient
+Nodes (1): @/lib/origin-check/checkOrigin
 
 ### Community 195 - "Community 195"
 Cohesion: 1.0
-Nodes (1): @/lib/pdf/generatePdfBuffer
+Nodes (1): @/lib/auth-helpers/getUser
 
 ### Community 196 - "Community 196"
 Cohesion: 1.0
-Nodes (1): @/lib/pdf/ScamDbMatchEntry
+Nodes (1): @/lib/config/env
 
 ### Community 197 - "Community 197"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/clusterWallets
+Nodes (1): crypto/randomBytes
 
 ### Community 198 - "Community 198"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/analyzeTimings
+Nodes (1): next/server/NextRequest
 
 ### Community 199 - "Community 199"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/Hop
+Nodes (1): @/lib/supabase/getAdminClient
 
 ### Community 200 - "Community 200"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/Chain
+Nodes (1): @/lib/pdf/generatePdfBuffer
 
 ### Community 201 - "Community 201"
 Cohesion: 1.0
-Nodes (1): @/lib/risk/RiskFlag
+Nodes (1): @/lib/pdf/ScamDbMatchEntry
 
 ### Community 202 - "Community 202"
 Cohesion: 1.0
-Nodes (1): @/lib/rate-limit/rateLimit
+Nodes (1): @/lib/tracer/clusterWallets
 
 ### Community 203 - "Community 203"
 Cohesion: 1.0
-Nodes (1): @/lib/rate-limit/rateLimits
+Nodes (1): @/lib/tracer/analyzeTimings
 
 ### Community 204 - "Community 204"
 Cohesion: 1.0
-Nodes (1): @/lib/origin-check/checkOrigin
+Nodes (1): @/lib/tracer/Hop
 
 ### Community 205 - "Community 205"
 Cohesion: 1.0
-Nodes (1): @/lib/config
+Nodes (1): @/lib/tracer/Chain
 
 ### Community 206 - "Community 206"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/risk/RiskFlag
 
 ### Community 207 - "Community 207"
 Cohesion: 1.0
-Nodes (1): next/server/NextRequest
+Nodes (1): @/lib/rate-limit/rateLimit
 
 ### Community 208 - "Community 208"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/traceAddress
+Nodes (1): @/lib/rate-limit/rateLimits
 
 ### Community 209 - "Community 209"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/Chain
+Nodes (1): @/lib/origin-check/checkOrigin
 
 ### Community 210 - "Community 210"
 Cohesion: 1.0
-Nodes (1): @/lib/risk/scoreAddress
+Nodes (1): @/lib/config
 
 ### Community 211 - "Community 211"
 Cohesion: 1.0
-Nodes (1): @/lib/rate-limit/rateLimit
+Nodes (0): 
 
 ### Community 212 - "Community 212"
 Cohesion: 1.0
-Nodes (1): @/lib/rate-limit/rateLimits
+Nodes (1): next/server/NextRequest
 
 ### Community 213 - "Community 213"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/SUPPORTED_CHAINS
+Nodes (1): @/lib/tracer/traceAddress
 
 ### Community 214 - "Community 214"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/ADDRESS_PATTERNS
+Nodes (1): @/lib/tracer/Chain
 
 ### Community 215 - "Community 215"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/ADDRESS_HINTS
+Nodes (1): @/lib/risk/scoreAddress
 
 ### Community 216 - "Community 216"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/validateAddress
+Nodes (1): @/lib/rate-limit/rateLimit
 
 ### Community 217 - "Community 217"
 Cohesion: 1.0
-Nodes (1): @/lib/logger/logger
+Nodes (1): @/lib/rate-limit/rateLimits
 
 ### Community 218 - "Community 218"
 Cohesion: 1.0
-Nodes (1): @/lib/origin-check/checkOrigin
+Nodes (1): @/lib/chain-utils/SUPPORTED_CHAINS
 
 ### Community 219 - "Community 219"
 Cohesion: 1.0
-Nodes (1): @/lib/auth-helpers/getUser
+Nodes (1): @/lib/chain-utils/ADDRESS_PATTERNS
 
 ### Community 220 - "Community 220"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/chain-utils/ADDRESS_HINTS
 
 ### Community 221 - "Community 221"
 Cohesion: 1.0
-Nodes (1): next/Metadata
+Nodes (1): @/lib/chain-utils/validateAddress
 
 ### Community 222 - "Community 222"
 Cohesion: 1.0
-Nodes (1): next/font/google/Geist
+Nodes (1): @/lib/logger/logger
 
 ### Community 223 - "Community 223"
 Cohesion: 1.0
-Nodes (1): next/font/google/Geist_Mono
+Nodes (1): @/lib/origin-check/checkOrigin
 
 ### Community 224 - "Community 224"
 Cohesion: 1.0
-Nodes (1): ./globals.css
+Nodes (1): @/lib/auth-helpers/getUser
 
 ### Community 225 - "Community 225"
 Cohesion: 1.0
-Nodes (1): @/components/Header/Header
+Nodes (0): 
 
 ### Community 226 - "Community 226"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): next/Metadata
 
 ### Community 227 - "Community 227"
 Cohesion: 1.0
-Nodes (1): @/lib/supabase-server/createClient
+Nodes (1): next/font/google/Geist
 
 ### Community 228 - "Community 228"
 Cohesion: 1.0
-Nodes (1): next/navigation/redirect
+Nodes (1): next/font/google/Geist_Mono
 
 ### Community 229 - "Community 229"
 Cohesion: 1.0
-Nodes (1): next/link/Link
+Nodes (1): ./globals.css
 
 ### Community 230 - "Community 230"
 Cohesion: 1.0
-Nodes (1): react/useState
+Nodes (1): @/components/Header/Header
 
 ### Community 231 - "Community 231"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/Chain
+Nodes (0): 
 
 ### Community 232 - "Community 232"
 Cohesion: 1.0
-Nodes (1): @/lib/risk/RiskFlag
+Nodes (1): @/lib/supabase-server/createClient
 
 ### Community 233 - "Community 233"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/CHAIN_DISPLAY_NAMES
+Nodes (1): next/navigation/redirect
 
 ### Community 234 - "Community 234"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/ADDRESS_PLACEHOLDERS
+Nodes (1): next/link/Link
 
 ### Community 235 - "Community 235"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/validateAddress
+Nodes (1): react/useState
 
 ### Community 236 - "Community 236"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/tracer/Chain
 
 ### Community 237 - "Community 237"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/risk/RiskFlag
 
 ### Community 238 - "Community 238"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/chain-utils/CHAIN_DISPLAY_NAMES
 
 ### Community 239 - "Community 239"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/chain-utils/ADDRESS_PLACEHOLDERS
 
 ### Community 240 - "Community 240"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/chain-utils/validateAddress
 
 ### Community 241 - "Community 241"
 Cohesion: 1.0
-Nodes (1): react/useState
+Nodes (0): 
 
 ### Community 242 - "Community 242"
 Cohesion: 1.0
-Nodes (1): next/link/Link
+Nodes (0): 
 
 ### Community 243 - "Community 243"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/Hop
+Nodes (0): 
 
 ### Community 244 - "Community 244"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/Chain
+Nodes (0): 
 
 ### Community 245 - "Community 245"
 Cohesion: 1.0
-Nodes (1): @/lib/risk/RiskFlag
+Nodes (0): 
 
 ### Community 246 - "Community 246"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/getExplorerAddressUrl
+Nodes (1): react/useState
 
 ### Community 247 - "Community 247"
 Cohesion: 1.0
-Nodes (1): @/lib/chain-utils/shortAddr
+Nodes (1): next/link/Link
 
 ### Community 248 - "Community 248"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/tracer/Hop
 
 ### Community 249 - "Community 249"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/tracer/Chain
 
 ### Community 250 - "Community 250"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): @/lib/risk/RiskFlag
 
 ### Community 251 - "Community 251"
 Cohesion: 1.0
-Nodes (1): next/navigation/notFound
+Nodes (1): @/lib/chain-utils/getExplorerAddressUrl
 
 ### Community 252 - "Community 252"
 Cohesion: 1.0
-Nodes (1): @/lib/supabase/getAdminClient
+Nodes (1): @/lib/chain-utils/shortAddr
 
 ### Community 253 - "Community 253"
 Cohesion: 1.0
-Nodes (1): @/lib/auth-helpers/createClient
+Nodes (0): 
 
 ### Community 254 - "Community 254"
 Cohesion: 1.0
-Nodes (1): next/headers/cookies
+Nodes (0): 
 
 ### Community 255 - "Community 255"
 Cohesion: 1.0
-Nodes (1): next/server/NextRequest
+Nodes (0): 
 
 ### Community 256 - "Community 256"
 Cohesion: 1.0
-Nodes (1): @/lib/tracer/Hop
+Nodes (1): next/navigation/notFound
 
 ### Community 257 - "Community 257"
 Cohesion: 1.0
-Nodes (1): @/lib/risk/RiskFlag
+Nodes (1): @/lib/supabase/getAdminClient
 
 ### Community 258 - "Community 258"
 Cohesion: 1.0
-Nodes (1): ./report-view/ReportView
+Nodes (1): @/lib/auth-helpers/createClient
 
 ### Community 259 - "Community 259"
 Cohesion: 1.0
-Nodes (1): next/server/NextRequest
+Nodes (1): next/headers/cookies
 
 ### Community 260 - "Community 260"
 Cohesion: 1.0
-Nodes (1): next/server/NextResponse
+Nodes (1): next/server/NextRequest
 
 ### Community 261 - "Community 261"
 Cohesion: 1.0
-Nodes (1): @/lib/supabase-server/createClient
+Nodes (1): @/lib/tracer/Hop
 
 ### Community 262 - "Community 262"
+Cohesion: 1.0
+Nodes (1): @/lib/risk/RiskFlag
+
+### Community 263 - "Community 263"
+Cohesion: 1.0
+Nodes (1): ./report-view/ReportView
+
+### Community 264 - "Community 264"
+Cohesion: 1.0
+Nodes (1): next/server/NextRequest
+
+### Community 265 - "Community 265"
+Cohesion: 1.0
+Nodes (1): next/server/NextResponse
+
+### Community 266 - "Community 266"
+Cohesion: 1.0
+Nodes (1): @/lib/supabase-server/createClient
+
+### Community 267 - "Community 267"
 Cohesion: 1.0
 Nodes (0): 
 
 ## Knowledge Gaps
 - **155 isolated node(s):** `@supabase/ssr/createServerClient`, `next/server/NextResponse`, `next/server/NextRequest`, `./tracer/Chain`, `@supabase/ssr/createServerClient` (+150 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 32`** (2 nodes): `SparklineChart.tsx`, `SparklineChart()`
+- **Thin community `Community 32`** (2 nodes): `register()`, `instrumentation.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 33`** (2 nodes): `TraceLoadingOverlay.tsx`, `TraceLoadingOverlay()`
+- **Thin community `Community 33`** (2 nodes): `SparklineChart.tsx`, `SparklineChart()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 34`** (2 nodes): `WhyWeBuilt.tsx`, `WhyWeBuilt()`
+- **Thin community `Community 34`** (2 nodes): `TraceLoadingOverlay.tsx`, `TraceLoadingOverlay()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (2 nodes): `DisclaimerBanner.tsx`, `DisclaimerBanner()`
+- **Thin community `Community 35`** (2 nodes): `WhyWeBuilt.tsx`, `WhyWeBuilt()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (2 nodes): `Logo.tsx`, `Logo()`
+- **Thin community `Community 36`** (2 nodes): `DisclaimerBanner.tsx`, `DisclaimerBanner()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (2 nodes): `supabase-server.ts`, `createClient()`
+- **Thin community `Community 37`** (2 nodes): `Logo.tsx`, `Logo()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (2 nodes): `sitemap.ts`, `sitemap()`
+- **Thin community `Community 38`** (2 nodes): `supabase-server.ts`, `createClient()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (2 nodes): `layout.tsx`, `RootLayout()`
+- **Thin community `Community 39`** (2 nodes): `global-error.tsx`, `GlobalError()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (2 nodes): `robots.ts`, `robots()`
+- **Thin community `Community 40`** (2 nodes): `sitemap.ts`, `sitemap()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (2 nodes): `page.tsx`, `cell()`
+- **Thin community `Community 41`** (2 nodes): `layout.tsx`, `RootLayout()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (2 nodes): `route.tsx`, `hopColor()`
+- **Thin community `Community 42`** (2 nodes): `robots.ts`, `robots()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (2 nodes): `isValidHopArray()`, `POST()`
+- **Thin community `Community 43`** (2 nodes): `page.tsx`, `cell()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 44`** (1 nodes): `next.config.ts`
+- **Thin community `Community 44`** (2 nodes): `route.tsx`, `hopColor()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 45`** (1 nodes): `SampleReport.tsx`
+- **Thin community `Community 45`** (2 nodes): `isValidHopArray()`, `POST()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 46`** (1 nodes): `FaqAccordion.tsx`
+- **Thin community `Community 46`** (1 nodes): `sentry.server.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (1 nodes): `StatCard.tsx`
+- **Thin community `Community 47`** (1 nodes): `next.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (1 nodes): `PricingTiers.tsx`
+- **Thin community `Community 48`** (1 nodes): `sentry.client.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 49`** (1 nodes): `DisclaimerModal.tsx`
+- **Thin community `Community 49`** (1 nodes): `sentry.edge.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (1 nodes): `GlassCard.tsx`
+- **Thin community `Community 50`** (1 nodes): `SampleReport.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `Footer.tsx`
+- **Thin community `Community 51`** (1 nodes): `FaqAccordion.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `IntentSelector.tsx`
+- **Thin community `Community 52`** (1 nodes): `StatCard.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 53`** (1 nodes): `Header.tsx`
+- **Thin community `Community 53`** (1 nodes): `PricingTiers.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 54`** (1 nodes): `og-template.tsx`
+- **Thin community `Community 54`** (1 nodes): `DisclaimerModal.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 55`** (1 nodes): `types.ts`
+- **Thin community `Community 55`** (1 nodes): `GlassCard.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 56`** (1 nodes): `env-browser.ts`
+- **Thin community `Community 56`** (1 nodes): `Footer.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 57`** (1 nodes): `page.tsx`
+- **Thin community `Community 57`** (1 nodes): `IntentSelector.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 58`** (1 nodes): `page.tsx`
+- **Thin community `Community 58`** (1 nodes): `Header.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 59`** (1 nodes): `page.tsx`
+- **Thin community `Community 59`** (1 nodes): `og-template.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 60`** (1 nodes): `page.tsx`
+- **Thin community `Community 60`** (1 nodes): `types.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 61`** (1 nodes): `ScansLineChart.tsx`
+- **Thin community `Community 61`** (1 nodes): `env-browser.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 62`** (1 nodes): `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -1423,415 +1448,425 @@ Nodes (0):
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 65`** (1 nodes): `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 66`** (1 nodes): `page.tsx`
+- **Thin community `Community 66`** (1 nodes): `ScansLineChart.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 67`** (1 nodes): `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 68`** (1 nodes): `@supabase/ssr/createServerClient`
+- **Thin community `Community 68`** (1 nodes): `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 69`** (1 nodes): `next/server/NextResponse`
+- **Thin community `Community 69`** (1 nodes): `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 70`** (1 nodes): `next/server/NextRequest`
+- **Thin community `Community 70`** (1 nodes): `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 71`** (1 nodes): `middleware()`
+- **Thin community `Community 71`** (1 nodes): `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 72`** (1 nodes): `./tracer/Chain`
+- **Thin community `Community 72`** (1 nodes): `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 73`** (1 nodes): `validateAddress()`
+- **Thin community `Community 73`** (1 nodes): `@supabase/ssr/createServerClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 74`** (1 nodes): `getExplorerAddressUrl()`
+- **Thin community `Community 74`** (1 nodes): `next/server/NextResponse`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 75`** (1 nodes): `getExplorerTxUrl()`
+- **Thin community `Community 75`** (1 nodes): `next/server/NextRequest`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 76`** (1 nodes): `getNativeToken()`
+- **Thin community `Community 76`** (1 nodes): `middleware()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 77`** (1 nodes): `isEvmChain()`
+- **Thin community `Community 77`** (1 nodes): `./tracer/Chain`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 78`** (1 nodes): `getChainId()`
+- **Thin community `Community 78`** (1 nodes): `validateAddress()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 79`** (1 nodes): `shortAddr()`
+- **Thin community `Community 79`** (1 nodes): `getExplorerAddressUrl()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 80`** (1 nodes): `@supabase/ssr/createServerClient`
+- **Thin community `Community 80`** (1 nodes): `getExplorerTxUrl()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 81`** (1 nodes): `next/server/NextResponse`
+- **Thin community `Community 81`** (1 nodes): `getNativeToken()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 82`** (1 nodes): `next/server/NextRequest`
+- **Thin community `Community 82`** (1 nodes): `isEvmChain()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 83`** (1 nodes): `next/headers/cookies`
+- **Thin community `Community 83`** (1 nodes): `getChainId()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 84`** (1 nodes): `@supabase/supabase-js/createClient`
+- **Thin community `Community 84`** (1 nodes): `shortAddr()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 85`** (1 nodes): `./config/env`
+- **Thin community `Community 85`** (1 nodes): `@supabase/ssr/createServerClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 86`** (1 nodes): `getAdminClient()`
+- **Thin community `Community 86`** (1 nodes): `next/server/NextResponse`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 87`** (1 nodes): `@/data/exchange-wallets.json/exchangeWallets`
+- **Thin community `Community 87`** (1 nodes): `next/server/NextRequest`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 88`** (1 nodes): `@/data/bridge-contracts.json/bridgeContracts`
+- **Thin community `Community 88`** (1 nodes): `next/headers/cookies`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 89`** (1 nodes): `@/data/mixer-addresses.json/mixerAddresses`
+- **Thin community `Community 89`** (1 nodes): `@supabase/supabase-js/createClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 90`** (1 nodes): `@/lib/chain-utils/EVM_CHAIN_CONFIG`
+- **Thin community `Community 90`** (1 nodes): `./config/env`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 91`** (1 nodes): `@/lib/chain-utils/getExplorerTxUrl`
+- **Thin community `Community 91`** (1 nodes): `getAdminClient()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 92`** (1 nodes): `@/lib/chain-utils/EvmChainConfig`
+- **Thin community `Community 92`** (1 nodes): `@/data/exchange-wallets.json/exchangeWallets`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 93`** (1 nodes): `./config/env`
+- **Thin community `Community 93`** (1 nodes): `@/data/bridge-contracts.json/bridgeContracts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 94`** (1 nodes): `./scam-db/lookupScamAddressBatch`
+- **Thin community `Community 94`** (1 nodes): `@/data/mixer-addresses.json/mixerAddresses`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 95`** (1 nodes): `./scam-db/ScamMatch`
+- **Thin community `Community 95`** (1 nodes): `@/lib/chain-utils/EVM_CHAIN_CONFIG`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 96`** (1 nodes): `detectBridges()`
+- **Thin community `Community 96`** (1 nodes): `@/lib/chain-utils/getExplorerTxUrl`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 97`** (1 nodes): `detectDeepMixers()`
+- **Thin community `Community 97`** (1 nodes): `@/lib/chain-utils/EvmChainConfig`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 98`** (1 nodes): `clusterWallets()`
+- **Thin community `Community 98`** (1 nodes): `./config/env`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 99`** (1 nodes): `analyzeTimings()`
+- **Thin community `Community 99`** (1 nodes): `./scam-db/lookupScamAddressBatch`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 100`** (1 nodes): `getExplorerAddressUrl()`
+- **Thin community `Community 100`** (1 nodes): `./scam-db/ScamMatch`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 101`** (1 nodes): `@upstash/ratelimit/Ratelimit`
+- **Thin community `Community 101`** (1 nodes): `detectBridges()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 102`** (1 nodes): `@upstash/redis/Redis`
+- **Thin community `Community 102`** (1 nodes): `detectDeepMixers()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 103`** (1 nodes): `next/server/NextRequest`
+- **Thin community `Community 103`** (1 nodes): `clusterWallets()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 104`** (1 nodes): `next/server/NextResponse`
+- **Thin community `Community 104`** (1 nodes): `analyzeTimings()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 105`** (1 nodes): `./logger/logger`
+- **Thin community `Community 105`** (1 nodes): `getExplorerAddressUrl()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 106`** (1 nodes): `./tracer/Hop`
+- **Thin community `Community 106`** (1 nodes): `@upstash/ratelimit/Ratelimit`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 107`** (1 nodes): `./tracer/Chain`
+- **Thin community `Community 107`** (1 nodes): `@upstash/redis/Redis`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 108`** (1 nodes): `@/data/exchange-wallets.json/exchangeWallets`
+- **Thin community `Community 108`** (1 nodes): `next/server/NextRequest`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 109`** (1 nodes): `./config/env`
+- **Thin community `Community 109`** (1 nodes): `next/server/NextResponse`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 110`** (1 nodes): `./scam-db/lookupScamAddress`
+- **Thin community `Community 110`** (1 nodes): `./logger/logger`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 111`** (1 nodes): `@react-pdf/renderer/Document`
+- **Thin community `Community 111`** (1 nodes): `./tracer/Hop`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 112`** (1 nodes): `@react-pdf/renderer/Page`
+- **Thin community `Community 112`** (1 nodes): `./tracer/Chain`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 113`** (1 nodes): `@react-pdf/renderer/Text`
+- **Thin community `Community 113`** (1 nodes): `@/data/exchange-wallets.json/exchangeWallets`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 114`** (1 nodes): `@react-pdf/renderer/View`
+- **Thin community `Community 114`** (1 nodes): `./config/env`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 115`** (1 nodes): `@react-pdf/renderer/StyleSheet`
+- **Thin community `Community 115`** (1 nodes): `./scam-db/lookupScamAddress`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 116`** (1 nodes): `@react-pdf/renderer/Link`
+- **Thin community `Community 116`** (1 nodes): `@react-pdf/renderer/Document`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 117`** (1 nodes): `@react-pdf/renderer/pdf`
+- **Thin community `Community 117`** (1 nodes): `@react-pdf/renderer/Page`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 118`** (1 nodes): `./tracer/Hop`
+- **Thin community `Community 118`** (1 nodes): `@react-pdf/renderer/Text`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 119`** (1 nodes): `./tracer/Chain`
+- **Thin community `Community 119`** (1 nodes): `@react-pdf/renderer/View`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 120`** (1 nodes): `./tracer/ClusterResult`
+- **Thin community `Community 120`** (1 nodes): `@react-pdf/renderer/StyleSheet`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 121`** (1 nodes): `./tracer/TimingFlag`
+- **Thin community `Community 121`** (1 nodes): `@react-pdf/renderer/Link`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 122`** (1 nodes): `./risk/RiskFlag`
+- **Thin community `Community 122`** (1 nodes): `@react-pdf/renderer/pdf`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 123`** (1 nodes): `@supabase/ssr/createServerClient`
+- **Thin community `Community 123`** (1 nodes): `./tracer/Hop`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 124`** (1 nodes): `next/headers/cookies`
+- **Thin community `Community 124`** (1 nodes): `./tracer/Chain`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 125`** (1 nodes): `createClient()`
+- **Thin community `Community 125`** (1 nodes): `./tracer/ClusterResult`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 126`** (1 nodes): `@supabase/supabase-js/createClient`
+- **Thin community `Community 126`** (1 nodes): `./tracer/TimingFlag`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 127`** (1 nodes): `./config/env`
+- **Thin community `Community 127`** (1 nodes): `./risk/RiskFlag`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 128`** (1 nodes): `checkOrigin()`
+- **Thin community `Community 128`** (1 nodes): `@supabase/ssr/createServerClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 129`** (1 nodes): `createRequestLogger()`
+- **Thin community `Community 129`** (1 nodes): `next/headers/cookies`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 130`** (1 nodes): `@supabase/ssr/createBrowserClient`
+- **Thin community `Community 130`** (1 nodes): `createClient()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 131`** (1 nodes): `createClient()`
+- **Thin community `Community 131`** (1 nodes): `@supabase/supabase-js/createClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 132`** (1 nodes): `validateEnv()`
+- **Thin community `Community 132`** (1 nodes): `./config/env`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 133`** (1 nodes): `baseUrl()`
+- **Thin community `Community 133`** (1 nodes): `checkOrigin()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 134`** (1 nodes): `next/NextConfig`
+- **Thin community `Community 134`** (1 nodes): `createRequestLogger()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 135`** (1 nodes): `@/lib/supabase-browser/createClient`
+- **Thin community `Community 135`** (1 nodes): `@supabase/ssr/createBrowserClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 136`** (1 nodes): `react/useEffect`
+- **Thin community `Community 136`** (1 nodes): `createClient()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 137`** (1 nodes): `react/useState`
+- **Thin community `Community 137`** (1 nodes): `validateEnv()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 138`** (1 nodes): `next/navigation/useRouter`
+- **Thin community `Community 138`** (1 nodes): `baseUrl()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 139`** (1 nodes): `handleSignOut()`
+- **Thin community `Community 139`** (1 nodes): `next/NextConfig`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 140`** (1 nodes): `./AuthButton/AuthButton`
+- **Thin community `Community 140`** (1 nodes): `@/lib/supabase-browser/createClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 141`** (1 nodes): `next/link/Link`
+- **Thin community `Community 141`** (1 nodes): `react/useEffect`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 142`** (1 nodes): `Header()`
+- **Thin community `Community 142`** (1 nodes): `react/useState`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 143`** (1 nodes): `./.next/types/routes.d.ts`
+- **Thin community `Community 143`** (1 nodes): `next/navigation/useRouter`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 144`** (1 nodes): `undici/Agent`
+- **Thin community `Community 144`** (1 nodes): `handleSignOut()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 145`** (1 nodes): `undici/setGlobalDispatcher`
+- **Thin community `Community 145`** (1 nodes): `./AuthButton/AuthButton`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 146`** (1 nodes): `xml2js/parseStringPromise`
+- **Thin community `Community 146`** (1 nodes): `next/link/Link`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 147`** (1 nodes): `@supabase/supabase-js/createClient`
+- **Thin community `Community 147`** (1 nodes): `Header()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 148`** (1 nodes): `child_process/execSync`
+- **Thin community `Community 148`** (1 nodes): `./.next/types/routes.d.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 149`** (1 nodes): `path/resolve`
+- **Thin community `Community 149`** (1 nodes): `undici/Agent`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 150`** (1 nodes): `run()`
+- **Thin community `Community 150`** (1 nodes): `undici/setGlobalDispatcher`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 151`** (1 nodes): `undici/Agent`
+- **Thin community `Community 151`** (1 nodes): `xml2js/parseStringPromise`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 152`** (1 nodes): `undici/setGlobalDispatcher`
+- **Thin community `Community 152`** (1 nodes): `@supabase/supabase-js/createClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 153`** (1 nodes): `@supabase/supabase-js/createClient`
+- **Thin community `Community 153`** (1 nodes): `child_process/execSync`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 154`** (1 nodes): `react/useState`
+- **Thin community `Community 154`** (1 nodes): `path/resolve`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 155`** (1 nodes): `next/link/Link`
+- **Thin community `Community 155`** (1 nodes): `run()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 156`** (1 nodes): `next/navigation/useRouter`
+- **Thin community `Community 156`** (1 nodes): `undici/Agent`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 157`** (1 nodes): `@/lib/supabase-browser/createClient`
+- **Thin community `Community 157`** (1 nodes): `undici/setGlobalDispatcher`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 158`** (1 nodes): `handleSignup()`
+- **Thin community `Community 158`** (1 nodes): `@supabase/supabase-js/createClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 159`** (1 nodes): `handleGoogle()`
+- **Thin community `Community 159`** (1 nodes): `react/useState`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 160`** (1 nodes): `react/useState`
+- **Thin community `Community 160`** (1 nodes): `next/link/Link`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 161`** (1 nodes): `react/Suspense`
+- **Thin community `Community 161`** (1 nodes): `next/navigation/useRouter`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 162`** (1 nodes): `next/link/Link`
+- **Thin community `Community 162`** (1 nodes): `@/lib/supabase-browser/createClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 163`** (1 nodes): `next/navigation/useRouter`
+- **Thin community `Community 163`** (1 nodes): `handleSignup()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 164`** (1 nodes): `next/navigation/useSearchParams`
+- **Thin community `Community 164`** (1 nodes): `handleGoogle()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 165`** (1 nodes): `@/lib/supabase-browser/createClient`
+- **Thin community `Community 165`** (1 nodes): `react/useState`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 166`** (1 nodes): `handleLogin()`
+- **Thin community `Community 166`** (1 nodes): `react/Suspense`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 167`** (1 nodes): `handleGoogle()`
+- **Thin community `Community 167`** (1 nodes): `next/link/Link`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 168`** (1 nodes): `crypto/createHmac`
+- **Thin community `Community 168`** (1 nodes): `next/navigation/useRouter`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 169`** (1 nodes): `crypto/timingSafeEqual`
+- **Thin community `Community 169`** (1 nodes): `next/navigation/useSearchParams`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 170`** (1 nodes): `@/lib/supabase/getAdminClient`
+- **Thin community `Community 170`** (1 nodes): `@/lib/supabase-browser/createClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 171`** (1 nodes): `@/lib/logger/logger`
+- **Thin community `Community 171`** (1 nodes): `handleLogin()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 172`** (1 nodes): `@/lib/config/env`
+- **Thin community `Community 172`** (1 nodes): `handleGoogle()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 173`** (1 nodes): `POST()`
+- **Thin community `Community 173`** (1 nodes): `crypto/createHmac`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 174`** (1 nodes): `next/server/NextRequest`
+- **Thin community `Community 174`** (1 nodes): `crypto/timingSafeEqual`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 175`** (1 nodes): `undici/Agent`
+- **Thin community `Community 175`** (1 nodes): `@/lib/supabase/getAdminClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 176`** (1 nodes): `undici/setGlobalDispatcher`
+- **Thin community `Community 176`** (1 nodes): `@/lib/logger/logger`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 177`** (1 nodes): `@/lib/supabase/getAdminClient`
+- **Thin community `Community 177`** (1 nodes): `@/lib/config/env`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 178`** (1 nodes): `@/lib/tracer/continueTrace`
+- **Thin community `Community 178`** (1 nodes): `POST()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 179`** (1 nodes): `@/lib/tracer/detectBridges`
+- **Thin community `Community 179`** (1 nodes): `next/server/NextRequest`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 180`** (1 nodes): `@/lib/tracer/detectDeepMixers`
+- **Thin community `Community 180`** (1 nodes): `undici/Agent`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 181`** (1 nodes): `@/lib/tracer/clusterWallets`
+- **Thin community `Community 181`** (1 nodes): `undici/setGlobalDispatcher`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 182`** (1 nodes): `@/lib/tracer/analyzeTimings`
+- **Thin community `Community 182`** (1 nodes): `@/lib/supabase/getAdminClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 183`** (1 nodes): `@/lib/tracer/Chain`
+- **Thin community `Community 183`** (1 nodes): `@/lib/tracer/continueTrace`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 184`** (1 nodes): `@/lib/tracer/Hop`
+- **Thin community `Community 184`** (1 nodes): `@/lib/tracer/detectBridges`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 185`** (1 nodes): `@/lib/risk/scoreAddress`
+- **Thin community `Community 185`** (1 nodes): `@/lib/tracer/detectDeepMixers`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 186`** (1 nodes): `@/lib/rate-limit/rateLimit`
+- **Thin community `Community 186`** (1 nodes): `@/lib/tracer/clusterWallets`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 187`** (1 nodes): `@/lib/rate-limit/rateLimits`
+- **Thin community `Community 187`** (1 nodes): `@/lib/tracer/analyzeTimings`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 188`** (1 nodes): `@/lib/logger/logger`
+- **Thin community `Community 188`** (1 nodes): `@/lib/tracer/Chain`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 189`** (1 nodes): `@/lib/origin-check/checkOrigin`
+- **Thin community `Community 189`** (1 nodes): `@/lib/tracer/Hop`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 190`** (1 nodes): `@/lib/auth-helpers/getUser`
+- **Thin community `Community 190`** (1 nodes): `@/lib/risk/scoreAddress`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 191`** (1 nodes): `@/lib/config/env`
+- **Thin community `Community 191`** (1 nodes): `@/lib/rate-limit/rateLimit`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 192`** (1 nodes): `crypto/randomBytes`
+- **Thin community `Community 192`** (1 nodes): `@/lib/rate-limit/rateLimits`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 193`** (1 nodes): `next/server/NextRequest`
+- **Thin community `Community 193`** (1 nodes): `@/lib/logger/logger`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 194`** (1 nodes): `@/lib/supabase/getAdminClient`
+- **Thin community `Community 194`** (1 nodes): `@/lib/origin-check/checkOrigin`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 195`** (1 nodes): `@/lib/pdf/generatePdfBuffer`
+- **Thin community `Community 195`** (1 nodes): `@/lib/auth-helpers/getUser`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 196`** (1 nodes): `@/lib/pdf/ScamDbMatchEntry`
+- **Thin community `Community 196`** (1 nodes): `@/lib/config/env`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 197`** (1 nodes): `@/lib/tracer/clusterWallets`
+- **Thin community `Community 197`** (1 nodes): `crypto/randomBytes`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 198`** (1 nodes): `@/lib/tracer/analyzeTimings`
+- **Thin community `Community 198`** (1 nodes): `next/server/NextRequest`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 199`** (1 nodes): `@/lib/tracer/Hop`
+- **Thin community `Community 199`** (1 nodes): `@/lib/supabase/getAdminClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 200`** (1 nodes): `@/lib/tracer/Chain`
+- **Thin community `Community 200`** (1 nodes): `@/lib/pdf/generatePdfBuffer`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 201`** (1 nodes): `@/lib/risk/RiskFlag`
+- **Thin community `Community 201`** (1 nodes): `@/lib/pdf/ScamDbMatchEntry`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 202`** (1 nodes): `@/lib/rate-limit/rateLimit`
+- **Thin community `Community 202`** (1 nodes): `@/lib/tracer/clusterWallets`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 203`** (1 nodes): `@/lib/rate-limit/rateLimits`
+- **Thin community `Community 203`** (1 nodes): `@/lib/tracer/analyzeTimings`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 204`** (1 nodes): `@/lib/origin-check/checkOrigin`
+- **Thin community `Community 204`** (1 nodes): `@/lib/tracer/Hop`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 205`** (1 nodes): `@/lib/config`
+- **Thin community `Community 205`** (1 nodes): `@/lib/tracer/Chain`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 206`** (1 nodes): `GET()`
+- **Thin community `Community 206`** (1 nodes): `@/lib/risk/RiskFlag`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 207`** (1 nodes): `next/server/NextRequest`
+- **Thin community `Community 207`** (1 nodes): `@/lib/rate-limit/rateLimit`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 208`** (1 nodes): `@/lib/tracer/traceAddress`
+- **Thin community `Community 208`** (1 nodes): `@/lib/rate-limit/rateLimits`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 209`** (1 nodes): `@/lib/tracer/Chain`
+- **Thin community `Community 209`** (1 nodes): `@/lib/origin-check/checkOrigin`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 210`** (1 nodes): `@/lib/risk/scoreAddress`
+- **Thin community `Community 210`** (1 nodes): `@/lib/config`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 211`** (1 nodes): `@/lib/rate-limit/rateLimit`
+- **Thin community `Community 211`** (1 nodes): `GET()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 212`** (1 nodes): `@/lib/rate-limit/rateLimits`
+- **Thin community `Community 212`** (1 nodes): `next/server/NextRequest`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 213`** (1 nodes): `@/lib/chain-utils/SUPPORTED_CHAINS`
+- **Thin community `Community 213`** (1 nodes): `@/lib/tracer/traceAddress`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 214`** (1 nodes): `@/lib/chain-utils/ADDRESS_PATTERNS`
+- **Thin community `Community 214`** (1 nodes): `@/lib/tracer/Chain`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 215`** (1 nodes): `@/lib/chain-utils/ADDRESS_HINTS`
+- **Thin community `Community 215`** (1 nodes): `@/lib/risk/scoreAddress`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 216`** (1 nodes): `@/lib/chain-utils/validateAddress`
+- **Thin community `Community 216`** (1 nodes): `@/lib/rate-limit/rateLimit`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 217`** (1 nodes): `@/lib/logger/logger`
+- **Thin community `Community 217`** (1 nodes): `@/lib/rate-limit/rateLimits`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 218`** (1 nodes): `@/lib/origin-check/checkOrigin`
+- **Thin community `Community 218`** (1 nodes): `@/lib/chain-utils/SUPPORTED_CHAINS`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 219`** (1 nodes): `@/lib/auth-helpers/getUser`
+- **Thin community `Community 219`** (1 nodes): `@/lib/chain-utils/ADDRESS_PATTERNS`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 220`** (1 nodes): `POST()`
+- **Thin community `Community 220`** (1 nodes): `@/lib/chain-utils/ADDRESS_HINTS`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 221`** (1 nodes): `next/Metadata`
+- **Thin community `Community 221`** (1 nodes): `@/lib/chain-utils/validateAddress`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 222`** (1 nodes): `next/font/google/Geist`
+- **Thin community `Community 222`** (1 nodes): `@/lib/logger/logger`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 223`** (1 nodes): `next/font/google/Geist_Mono`
+- **Thin community `Community 223`** (1 nodes): `@/lib/origin-check/checkOrigin`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 224`** (1 nodes): `./globals.css`
+- **Thin community `Community 224`** (1 nodes): `@/lib/auth-helpers/getUser`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 225`** (1 nodes): `@/components/Header/Header`
+- **Thin community `Community 225`** (1 nodes): `POST()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 226`** (1 nodes): `RootLayout()`
+- **Thin community `Community 226`** (1 nodes): `next/Metadata`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 227`** (1 nodes): `@/lib/supabase-server/createClient`
+- **Thin community `Community 227`** (1 nodes): `next/font/google/Geist`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 228`** (1 nodes): `next/navigation/redirect`
+- **Thin community `Community 228`** (1 nodes): `next/font/google/Geist_Mono`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 229`** (1 nodes): `next/link/Link`
+- **Thin community `Community 229`** (1 nodes): `./globals.css`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 230`** (1 nodes): `react/useState`
+- **Thin community `Community 230`** (1 nodes): `@/components/Header/Header`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 231`** (1 nodes): `@/lib/tracer/Chain`
+- **Thin community `Community 231`** (1 nodes): `RootLayout()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 232`** (1 nodes): `@/lib/risk/RiskFlag`
+- **Thin community `Community 232`** (1 nodes): `@/lib/supabase-server/createClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 233`** (1 nodes): `@/lib/chain-utils/CHAIN_DISPLAY_NAMES`
+- **Thin community `Community 233`** (1 nodes): `next/navigation/redirect`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 234`** (1 nodes): `@/lib/chain-utils/ADDRESS_PLACEHOLDERS`
+- **Thin community `Community 234`** (1 nodes): `next/link/Link`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 235`** (1 nodes): `@/lib/chain-utils/validateAddress`
+- **Thin community `Community 235`** (1 nodes): `react/useState`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 236`** (1 nodes): `RiskMeter()`
+- **Thin community `Community 236`** (1 nodes): `@/lib/tracer/Chain`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 237`** (1 nodes): `handleAddressChange()`
+- **Thin community `Community 237`** (1 nodes): `@/lib/risk/RiskFlag`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 238`** (1 nodes): `handleChainChange()`
+- **Thin community `Community 238`** (1 nodes): `@/lib/chain-utils/CHAIN_DISPLAY_NAMES`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 239`** (1 nodes): `handleTrace()`
+- **Thin community `Community 239`** (1 nodes): `@/lib/chain-utils/ADDRESS_PLACEHOLDERS`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 240`** (1 nodes): `handleBuyTier()`
+- **Thin community `Community 240`** (1 nodes): `@/lib/chain-utils/validateAddress`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 241`** (1 nodes): `react/useState`
+- **Thin community `Community 241`** (1 nodes): `RiskMeter()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 242`** (1 nodes): `next/link/Link`
+- **Thin community `Community 242`** (1 nodes): `handleAddressChange()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 243`** (1 nodes): `@/lib/tracer/Hop`
+- **Thin community `Community 243`** (1 nodes): `handleChainChange()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 244`** (1 nodes): `@/lib/tracer/Chain`
+- **Thin community `Community 244`** (1 nodes): `handleTrace()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 245`** (1 nodes): `@/lib/risk/RiskFlag`
+- **Thin community `Community 245`** (1 nodes): `handleBuyTier()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 246`** (1 nodes): `@/lib/chain-utils/getExplorerAddressUrl`
+- **Thin community `Community 246`** (1 nodes): `react/useState`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 247`** (1 nodes): `@/lib/chain-utils/shortAddr`
+- **Thin community `Community 247`** (1 nodes): `next/link/Link`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 248`** (1 nodes): `riskColor()`
+- **Thin community `Community 248`** (1 nodes): `@/lib/tracer/Hop`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 249`** (1 nodes): `flagBorder()`
+- **Thin community `Community 249`** (1 nodes): `@/lib/tracer/Chain`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 250`** (1 nodes): `flagBadge()`
+- **Thin community `Community 250`** (1 nodes): `@/lib/risk/RiskFlag`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 251`** (1 nodes): `next/navigation/notFound`
+- **Thin community `Community 251`** (1 nodes): `@/lib/chain-utils/getExplorerAddressUrl`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 252`** (1 nodes): `@/lib/supabase/getAdminClient`
+- **Thin community `Community 252`** (1 nodes): `@/lib/chain-utils/shortAddr`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 253`** (1 nodes): `@/lib/auth-helpers/createClient`
+- **Thin community `Community 253`** (1 nodes): `riskColor()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 254`** (1 nodes): `next/headers/cookies`
+- **Thin community `Community 254`** (1 nodes): `flagBorder()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 255`** (1 nodes): `next/server/NextRequest`
+- **Thin community `Community 255`** (1 nodes): `flagBadge()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 256`** (1 nodes): `@/lib/tracer/Hop`
+- **Thin community `Community 256`** (1 nodes): `next/navigation/notFound`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 257`** (1 nodes): `@/lib/risk/RiskFlag`
+- **Thin community `Community 257`** (1 nodes): `@/lib/supabase/getAdminClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 258`** (1 nodes): `./report-view/ReportView`
+- **Thin community `Community 258`** (1 nodes): `@/lib/auth-helpers/createClient`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 259`** (1 nodes): `next/server/NextRequest`
+- **Thin community `Community 259`** (1 nodes): `next/headers/cookies`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 260`** (1 nodes): `next/server/NextResponse`
+- **Thin community `Community 260`** (1 nodes): `next/server/NextRequest`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 261`** (1 nodes): `@/lib/supabase-server/createClient`
+- **Thin community `Community 261`** (1 nodes): `@/lib/tracer/Hop`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 262`** (1 nodes): `GET()`
+- **Thin community `Community 262`** (1 nodes): `@/lib/risk/RiskFlag`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 263`** (1 nodes): `./report-view/ReportView`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 264`** (1 nodes): `next/server/NextRequest`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 265`** (1 nodes): `next/server/NextResponse`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 266`** (1 nodes): `@/lib/supabase-server/createClient`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 267`** (1 nodes): `GET()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `POST()` connect `Community 3` to `Community 0`, `Community 1`, `Community 2`, `Community 7`?**
-  _High betweenness centrality (0.056) - this node is a cross-community bridge._
+  _High betweenness centrality (0.055) - this node is a cross-community bridge._
 - **Why does `log()` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`, `Community 7`, `Community 19`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+  _High betweenness centrality (0.047) - this node is a cross-community bridge._
 - **Why does `createClient()` connect `Community 2` to `Community 1`, `Community 3`, `Community 4`, `Community 7`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
-- **Are the 23 inferred relationships involving `POST()` (e.g. with `validateAddress()` and `requireUser()`) actually correct?**
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+- **Are the 23 inferred relationships involving `POST()` (e.g. with `checkOrigin()` and `validateAddress()`) actually correct?**
   _`POST()` has 23 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 38 inferred relationships involving `log()` (e.g. with `fetchFromAnkr()` and `etherscanFetch()`) actually correct?**
+- **Are the 38 inferred relationships involving `log()` (e.g. with `main()` and `main()`) actually correct?**
   _`log()` has 38 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 20 inferred relationships involving `GET()` (e.g. with `getUser()` and `getAdminClient()`) actually correct?**
+- **Are the 20 inferred relationships involving `GET()` (e.g. with `checkOrigin()` and `lookupScamAddressBatch()`) actually correct?**
   _`GET()` has 20 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 15 inferred relationships involving `getAdminClient()` (e.g. with `createClient()` and `requireAdmin()`) actually correct?**
   _`getAdminClient()` has 15 INFERRED edges - model-reasoned connections that need verification._
