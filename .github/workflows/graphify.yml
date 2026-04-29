@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   rebuild-graph:
     runs-on: ubuntu-latest
