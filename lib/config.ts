@@ -20,6 +20,17 @@ const serverEnv = {
 
   // Optional salt for rate limiting or other purposes
   SCAN_SALT: process.env.SCAN_SALT,
+
+  // RPC providers (optional overrides)
+  QUICKNODE_BASE_URL: process.env.QUICKNODE_BASE_URL ?? "",
+  ALCHEMY_BSC_URL: process.env.ALCHEMY_BSC_URL ?? "",
+
+  // Rate limiting
+  UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL ?? "",
+  UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN ?? "",
+
+  // AI narrative
+  AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY ?? "",
 } as const;
 
 // Public environment variables (exposed to client via NEXT_PUBLIC_ prefix)

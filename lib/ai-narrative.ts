@@ -1,5 +1,6 @@
 import { generateText } from "ai";
 import { gateway } from "@ai-sdk/gateway";
+import { env } from "@/lib/config";
 
 export interface NarrativeInput {
   address: string;
@@ -19,8 +20,7 @@ const SYSTEM_PROMPT =
   "You are a blockchain forensics analyst. Output ONLY a 2-paragraph plain-English scam narrative. No preamble, no reasoning, no markdown. First paragraph: timeline and fund movement. Second paragraph: laundering pattern and destination. Be factual, concise, under 200 words total. If hops array is empty or inconclusive, output exactly: 'Insufficient hop data for narrative.'";
 
 export async function generateNarrative(input: NarrativeInput): Promise<string | null> {
-  const apiKey = process.env.AI_GATEWAY_API_KEY;
-  if (!apiKey) return null;
+  if (!env.AI_GATEWAY_API_KEY) return null;
 
   try {
     const { text } = await generateText({

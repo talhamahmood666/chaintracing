@@ -2,6 +2,7 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "./logger";
+import { env } from "./config";
 
 // ── Upstash Ratelimit setup ───────────────────────────────────────────────────
 // Two sliding-window limiters:
@@ -23,8 +24,8 @@ let reportViewRatelimit: Ratelimit | null | undefined = undefined;
 let couponRatelimit: Ratelimit | null | undefined = undefined;
 
 function initLimiters(): void {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = env.UPSTASH_REDIS_REST_URL;
+  const token = env.UPSTASH_REDIS_REST_TOKEN;
 
   if (!url || !token) {
     logger.warn("UPSTASH_REDIS_REST_URL or TOKEN not set — rate limiting disabled (fail-open)");

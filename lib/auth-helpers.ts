@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
+import { env } from "@/lib/config";
 
 /**
  * Create a Supabase server client for use in Server Components, Server Actions,
@@ -14,8 +15,8 @@ export async function createClient(request?: NextRequest) {
   // via the response-able setAll callback (needed for Set-Cookie headers).
   if (request) {
     return createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      env.NEXT_PUBLIC_SUPABASE_URL!,
+      env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
           getAll() {
@@ -35,8 +36,8 @@ export async function createClient(request?: NextRequest) {
   // Server Components / Server Actions: use the async cookie store.
   const cookieStore = await cookies();
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.NEXT_PUBLIC_SUPABASE_URL!,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {

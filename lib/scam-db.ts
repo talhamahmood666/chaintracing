@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { env } from "./config";
 
 export interface ScamMatch {
   category: string;
@@ -9,11 +10,10 @@ export interface ScamMatch {
   notes?: string;
 }
 
-// Lazy client — does not import lib/config.ts so no validateEnv() side-effect.
 // Fails open (returns null) if env vars are absent.
 function getScamDbClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const url = env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return null;
   return createClient(url, key, { auth: { persistSession: false } });
 }

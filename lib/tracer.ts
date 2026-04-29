@@ -430,7 +430,7 @@ function getBridgeName(address: string, chain: string): string | null {
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
 async function quickNodeRpc<T>(method: string, params: unknown[]): Promise<T | null> {
-  const url = process.env.QUICKNODE_BASE_URL;
+  const url = env.QUICKNODE_BASE_URL;
   if (!url) return null;
   try {
     const r = await fetch(url, {
@@ -496,7 +496,7 @@ async function _quickNodeGetLogs(
   toBlockHex: string,
   topics: (string | null)[]
 ): Promise<LogsResult> {
-  const url = process.env.QUICKNODE_BASE_URL;
+  const url = env.QUICKNODE_BASE_URL;
   if (!url) return null;
   try {
     const r = await fetch(url, {
@@ -591,7 +591,7 @@ async function fetchBaseViaQuickNode(
   address: string,
   limit = 100
 ): Promise<{ native: NormalizedTx[]; token: NormalizedTx[] }> {
-  if (!process.env.QUICKNODE_BASE_URL) {
+  if (!env.QUICKNODE_BASE_URL) {
     console.log("[base-quicknode] QUICKNODE_BASE_URL not set, returning empty");
     return { native: [], token: [] };
   }
@@ -673,7 +673,7 @@ async function fetchBaseViaQuickNode(
 // ─── BSC via Alchemy RPC (Etherscan V2 free tier excludes BSC) ───────────────
 
 async function alchemyBscRpc<T>(method: string, params: unknown[]): Promise<T | null> {
-  const url = process.env.ALCHEMY_BSC_URL;
+  const url = env.ALCHEMY_BSC_URL;
   if (!url) return null;
   try {
     const r = await fetch(url, {
@@ -703,7 +703,7 @@ async function _alchemyBscGetLogs(
   toBlockHex: string,
   topics: (string | null)[]
 ): Promise<LogsResult> {
-  const url = process.env.ALCHEMY_BSC_URL;
+  const url = env.ALCHEMY_BSC_URL;
   if (!url) return null;
   try {
     const r = await fetch(url, {
@@ -793,7 +793,7 @@ async function fetchBscViaAlchemy(
   address: string,
   limit = 100
 ): Promise<{ native: NormalizedTx[]; token: NormalizedTx[] }> {
-  if (!process.env.ALCHEMY_BSC_URL) {
+  if (!env.ALCHEMY_BSC_URL) {
     console.log("[bsc-alchemy] missing ALCHEMY_BSC_URL");
     return { native: [], token: [] };
   }
