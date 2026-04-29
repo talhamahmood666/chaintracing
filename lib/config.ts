@@ -40,6 +40,13 @@ const serverEnv = {
 
   // Cron jobs
   CRON_SECRET: process.env.CRON_SECRET ?? "",
+
+  // Sentry (optional — no-ops gracefully when DSN is empty)
+  SENTRY_DSN: process.env.SENTRY_DSN ?? "",
+  NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN ?? "",
+  SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN ?? "",
+  SENTRY_ORG: process.env.SENTRY_ORG ?? "",
+  SENTRY_PROJECT: process.env.SENTRY_PROJECT ?? "",
 } as const;
 
 // Public environment variables (exposed to client via NEXT_PUBLIC_ prefix)

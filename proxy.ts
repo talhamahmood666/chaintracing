@@ -46,6 +46,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     // Run on all routes except Next.js internals, static assets, and webhook.
-    "/((?!_next/static|_next/image|favicon\\.ico|api/webhook|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon\\.ico|monitoring|api/webhook|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
