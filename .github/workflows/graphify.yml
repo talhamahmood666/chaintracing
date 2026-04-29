@@ -18,7 +18,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install graphify
-        run: pip install graphifyy
+        run: pip install graphifyy==0.4.10
 
       - name: Rebuild graph (code-only, no LLM)
         env:
