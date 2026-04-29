@@ -31,6 +31,15 @@ const serverEnv = {
 
   // AI narrative
   AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY ?? "",
+
+  // Email (Resend)
+  RESEND_API_KEY: process.env.RESEND_API_KEY ?? "",
+  RESEND_FROM: process.env.RESEND_FROM ?? "onboarding@resend.dev",
+  RESEND_TO: process.env.RESEND_TO ?? "support@chaintracing.org",
+  OPERATOR_EMAIL: process.env.OPERATOR_EMAIL ?? "",
+
+  // Cron jobs
+  CRON_SECRET: process.env.CRON_SECRET ?? "",
 } as const;
 
 // Public environment variables (exposed to client via NEXT_PUBLIC_ prefix)

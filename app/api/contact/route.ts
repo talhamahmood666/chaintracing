@@ -5,6 +5,7 @@ import { getUser } from "@/lib/auth-helpers";
 import { rateLimit, rateLimits } from "@/lib/rate-limit";
 import { checkOrigin } from "@/lib/origin-check";
 import { logger } from "@/lib/logger";
+import { env } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -51,9 +52,9 @@ export async function POST(request: NextRequest) {
   }
 
   // Send email via Resend — non-fatal if it fails
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM ?? "onboarding@resend.dev";
-  const to = process.env.RESEND_TO ?? "support@chaintracing.org";
+  const apiKey = env.RESEND_API_KEY;
+  const from = env.RESEND_FROM;
+  const to = env.RESEND_TO;
 
   if (apiKey) {
     try {

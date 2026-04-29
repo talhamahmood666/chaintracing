@@ -28,6 +28,7 @@ import { rateLimit, rateLimits } from "@/lib/rate-limit";
 import { checkOrigin } from "@/lib/origin-check";
 import { logger } from "@/lib/logger";
 import { randomBytes } from "crypto";
+import { env } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -121,8 +122,8 @@ export async function POST(request: NextRequest) {
   }
 
   // Email notifications — non-fatal
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM ?? "onboarding@resend.dev";
+  const apiKey = env.RESEND_API_KEY;
+  const from = env.RESEND_FROM;
 
   if (apiKey) {
     const resend = new Resend(apiKey);
@@ -164,7 +165,7 @@ export async function POST(request: NextRequest) {
       `chaintracing.org`,
     ].join("\n");
 
-    let operatorEmail = process.env.OPERATOR_EMAIL;
+    let operatorEmail = env.OPERATOR_EMAIL;
     if (!operatorEmail) {
       logger.warn("OPERATOR_EMAIL env var not set — falling back to hardcoded recipient");
       operatorEmail = "talhamahmood666@gmail.com";

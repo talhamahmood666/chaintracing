@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import { resolve } from "path";
+import { env } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -9,7 +10,7 @@ export const maxDuration = 300;
 const execFileAsync = promisify(execFile);
 
 export async function GET(req: NextRequest) {
-  const secret = process.env.CRON_SECRET;
+  const secret = env.CRON_SECRET;
   if (!secret) {
     return Response.json({ error: "CRON_SECRET not configured" }, { status: 500 });
   }
