@@ -21,6 +21,8 @@ jobs:
         run: pip install graphifyy
 
       - name: Rebuild graph (code-only, no LLM)
+        env:
+          GRAPHIFY_NO_TIPS: "1"
         run: graphify update . || graphify .
 
       - name: Commit updated graph
