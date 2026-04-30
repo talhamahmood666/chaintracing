@@ -8,7 +8,7 @@ import { MdEmail } from "react-icons/md";
 
 export const metadata: Metadata = {
   title: 'About ChainTracing — Blockchain Forensics for Scam Victims & Investigators',
-  description: 'ChainTracing helps crypto scam victims and law enforcement trace stolen funds across EVM, Solana, Tron, and Bitcoin. Affordable, evidence-grade on-chain analysis.',
+  description: 'ChainTracing helps crypto scam victims and law enforcement trace stolen funds across EVM, Solana, Tron, and Bitcoin. Affordable, investigative on-chain analysis.',
   alternates: { canonical: '/about' },
 };
 
@@ -55,7 +55,7 @@ export default function AboutPage() {
             About ChainTracing — Blockchain Forensics for Scam Victims
           </h1>
           <p className="text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-            Affordable, evidence-grade on-chain tracing for people who can&apos;t spend $500+ on a forensic firm.
+            Affordable, investigative on-chain tracing for people who can&apos;t spend $500+ on a forensic firm.
           </p>
         </section>
 
@@ -146,7 +146,7 @@ export default function AboutPage() {
             </div>
             <div className="rounded-xl p-5" style={{ border: "1px solid rgba(0,217,255,0.15)", background: "rgba(10,22,40,0.4)" }}>
               <h3 className="font-bold mb-2" style={{ color: "#00D9FF" }}>Law Enforcement</h3>
-              <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>Court-ready PDFs with block explorer citations, exchange attribution, and OFAC screening — built for subpoena targeting.</p>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>Structured investigative PDFs with block explorer citations, exchange attribution, and OFAC screening — built for subpoena targeting.</p>
             </div>
           </div>
         </section>

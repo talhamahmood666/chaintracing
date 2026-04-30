@@ -15,7 +15,7 @@ export function IntentSelector({ value, onChange }: IntentSelectorProps) {
   const options: { value: Intent; label: string; description: string }[] = [
     { value: "curious",          label: "Just exploring",             description: "Research how blockchain forensics works" },
     { value: "lost_money",       label: "I've lost funds",            description: "Trace where stolen crypto went" },
-    { value: "law_enforcement",  label: "Law enforcement report",     description: "Court-ready evidence & compliance docs" },
+    { value: "law_enforcement",  label: "Law enforcement report",     description: "Investigative evidence & compliance docs" },
   ];
 
   return (

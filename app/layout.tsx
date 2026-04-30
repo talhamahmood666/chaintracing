@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     default: 'ChainTracing — Trace Stolen Crypto Across EVM, Solana, Tron & Bitcoin',
     template: '%s | ChainTracing',
   },
-  description: 'Trace stolen cryptocurrency across Ethereum, Solana, Tron, and Bitcoin. Follow scammer wallets to exchange off-ramps and generate evidence-grade reports for law enforcement.',
+  description: 'Trace stolen cryptocurrency across Ethereum, Solana, Tron, and Bitcoin. Follow scammer wallets to exchange off-ramps and generate investigative on-chain evidence reports for law enforcement.',
   keywords: ['trace stolen crypto', 'blockchain forensics', 'crypto scam wallet check', 'recover stolen bitcoin', 'wallet tracer', 'CEX off-ramp detection'],
   robots: { index: true, follow: true },
   openGraph: {

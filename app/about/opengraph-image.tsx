@@ -6,6 +6,6 @@ export const alt = 'About ChainTracing';
 export default async function Image() {
   return renderOG(
     'Blockchain Forensics for Victims & Investigators',
-    'Affordable, evidence-grade on-chain tracing.'
+    'Affordable, investigative on-chain tracing.'
   );
 }

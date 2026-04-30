@@ -68,7 +68,7 @@ export default async function HomePage() {
                 name: 'ChainTracing',
                 applicationCategory: 'SecurityApplication',
                 operatingSystem: 'Web',
-                description: 'Trace stolen cryptocurrency across 8 blockchains. Free risk score, evidence-grade reports.',
+                description: 'Trace stolen cryptocurrency across 8 blockchains. Free risk score, investigative on-chain evidence reports.',
                 offers: [
                   { '@type': 'Offer', name: 'Free Scan', price: '0', priceCurrency: 'USD' },
                   { '@type': 'Offer', name: 'Quick Scan', price: '14.99', priceCurrency: 'USD' },
@@ -110,7 +110,7 @@ export default async function HomePage() {
             </h1>
 
             <p className="text-lg md:text-xl max-w-lg mb-10" style={{ color: 'var(--text-secondary)' }}>
-              Follow scammer wallets hop-by-hop across Ethereum, Solana, Tron, Bitcoin, and EVM L2s. Free risk score and scam database check. Evidence-grade reports for victims, investigators, and law enforcement.
+              Follow scammer wallets hop-by-hop across Ethereum, Solana, Tron, Bitcoin, and EVM L2s. Free risk score and scam database check. Investigative on-chain evidence reports for victims, investigators, and law enforcement.
             </p>
 
             <AnimatedStatsCounter reportsCount={reportsCount} flaggedCount={flaggedCount} communityReportsCount={communityReportsCount} />
@@ -190,7 +190,7 @@ export default async function HomePage() {
               { icon: Search, title: "Enter the Scammer's Wallet", desc: "Paste the wallet address or transaction hash where your crypto was sent." },
               { icon: ArrowRight, title: "Multi-Chain BFS Trace", desc: "Our BFS engine follows the funds across EVM chains, Solana, Tron, and Bitcoin — automatically." },
               { icon: Shield, title: "Detect Mixers, Bridges & Exchanges", desc: "Identify Tornado Cash, cross-chain bridges, and CEX hot wallets (Binance, Coinbase, Kraken, OKX, Bybit)." },
-              { icon: FileText, title: "Get a Court-Ready Evidence Report", desc: "PDF with every hop, block explorer links, timestamps, risk flags, and law enforcement action guidance." },
+              { icon: FileText, title: "Get an Investigative Evidence Report", desc: "PDF with every hop, block explorer links, timestamps, risk flags, and law enforcement action guidance." },
             ].map((step, idx) => (
               <div key={idx} className="glass rounded-2xl p-6 text-center animate-fade-up" style={{ animationDelay: `${idx * 0.1}s` }}>
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto"
@@ -221,7 +221,7 @@ export default async function HomePage() {
               { icon: AlertTriangle, title: "OFAC & Sanctions Screening", desc: "Check against 779 OFAC SDN entries plus EU and UK HMT sanctions lists." },
               { icon: Cpu, title: "Mixer & Bridge Detection", desc: "Flag Tornado Cash, Blender, and cross-chain bridges used to obscure funds." },
               { icon: Briefcase, title: "Exchange Off-Ramp Identification", desc: "Map funds to known CEX hot wallets — Binance, Coinbase, Kraken, OKX, Bybit — for subpoena targeting." },
-              { icon: FileCheck, title: "Evidence-Grade PDF Reports", desc: "Court-ready packages with block explorer links, timestamps, and attribution confidence." },
+              { icon: FileCheck, title: "Structured Investigative Reports", desc: "Structured investigative packages with block explorer links, timestamps, and attribution confidence." },
               { icon: ShieldCheck, title: "Built for Law Enforcement", desc: "Compliance letters, wallet clustering, timing analysis, and risk scoring." },
             ].map((feat, idx) => (
               <div key={idx} className="glass rounded-2xl p-6 animate-fade-up" style={{ animationDelay: `${idx * 0.1}s` }}>
@@ -252,7 +252,7 @@ export default async function HomePage() {
             {[
               { icon: Users, title: "Crypto Scam Victims", desc: "Pig butchering, romance scam, phishing, rug pull — trace where your stolen crypto went. Free risk score, affordable evidence report." },
               { icon: Scale, title: "Investigators & Compliance", desc: "Professional on-chain forensics for private investigators, compliance teams, and auditors." },
-              { icon: Shield, title: "Law Enforcement", desc: "Court-ready evidence, OFAC screening, mixer detection, and CEX attribution for subpoenas." },
+              { icon: Shield, title: "Law Enforcement", desc: "On-chain investigative evidence, OFAC screening, mixer detection, and CEX attribution for subpoenas." },
             ].map((audience, idx) => (
               <div key={idx} className="glass rounded-2xl p-6 text-center animate-fade-up" style={{ animationDelay: `${idx * 0.1}s` }}>
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto"
